@@ -263,7 +263,7 @@ export default function Dashboard() {
   );
 }
 
-function CheckIcon(props) {
+function CheckIcon(props?: any) {
   return (
     <svg
       {...props}
@@ -282,7 +282,7 @@ function CheckIcon(props) {
   );
 }
 
-function ChevronRightIcon(props) {
+function ChevronRightIcon(props?: any) {
   return (
     <svg
       {...props}
@@ -301,7 +301,7 @@ function ChevronRightIcon(props) {
   );
 }
 
-function FilterIcon(props) {
+function FilterIcon(props?: any) {
   return (
     <svg
       {...props}
@@ -320,7 +320,7 @@ function FilterIcon(props) {
   );
 }
 
-function ListOrderedIcon(props) {
+function ListOrderedIcon(props?: any) {
   return (
     <svg
       {...props}
@@ -344,7 +344,7 @@ function ListOrderedIcon(props) {
   );
 }
 
-function SearchIcon(props) {
+function SearchIcon(props?: any) {
   return (
     <svg
       {...props}
@@ -364,7 +364,7 @@ function SearchIcon(props) {
   );
 }
 
-function XIcon(props) {
+function XIcon(props?: any) {
   return (
     <svg
       {...props}
