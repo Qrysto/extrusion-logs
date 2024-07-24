@@ -1,8 +1,8 @@
-import { Database } from './dbSchema';
+import { DB } from 'kysely-codegen';
 import { CamelCasePlugin } from 'kysely';
 import { createKysely } from '@vercel/postgres-kysely';
 
-const db = createKysely<Database>(undefined, {
+const db = createKysely<DB>(undefined, {
   plugins: [new CamelCasePlugin()],
 });
 
