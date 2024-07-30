@@ -5,6 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { post } from '@/lib/utils';
 
 interface FormValues {
   username: string;
@@ -12,16 +15,27 @@ interface FormValues {
 }
 
 export default function LoginForm() {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
+    setError,
+    formState: { isSubmitting, errors },
   } = useForm<FormValues>();
-  const onSubmit: SubmitHandler<FormValues> = ({ username, password }) =>
-    fetch('/api/login', {
-      method: 'POST',
-      body: JSON.stringify({ username, password }),
-    });
+  const onSubmit: SubmitHandler<FormValues> = async ({
+    username,
+    password,
+  }) => {
+    try {
+      await post('/api/login', { username, password });
+    } catch (err: any) {
+      setError('root', { message: err?.message });
+      return;
+    }
+
+    router.push('/dashboard');
+  };
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
@@ -52,6 +66,11 @@ export default function LoginForm() {
           {...register('password')}
         />
       </div>
+      {errors?.root && (
+        <Alert variant="destructive">
+          <AlertDescription>{errors.root.message}</AlertDescription>
+        </Alert>
+      )}
       <div>
         <Button
           disabled={isSubmitting}
