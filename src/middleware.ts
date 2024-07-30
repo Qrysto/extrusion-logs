@@ -19,11 +19,6 @@ export async function middleware(request: NextRequest) {
     }
   };
 
-  // Don't check for login routes
-  if (pathname === '/login' || pathname === '/api/login') {
-    return NextResponse.next();
-  }
-
   // Check if JWT token is passed
   const jwtToken = request.cookies.get('auth_token')?.value;
   if (!jwtToken) {
@@ -64,5 +59,5 @@ export async function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: '/about/:path*',
+  matcher: ['/((?!login|api/login|_next/static|_next/image|favicon.ico).*)'],
 };
