@@ -1,7 +1,8 @@
 import { type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
 import db from '@/lib/db';
+import { jwtSign } from '@/lib/utils';
+import type { AuthData } from '@/lib/types';
 
 const jwtSecret = process.env.JWT_SECRET || 'secret';
 
@@ -31,8 +32,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const token = jwt.sign({ account, timestamp: Date.now() }, jwtSecret);
-    cookies().set('jwt', token, {
+    const timestamp = Date.now();
+    await db
+      .updateTable('accounts')
+      .set({
+        lastLogin: timestamp,
+      })
+      .where('id', '=', account.id)
+      .execute();
+
+    const authData: AuthData = { accountId: account.id, timestamp };
+    const token = await jwtSign(authData, jwtSecret);
+    if (!token) {
+      return Response.json(
+        { message: 'Failed to generate the authentication token' },
+        { status: 500 }
+      );
+    }
+
+    cookies().set('auth_token', token, {
       httpOnly: true,
       sameSite: 'strict',
       secure: true,
