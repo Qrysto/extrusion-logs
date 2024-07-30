@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import type { AuthData } from '@/lib/types';
-import { jwtVerify } from '@/lib/utils';
+import { jwtVerify } from 'jose';
 import db from '@/lib/db';
 
-const jwtSecret = process.env.JWT_SECRET || 'secret';
+const jwtSecret = new TextEncoder().encode(process.env.JWT_SECRET || 'secret');
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
   const {
     nextUrl: { pathname },
   } = request;
-  const redirect = () => {
+  const rejectAuthorization = () => {
     if (pathname.startsWith('/api')) {
       return NextResponse.json({ message: 'Unauthorized!' }, { status: 401 });
     } else {
@@ -22,15 +22,19 @@ export async function middleware(request: NextRequest) {
   // Check if JWT token is passed
   const jwtToken = request.cookies.get('auth_token')?.value;
   if (!jwtToken) {
-    return redirect();
+    return rejectAuthorization();
   }
 
   // Try to decode the token
-  let authData;
+  let authData: AuthData | null = null;
   try {
-    authData = (await jwtVerify(jwtToken, jwtSecret)) as AuthData;
+    const result = await jwtVerify(jwtToken, jwtSecret, {
+      algorithms: ['HS256'],
+    });
+    authData = result.payload as AuthData;
   } catch (err) {
-    return redirect();
+    console.error(err);
+    return rejectAuthorization();
   }
 
   // Check if authData is valid
@@ -38,7 +42,7 @@ export async function middleware(request: NextRequest) {
     typeof authData?.accountId === 'number' &&
     typeof authData?.timestamp === 'number';
   if (!isAuthDataValid) {
-    return redirect();
+    return rejectAuthorization();
   }
 
   // Check if account ID exists and the session is active
@@ -47,8 +51,8 @@ export async function middleware(request: NextRequest) {
     .select(['id', 'username', 'role', 'lastLogin'])
     .where('id', '=', authData.accountId)
     .executeTakeFirst();
-  if (!account || account.lastLogin !== authData.timestamp) {
-    return redirect();
+  if (!account || account.lastLogin !== authData.timestamp.toString()) {
+    return rejectAuthorization();
   }
 
   // Pass account info

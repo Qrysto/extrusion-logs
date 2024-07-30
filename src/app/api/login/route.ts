@@ -1,10 +1,10 @@
 import { type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 import db from '@/lib/db';
-import { jwtSign } from '@/lib/utils';
+import { SignJWT } from 'jose';
 import type { AuthData } from '@/lib/types';
 
-const jwtSecret = process.env.JWT_SECRET || 'secret';
+const jwtSecret = new TextEncoder().encode(process.env.JWT_SECRET || 'secret');
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -42,7 +42,9 @@ export async function POST(request: NextRequest) {
       .execute();
 
     const authData: AuthData = { accountId: account.id, timestamp };
-    const token = await jwtSign(authData, jwtSecret);
+    const token = await new SignJWT(authData)
+      .setProtectedHeader({ alg: 'HS256' })
+      .sign(jwtSecret);
     if (!token) {
       return Response.json(
         { message: 'Failed to generate the authentication token' },
