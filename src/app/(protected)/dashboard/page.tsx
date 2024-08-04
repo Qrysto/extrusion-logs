@@ -54,6 +54,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { protectPage } from '@/lib/account';
+import AccountControl from './AccountControl';
 
 export default async function Dashboard() {
   const account = await protectPage();
@@ -74,14 +75,7 @@ export default async function Dashboard() {
         </Link>
 
         <div className="flex-1 flex justify-end">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <span>{account.username}</span>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>Sign out</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <AccountControl account={account} />
         </div>
       </header>
       <div className="bg-background border-b px-4 md:px-6 flex items-center h-14 shrink-0">
