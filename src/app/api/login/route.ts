@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
       httpOnly: true,
       sameSite: 'strict',
       secure: true,
+      maxAge: 315360000, // 10 years
     });
     return Response.json({ ok: true });
   } catch (err: any) {
