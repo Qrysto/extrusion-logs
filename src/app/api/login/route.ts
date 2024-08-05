@@ -33,15 +33,28 @@ export async function POST(request: NextRequest) {
     }
 
     const timestamp = Date.now();
-    await db
-      .updateTable('accounts')
-      .set({
+    const { ip, geo } = request;
+    const result = await db
+      .insertInto('sessions')
+      .values({
+        accountId: account.id,
+        loginInfo: { ip, geo },
         lastLogin: timestamp,
       })
-      .where('id', '=', account.id)
-      .execute();
+      .returning('id')
+      .executeTakeFirst();
+    if (!result) {
+      return Response.json(
+        { message: 'Could not create session!' },
+        { status: 500 }
+      );
+    }
 
-    const authData: AuthData = { accountId: account.id, timestamp };
+    const authData: AuthData = {
+      sessionId: result.id,
+      accountId: account.id,
+      timestamp,
+    };
     const token = await new SignJWT(authData)
       .setProtectedHeader({ alg: 'HS256' })
       .sign(jwtSecret);

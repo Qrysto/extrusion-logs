@@ -21,9 +21,13 @@ import {
 import { ChevronDown } from 'lucide-react';
 import { post } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import type { Account } from '@/lib/account';
+import type { LoggedInAccount } from '@/lib/auth';
 
-export default function AccountControl({ account }: { account: Account }) {
+export default function AccountControl({
+  account,
+}: {
+  account: LoggedInAccount;
+}) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   async function logOut() {

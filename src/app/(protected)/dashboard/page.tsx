@@ -53,7 +53,7 @@ import {
   TableCell,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { protectPage } from '@/lib/account';
+import { protectPage } from '@/lib/auth';
 import AccountControl from './AccountControl';
 
 export default async function Dashboard() {

@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { Accounts } from 'kysely-codegen';
+import { Accounts, Sessions } from 'kysely-codegen';
 import { Selectable } from 'kysely';
 import { jwtVerify } from 'jose';
 import { redirect } from 'next/navigation';
@@ -29,6 +29,7 @@ export async function getAccount() {
 
   // Check if authData is valid
   const isAuthDataValid =
+    typeof authData?.sessionId === 'number' &&
     typeof authData?.accountId === 'number' &&
     typeof authData?.timestamp === 'number';
   if (!isAuthDataValid) {
@@ -36,15 +37,21 @@ export async function getAccount() {
   }
 
   // Check if account ID exists and the session is active
-  const account: Account | undefined = await db
+  const account: LoggedInAccount | undefined = await db
     .selectFrom('accounts')
-    .select(['id', 'username', 'role', 'lastLogin'])
-    .where('id', '=', authData.accountId)
+    .innerJoin('sessions', 'sessions.accountId', 'accounts.id')
+    .select([
+      'accounts.id',
+      'username',
+      'role',
+      'lastLogin',
+      'sessions.id as sessionId',
+    ])
+    .where('accounts.id', '=', authData.accountId)
+    .where('sessions.id', '=', authData.sessionId)
+    .where('accounts.active', '=', true)
     .executeTakeFirst();
-  if (
-    !account ||
-    account.lastLogin?.toString() !== authData.timestamp.toString()
-  ) {
+  if (!account) {
     return null;
   }
 
@@ -59,7 +66,9 @@ export async function protectPage() {
   return account;
 }
 
-export type Account = Pick<
+export type LoggedInAccount = Pick<
   Selectable<Accounts>,
-  'id' | 'username' | 'role' | 'lastLogin'
->;
+  'id' | 'username' | 'role'
+> & {
+  sessionId: Selectable<Sessions>['id'];
+};
