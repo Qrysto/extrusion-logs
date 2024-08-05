@@ -10,12 +10,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuArrow,
 } from '@/components/ui/dropdown-menu';
+import { ChevronDown } from 'lucide-react';
 import { post } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import type { Account } from '@/lib/account';
@@ -32,9 +35,12 @@ export default function AccountControl({ account }: { account: Account }) {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <span>{account.username}</span>
+          <Button variant="ghost">
+            <span className="font-bold mr-1">{account.username}</span>
+            <ChevronDown size={20} className="inline-block" />
+          </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent align="end">
           <DropdownMenuItem
             className="cursor-pointer"
             onSelect={() => {

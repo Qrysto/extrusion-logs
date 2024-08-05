@@ -61,8 +61,7 @@ export default async function Dashboard() {
 
   return (
     <div className="flex flex-col w-full min-h-screen">
-      <header className="bg-background border-b px-4 py-4 md:px-6 flex justify-between items-center shrink-0">
-        <div className="flex-1" />
+      <header className="bg-background border-b px-4 py-6 md:px-6 flex justify-between items-center shrink-0">
         <Link href="#" className="flex items-center" prefetch={false}>
           <Image
             src="/aluko.png"
@@ -78,6 +77,7 @@ export default async function Dashboard() {
           <AccountControl account={account} />
         </div>
       </header>
+
       <div className="bg-background border-b px-4 md:px-6 flex items-center h-14 shrink-0">
         <div className="flex items-center gap-4 w-full">
           <div className="relative flex-1">
@@ -163,6 +163,7 @@ export default async function Dashboard() {
           </DropdownMenu>
         </div>
       </div>
+
       <main className="flex-1 overflow-auto">
         <Table className="w-full">
           <TableHeader>
