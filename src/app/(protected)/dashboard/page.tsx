@@ -64,7 +64,7 @@ export default async function Dashboard() {
       <header className="bg-background border-b px-4 py-6 md:px-6 flex justify-between items-center shrink-0">
         <Link href="#" className="flex items-center" prefetch={false}>
           <Image
-            src="/aluko.png"
+            src="/aluko-logo.png"
             alt="Aluko logo"
             width={1137}
             height={226}

@@ -26,7 +26,7 @@ export default function Login() {
       <div className="w-full max-w-md space-y-8">
         <div>
           <Image
-            src="/aluko.png"
+            src="/aluko-logo.png"
             alt="Aluko logo"
             width={1137}
             height={226}
