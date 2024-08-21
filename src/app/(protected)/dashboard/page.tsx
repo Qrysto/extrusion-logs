@@ -55,25 +55,30 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { protectPage } from '@/lib/auth';
 import AccountControl from './AccountControl';
+import ColumnSelector from './ColumnSelector';
 
 export default async function Dashboard() {
   const account = await protectPage();
 
   return (
     <div className="flex flex-col w-full min-h-screen">
-      <header className="bg-background border-b px-4 py-6 md:px-6 flex justify-between items-center shrink-0">
+      <header className="bg-background border-b px-4 py-6 md:px-6 flex justify-between items-start shrink-0">
+        <div className="flex justify-start flex-1">
+          <ColumnSelector />
+        </div>
+
         <Link href="#" className="flex items-center" prefetch={false}>
           <Image
             src="/aluko-logo.png"
             alt="Aluko logo"
-            width={1137}
+            width={230}
             height={226}
             className="mx-auto h-12 w-auto"
           />
           <span className="sr-only">Acme Inc</span>
         </Link>
 
-        <div className="flex-1 flex justify-end">
+        <div className="flex justify-end flex-1">
           <AccountControl account={account} />
         </div>
       </header>
@@ -107,7 +112,11 @@ export default async function Dashboard() {
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[200px]">
+            <DropdownMenuContent
+              align="end"
+              avoidCollisions
+              className="w-[200px] overflow-auto"
+            >
               <DropdownMenuLabel>Filter by</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuCheckboxItem checked>Date</DropdownMenuCheckboxItem>

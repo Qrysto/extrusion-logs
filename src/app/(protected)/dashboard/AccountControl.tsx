@@ -39,8 +39,11 @@ export default function AccountControl({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost">
-            <span className="font-bold mr-1">{account.username}</span>
+          <Button variant="ghost" className="ml-4">
+            <span className="font-bold mr-1">
+              {account.plant ? `[${account.plant}] ` : ''}
+              {account.username}
+            </span>
             <ChevronDown size={20} className="inline-block" />
           </Button>
         </DropdownMenuTrigger>

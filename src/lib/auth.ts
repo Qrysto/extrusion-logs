@@ -45,6 +45,8 @@ export async function getAccount() {
       'username',
       'role',
       'lastLogin',
+      'plant',
+      'inch',
       'sessions.id as sessionId',
     ])
     .where('accounts.id', '=', authData.accountId)
@@ -68,7 +70,7 @@ export async function protectPage() {
 
 export type LoggedInAccount = Pick<
   Selectable<Accounts>,
-  'id' | 'username' | 'role'
+  'id' | 'username' | 'role' | 'plant' | 'inch'
 > & {
   sessionId: Selectable<Sessions>['id'];
 };
