@@ -24,24 +24,7 @@ To read more about using these font, please visit the Next.js documentation:
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
 import { Input } from '@/components/ui/input';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuCheckboxItem,
-  DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -56,16 +39,15 @@ import { Badge } from '@/components/ui/badge';
 import { protectPage } from '@/lib/auth';
 import AccountControl from './AccountControl';
 import ColumnSelector from './ColumnSelector';
+import Filters from './Filters';
 
 export default async function Dashboard() {
   const account = await protectPage();
 
   return (
-    <div className="flex flex-col w-full min-h-screen">
-      <header className="bg-background border-b px-4 py-6 md:px-6 flex justify-between items-start shrink-0">
-        <div className="flex justify-start flex-1">
-          <ColumnSelector />
-        </div>
+    <div className="flex flex-col w-full min-h-screen px-4">
+      <header className="bg-background border-b px-4 py-2 md:px-6 flex justify-between items-start shrink-0">
+        <div className="flex-1"></div>
 
         <Link href="#" className="flex items-center" prefetch={false}>
           <Image
@@ -82,6 +64,11 @@ export default async function Dashboard() {
           <AccountControl account={account} />
         </div>
       </header>
+
+      <div className="my-3 flex">
+        <ColumnSelector />
+        <Filters />
+      </div>
 
       <div className="bg-background border-b px-4 md:px-6 flex items-center h-14 shrink-0">
         <div className="flex items-center gap-4 w-full">
@@ -102,75 +89,7 @@ export default async function Dashboard() {
             />
           </div>
         </div>
-        <div className="ml-4 flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8 gap-1">
-                <FilterIcon className="h-4 w-4" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Filter
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              avoidCollisions
-              className="w-[200px] overflow-auto"
-            >
-              <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuCheckboxItem checked>Date</DropdownMenuCheckboxItem>
-              <DropdownMenuItem>
-                <div className="flex items-center justify-between">
-                  <span>Today</span>
-                  <CheckIcon className="h-4 w-4" />
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <div className="flex items-center justify-between">
-                  <span>Yesterday</span>
-                  <CheckIcon className="h-4 w-4" />
-                </div>
-              </DropdownMenuItem>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <DropdownMenuItem>
-                    <div className="flex items-center justify-between w-full">
-                      <span>Custom date</span>
-                      <ChevronRightIcon className="h-4 w-4" />
-                    </div>
-                  </DropdownMenuItem>
-                </PopoverTrigger>
-                <PopoverContent className="p-0 max-w-[276px]">
-                  <Calendar />
-                </PopoverContent>
-              </Popover>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8 gap-1">
-                <ListOrderedIcon className="h-4 w-4" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Sort
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[200px]">
-              <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuRadioGroup value="date">
-                <DropdownMenuRadioItem value="date">Date</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="amount">
-                  Amount
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="status">
-                  Status
-                </DropdownMenuRadioItem>
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <div className="ml-4 flex items-center gap-2"></div>
       </div>
 
       <main className="flex-1 overflow-auto">
