@@ -70,28 +70,6 @@ export default async function Dashboard() {
         <Filters />
       </div>
 
-      <div className="bg-background border-b px-4 md:px-6 flex items-center h-14 shrink-0">
-        <div className="flex items-center gap-4 w-full">
-          <div className="relative flex-1">
-            <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search mold ID..."
-              className="pl-8 w-full"
-            />
-          </div>
-          <div className="relative flex-1">
-            <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search product ID..."
-              className="pl-8 w-full"
-            />
-          </div>
-        </div>
-        <div className="ml-4 flex items-center gap-2"></div>
-      </div>
-
       <main className="flex-1 overflow-auto">
         <Table className="w-full">
           <TableHeader>
