@@ -109,7 +109,7 @@ export default function ColumnSelector() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="h-8 gap-1">
+        <Button variant="outline" size="sm" className="h-10 gap-1">
           <ListChecks className="h-4 w-4" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
             Columns

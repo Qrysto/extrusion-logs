@@ -65,7 +65,7 @@ export default async function Dashboard() {
         </div>
       </header>
 
-      <div className="my-3 flex">
+      <div className="my-3 flex gap-4 items-center flex-wrap">
         <ColumnSelector />
         <Filters />
       </div>
