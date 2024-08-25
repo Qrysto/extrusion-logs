@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import { format, parse } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 
@@ -13,7 +12,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-const dateFormat = 'dd/MM/y';
+export const dateFormat = 'dd/MM/y';
 
 export function DateRangePicker({
   className,

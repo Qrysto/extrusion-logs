@@ -1,6 +1,6 @@
 import db from '@/lib/db';
 
-export default async function loadData() {
+export async function loadData() {
   const [accounts, items, customers, dies, lotNumbers] = await Promise.all([
     accountQuery,
     itemQuery,

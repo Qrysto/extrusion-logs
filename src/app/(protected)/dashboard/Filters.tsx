@@ -30,19 +30,17 @@ const filterableFields = [
   'remark',
 ];
 
-export default function Filters({
-  data: {
+export default function Filters({ data }: { data: LoadDataResult }) {
+  const [searchParams, updateSearchParams] = useUpdateSearchParams();
+  const {
     plantList,
     machineList,
     itemList,
     customerList,
     dieCodeList,
     lotNoList,
-  },
-}: {
-  data: LoadDataResult;
-}) {
-  const [searchParams, updateSearchParams] = useUpdateSearchParams();
+  } = data;
+
   return (
     <>
       <DateRangePicker
