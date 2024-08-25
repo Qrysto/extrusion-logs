@@ -31,10 +31,10 @@ export function Combobox({
 }) {
   const [open, setOpen] = useState(false);
   const item = useMemo(
-    () => list?.find((item) => String(item.value) === value),
+    () => list?.find((item) => String(getValue(item)) === value),
     [list, value]
   );
-  const label = item?.label;
+  const label = item && getLabel(item);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -56,10 +56,10 @@ export function Combobox({
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>
               {list.map((item) => {
-                const valueStr = String(item.value);
+                const valueStr = String(getValue(item));
                 return (
                   <CommandItem
-                    key={item.value}
+                    key={valueStr}
                     value={valueStr}
                     onSelect={() => {
                       if (value !== valueStr) {
@@ -69,14 +69,15 @@ export function Combobox({
                       }
                       setOpen(false);
                     }}
+                    className="cursor-pointer"
                   >
                     <Check
                       className={cn(
                         'mr-2 h-4 w-4',
-                        value === item.value ? 'opacity-100' : 'opacity-0'
+                        value === valueStr ? 'opacity-100' : 'opacity-0'
                       )}
                     />
-                    {item.label}
+                    {getLabel(item)}
                   </CommandItem>
                 );
               })}
@@ -88,10 +89,28 @@ export function Combobox({
   );
 }
 
-export type ComboboxListItem = {
-  value: string | number;
-  label: string;
-};
+function getValue(item: ComboboxListItem) {
+  if (typeof item === 'string') {
+    return item;
+  } else {
+    return item.value;
+  }
+}
+
+function getLabel(item: ComboboxListItem) {
+  if (typeof item === 'string') {
+    return item;
+  } else {
+    return item.label;
+  }
+}
+
+export type ComboboxListItem =
+  | {
+      value: string | number;
+      label: string;
+    }
+  | string;
 
 const fakeItems = [
   { value: 1, label: 'AL FORM' },

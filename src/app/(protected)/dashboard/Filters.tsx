@@ -11,6 +11,7 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { Combobox } from '@/components/ui/combobox';
+import type { LoadDataResult } from './loadData';
 
 const filterableFields = [
   'plant', // admin only cbb
@@ -29,7 +30,18 @@ const filterableFields = [
   'remark',
 ];
 
-export default function Filters() {
+export default function Filters({
+  data: {
+    plantList,
+    machineList,
+    itemList,
+    customerList,
+    dieCodeList,
+    lotNoList,
+  },
+}: {
+  data: LoadDataResult;
+}) {
   const [searchParams, updateSearchParams] = useUpdateSearchParams();
   return (
     <>
@@ -63,30 +75,35 @@ export default function Filters() {
         placeholder="Select plant..."
         value={searchParams.get('plant')}
         onValueChange={(value) => updateSearchParams('plant', value)}
+        list={plantList}
       />
 
       <Combobox
         placeholder="Select machine..."
         value={searchParams.get('machine')}
         onValueChange={(value) => updateSearchParams('machine', value)}
+        list={machineList}
       />
 
       <Combobox
         placeholder="Select item..."
         value={searchParams.get('item')}
         onValueChange={(value) => updateSearchParams('item', value)}
+        list={itemList}
       />
 
       <Combobox
         placeholder="Select customer..."
         value={searchParams.get('customer')}
         onValueChange={(value) => updateSearchParams('customer', value)}
+        list={customerList}
       />
 
       <Combobox
         placeholder="Select die code..."
         value={searchParams.get('dieCode')}
         onValueChange={(value) => updateSearchParams('dieCode', value)}
+        list={dieCodeList}
       />
 
       <Input
@@ -105,6 +122,7 @@ export default function Filters() {
         placeholder="Select lot number..."
         value={searchParams.get('lotNo')}
         onValueChange={(value) => updateSearchParams('lotNo', value)}
+        list={lotNoList}
       />
 
       <Select
