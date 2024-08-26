@@ -43,10 +43,10 @@ const formSchema = z.object({
   billetTemp: z.number().int(),
   outputTemp: z.number().int(),
 
+  ok: z.enum(['OK', 'NG']),
+  yield: z.number().int(),
   productionQuantity: z.number().int(),
   productionWeight: z.number(),
-  yield: z.number().int(),
-  ok: z.enum(['OK', 'NG']),
   remark: z.string(),
   outputRate: z.number(),
   ngQuantity: z.number().int(),
@@ -64,11 +64,15 @@ function onSubmit(values: z.infer<typeof formSchema>) {
 
 export default function ExtrusionLogForm() {
   const now = new Date();
+
+  const defaultShift =
+    now.getHours() >= 8 && now.getHours() < 16 ? 'day' : 'night';
+  console.log('defaultShift', defaultShift);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       date: now,
-      shift: now.getHours() >= 8 && now.getHours() < 16 ? 'day' : 'night',
+      shift: defaultShift,
       endTime: format(now, timeFormat),
     },
   });
@@ -76,6 +80,25 @@ export default function ExtrusionLogForm() {
   return (
     <Form form={form} onSubmit={onSubmit}>
       <div className="flex gap-x-4">
+        <ExtrusionFormItem
+          name="shift"
+          label="Shift"
+          render={({ field }) => {
+            console.log(field);
+
+            return (
+              <ToggleGroup
+                type="single"
+                value={field.value}
+                onValueChange={field.onChange}
+              >
+                <ToggleGroupItem value="day">Day</ToggleGroupItem>
+                <ToggleGroupItem value="night">Night</ToggleGroupItem>
+              </ToggleGroup>
+            );
+          }}
+        />
+
         <ExtrusionFormItem
           name="date"
           label="Date"
@@ -89,23 +112,6 @@ export default function ExtrusionLogForm() {
           )}
         />
 
-        <ExtrusionFormItem
-          name="shift"
-          label="Shift"
-          render={({ field }) => (
-            <ToggleGroup
-              type="single"
-              value={field.value}
-              onValueChange={field.onChange}
-            >
-              <ToggleGroupItem value="day">Day</ToggleGroupItem>
-              <ToggleGroupItem value="night">Night</ToggleGroupItem>
-            </ToggleGroup>
-          )}
-        />
-      </div>
-
-      <div className="flex gap-x-4">
         <ExtrusionFormItem
           name="startTime"
           label="Start time"
@@ -190,21 +196,23 @@ export default function ExtrusionLogForm() {
         />
       </div>
 
-      <ExtrusionFormItem
-        name="billetType"
-        label="Billet type"
-        render={({ field }) => (
-          <Input placeholder="Enter billet type" {...field} />
-        )}
-      />
+      <div className="flex gap-x-4">
+        <ExtrusionFormItem
+          name="billetType"
+          label="Billet type"
+          render={({ field }) => (
+            <Input placeholder="Enter billet type" {...field} />
+          )}
+        />
 
-      <ExtrusionFormItem
-        name="lotNo"
-        label="Lot number"
-        render={({ field }) => (
-          <Input placeholder="Enter lot number" {...field} />
-        )}
-      />
+        <ExtrusionFormItem
+          name="lotNo"
+          label="Lot number"
+          render={({ field }) => (
+            <Input placeholder="Enter lot number" {...field} />
+          )}
+        />
+      </div>
 
       <div className="flex gap-x-4">
         <ExtrusionFormItem
@@ -273,6 +281,206 @@ export default function ExtrusionLogForm() {
               type="number"
               min={0}
               placeholder="Enter billet weight"
+              {...field}
+            />
+          )}
+        />
+      </div>
+
+      <div className="flex gap-x-4">
+        <ExtrusionFormItem
+          name="orderLength"
+          label="Order length (mm)"
+          render={({ field }) => (
+            <Input
+              type="number"
+              min={0}
+              step={1}
+              placeholder="Enter order length"
+              {...field}
+            />
+          )}
+        />
+
+        <ExtrusionFormItem
+          name="ramSpeed"
+          label="Ram speed"
+          render={({ field }) => (
+            <Input
+              type="number"
+              min={0}
+              placeholder="Enter ram speed"
+              {...field}
+            />
+          )}
+        />
+      </div>
+
+      <div className="flex gap-x-4">
+        <ExtrusionFormItem
+          name="billetTemp"
+          label="Billet temperature"
+          render={({ field }) => (
+            <Input
+              type="number"
+              min={0}
+              placeholder="Enter billet temperature"
+              {...field}
+            />
+          )}
+        />
+
+        <ExtrusionFormItem
+          name="outputTemp"
+          label="Output temperature"
+          render={({ field }) => (
+            <Input
+              type="number"
+              min={0}
+              placeholder="Enter output temperature"
+              {...field}
+            />
+          )}
+        />
+      </div>
+
+      <div className="flex gap-x-4">
+        <ExtrusionFormItem
+          name="ok"
+          label="Result"
+          render={({ field }) => (
+            <ToggleGroup
+              type="single"
+              value={field.value}
+              onValueChange={field.onChange}
+            >
+              <ToggleGroupItem value="OK">OK</ToggleGroupItem>
+              <ToggleGroupItem value="NG">NG</ToggleGroupItem>
+            </ToggleGroup>
+          )}
+        />
+
+        <ExtrusionFormItem
+          name="yield"
+          label="Yield (%)"
+          render={({ field }) => (
+            <Input
+              type="number"
+              min={0}
+              max={100}
+              step={1}
+              placeholder="Enter yield"
+              {...field}
+            />
+          )}
+        />
+      </div>
+
+      <div className="flex gap-x-4">
+        <ExtrusionFormItem
+          name="productionQuantity"
+          label="Production quantity"
+          render={({ field }) => (
+            <Input
+              type="number"
+              min={0}
+              step={1}
+              placeholder="Enter production quantity"
+              {...field}
+            />
+          )}
+        />
+
+        <ExtrusionFormItem
+          name="productionWeight"
+          label="Production weight (g)"
+          render={({ field }) => (
+            <Input
+              type="number"
+              min={0}
+              placeholder="Enter production weight"
+              {...field}
+            />
+          )}
+        />
+
+        <ExtrusionFormItem
+          name="outputRate"
+          label="Output rate (kg/h)"
+          render={({ field }) => (
+            <Input
+              type="number"
+              min={0}
+              placeholder="Enter output rate"
+              {...field}
+            />
+          )}
+        />
+      </div>
+
+      <div className="flex gap-x-4">
+        <ExtrusionFormItem
+          name="ngQuantity"
+          label="NG quantity"
+          render={({ field }) => (
+            <Input
+              type="number"
+              min={0}
+              step={1}
+              placeholder="Enter NG quantity"
+              {...field}
+            />
+          )}
+        />
+
+        <ExtrusionFormItem
+          name="ngWeight"
+          label="NG weight (g)"
+          render={({ field }) => (
+            <Input
+              type="number"
+              min={0}
+              placeholder="Enter NG weight"
+              {...field}
+            />
+          )}
+        />
+
+        <ExtrusionFormItem
+          name="ngPercentage"
+          label="NG Percentage (%)"
+          render={({ field }) => (
+            <Input
+              type="number"
+              min={0}
+              placeholder="Enter NG percentage"
+              {...field}
+            />
+          )}
+        />
+      </div>
+
+      <ExtrusionFormItem
+        name="remark"
+        label="Remark"
+        render={({ field }) => <Input placeholder="Enter remark" {...field} />}
+      />
+
+      <div className="flex gap-x-4">
+        <ExtrusionFormItem
+          name="code"
+          label="Code"
+          render={({ field }) => <Input placeholder="Enter code" {...field} />}
+        />
+
+        <ExtrusionFormItem
+          name="buttWeight"
+          label="Butt weight (g)"
+          render={({ field }) => (
+            <Input
+              type="number"
+              min={0}
+              placeholder="Enter butt weight"
               {...field}
             />
           )}
