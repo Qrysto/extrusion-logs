@@ -2,7 +2,11 @@
 
 import { Input } from '@/components/ui/input';
 import { useUpdateSearchParams } from '@/lib/clientUtils';
-import { DateRangePicker } from '@/components/ui/date-range-picker';
+import {
+  DateRangePicker,
+  formatDateRange,
+  parseDateRange,
+} from '@/components/ui/date-range-picker';
 import {
   Select,
   SelectTrigger,
@@ -44,8 +48,14 @@ export default function Filters({ data }: { data: LoadDataResult }) {
   return (
     <>
       <DateRangePicker
-        dateRangeStr={searchParams.get('date') || undefined}
-        onDateRangeChange={(value) => updateSearchParams('date', value)}
+        dateRange={
+          searchParams.get('date')
+            ? parseDateRange(searchParams.get('date'))
+            : null
+        }
+        onDateRangeChange={(value) =>
+          updateSearchParams('date', formatDateRange(value))
+        }
       />
 
       <Select

@@ -12,17 +12,17 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-export const dateFormat = 'dd/MM/y';
+export const dateFormat = 'PP';
 
 export function DateRangePicker({
   className,
-  dateRangeStr,
+  dateRange,
   onDateRangeChange,
 }: React.HTMLAttributes<HTMLDivElement> & {
-  dateRangeStr: string | undefined;
-  onDateRangeChange: (dateRange?: string) => void;
+  dateRange: DateRange | null;
+  onDateRangeChange: (dateRange: DateRange | null) => void;
 }) {
-  const dateRange = parseDateRange(dateRangeStr);
+  const dateRangeStr = formatDateRange(dateRange);
 
   return (
     <div className={cn('grid gap-2', className)}>
@@ -37,7 +37,7 @@ export function DateRangePicker({
             )}
           >
             <CalendarIcon
-              className={cn('mr-2 h-4 w-4', { 'opacity-50': !dateRangeStr })}
+              className={cn('mr-2 h-4 w-4', { 'opacity-50': !dateRange })}
             />
             {dateRangeStr || <span className="opacity-50">Pick a date</span>}
           </Button>
@@ -47,13 +47,19 @@ export function DateRangePicker({
             autoFocus
             mode="range"
             defaultMonth={referenceDate}
-            selected={dateRange}
+            selected={dateRange || undefined}
             onSelect={(selected) => {
-              if (selected && selected.from && selected.to) {
+              if (selected) {
                 const { from, to } = selected;
-                onDateRangeChange(formatDateRange({ from, to }));
+                if (from && to) {
+                  onDateRangeChange({ from, to });
+                } else if (from && !to) {
+                  onDateRangeChange({ from, to: from });
+                } else if (!from && to) {
+                  onDateRangeChange({ from: to, to });
+                }
               } else {
-                onDateRangeChange(undefined);
+                onDateRangeChange(null);
               }
             }}
             numberOfMonths={2}
@@ -64,23 +70,23 @@ export function DateRangePicker({
   );
 }
 
-function formatDateRange(dateRange: DateRange | undefined) {
-  if (!dateRange) return undefined;
+export function formatDateRange(dateRange: DateRange | null) {
+  if (!dateRange) return null;
   return `${format(dateRange.from, dateFormat)} - ${format(
     dateRange.to,
     dateFormat
   )}`;
 }
 
-function parseDateRange(dateRangeStr: string | undefined) {
-  if (!dateRangeStr) return undefined;
+export function parseDateRange(dateRangeStr: string | null) {
+  if (!dateRangeStr) return null;
   try {
     const [fromStr, toStr] = dateRangeStr.split(' - ');
     const from = parse(fromStr, dateFormat, referenceDate);
     const to = parse(toStr, dateFormat, referenceDate);
     return { from, to };
   } catch (err) {
-    return undefined;
+    return null;
   }
 }
 
