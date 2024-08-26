@@ -19,7 +19,6 @@ import {
   FieldValues,
   FormProvider,
   useFormContext,
-  useForm,
   type UseFormReturn,
   type SubmitHandler,
 } from 'react-hook-form';
@@ -62,7 +61,8 @@ const FormField = <
 >({
   ...props
 }: ControllerProps<TFieldValues, TName>) => {
-  const { control } = useForm<TFieldValues>();
+  const { control } = useFormContext<TFieldValues>();
+
   return (
     <FormFieldContext.Provider value={{ name: props.name }}>
       <Controller control={control} {...props} />

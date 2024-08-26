@@ -67,7 +67,6 @@ export default function ExtrusionLogForm() {
 
   const defaultShift =
     now.getHours() >= 8 && now.getHours() < 16 ? 'day' : 'night';
-  console.log('defaultShift', defaultShift);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -83,20 +82,16 @@ export default function ExtrusionLogForm() {
         <ExtrusionFormItem
           name="shift"
           label="Shift"
-          render={({ field }) => {
-            console.log(field);
-
-            return (
-              <ToggleGroup
-                type="single"
-                value={field.value}
-                onValueChange={field.onChange}
-              >
-                <ToggleGroupItem value="day">Day</ToggleGroupItem>
-                <ToggleGroupItem value="night">Night</ToggleGroupItem>
-              </ToggleGroup>
-            );
-          }}
+          render={({ field }) => (
+            <ToggleGroup
+              type="single"
+              value={field.value}
+              onValueChange={field.onChange}
+            >
+              <ToggleGroupItem value="day">Day</ToggleGroupItem>
+              <ToggleGroupItem value="night">Night</ToggleGroupItem>
+            </ToggleGroup>
+          )}
         />
 
         <ExtrusionFormItem
