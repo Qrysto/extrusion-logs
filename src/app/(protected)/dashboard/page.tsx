@@ -1,5 +1,3 @@
-import Link from 'next/link';
-import Image from 'next/image';
 import {
   Table,
   TableHeader,
@@ -10,11 +8,10 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { protectPage } from '@/lib/auth';
-import AccountControl from './AccountControl';
 import ColumnSelector from './ColumnSelector';
 import Filters from './Filters';
-import AddExtrusionLog from './AddExtrusionLog';
 import { loadData } from './loadData';
+import Header from './Header';
 
 export default async function Dashboard() {
   const account = await protectPage();
@@ -22,26 +19,7 @@ export default async function Dashboard() {
 
   return (
     <div className="flex flex-col w-full min-h-screen px-6">
-      <header className="bg-background border-b py-4 flex justify-between items-start shrink-0">
-        <div className="flex-1">
-          <AddExtrusionLog />
-        </div>
-
-        <Link href="#" className="flex items-center" prefetch={false}>
-          <Image
-            src="/aluko-logo.png"
-            alt="Aluko logo"
-            width={230}
-            height={226}
-            className="mx-auto h-12 w-auto"
-          />
-          <span className="sr-only">Acme Inc</span>
-        </Link>
-
-        <div className="flex justify-end flex-1">
-          <AccountControl account={account} />
-        </div>
-      </header>
+      <Header account={account} />
 
       <div className="my-3 flex gap-4 items-center flex-wrap">
         <ColumnSelector />

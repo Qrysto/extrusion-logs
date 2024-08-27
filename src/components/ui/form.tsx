@@ -22,7 +22,6 @@ import {
   type UseFormReturn,
   type SubmitHandler,
 } from 'react-hook-form';
-
 import { cn } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
 
@@ -30,17 +29,17 @@ const Form = <TFieldValues extends FieldValues = FieldValues>({
   form,
   children,
   onSubmit,
+  className,
 }: {
   form: UseFormReturn<TFieldValues>;
   children: ReactNode;
   onSubmit: SubmitHandler<TFieldValues>;
+  className?: string;
 }) => {
   return (
-    <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {children}
-      </form>
-    </FormProvider>
+    <form onSubmit={form.handleSubmit(onSubmit)} className={className}>
+      <FormProvider {...form}>{children}</FormProvider>
+    </form>
   );
 };
 
