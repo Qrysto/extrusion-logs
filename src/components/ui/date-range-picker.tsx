@@ -1,6 +1,7 @@
 'use client';
 
 import { format, parse } from 'date-fns';
+// import { vi } from 'date-fns/locale/vi';
 import { Calendar as CalendarIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -13,6 +14,7 @@ import {
 } from '@/components/ui/popover';
 
 export const dateFormat = 'PP';
+// vi = 'EEEEE P'
 
 export function DateRangePicker({
   className,
@@ -72,10 +74,15 @@ export function DateRangePicker({
 
 export function formatDateRange(dateRange: DateRange | null) {
   if (!dateRange) return null;
-  return `${format(dateRange.from, dateFormat)} - ${format(
-    dateRange.to,
-    dateFormat
-  )}`;
+  try {
+    return `${format(dateRange.from, dateFormat)} - ${format(
+      dateRange.to,
+      dateFormat
+    )}`;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 }
 
 export function parseDateRange(dateRangeStr: string | null) {
@@ -86,6 +93,7 @@ export function parseDateRange(dateRangeStr: string | null) {
     const to = parse(toStr, dateFormat, referenceDate);
     return { from, to };
   } catch (err) {
+    console.error(err);
     return null;
   }
 }

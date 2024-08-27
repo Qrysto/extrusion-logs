@@ -45,7 +45,7 @@ const columns = [
   'productionWeight',
 
   'ok',
-  'yield',
+  'outputYield',
   'ngPercentage',
   'ngQuantity',
   'ngWeight',
@@ -89,7 +89,7 @@ const columnLabels: Record<string, string> = {
   productionWeight: 'Production weight',
 
   ok: 'OK/NG',
-  yield: 'Yield',
+  outputYield: 'Yield',
   ngQuantity: 'NG Quantity',
   ngWeight: 'NG Weight',
   ngPercentage: 'NG Percentage',

@@ -13,17 +13,16 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-export const dateFormat = 'PPP';
+export const dateFormat = 'PP';
 
 export function DatePicker({
-  dateStr,
+  date,
   onDateChange,
 }: {
-  dateStr: string | null;
-  onDateChange: (dateStr?: Date | undefined) => void;
+  date: Date | null;
+  onDateChange: (date: Date | null) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const date = dateStr ? parse(dateStr, dateFormat, new Date()) : undefined;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -37,7 +36,7 @@ export function DatePicker({
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? (
-            format(date, 'PPP')
+            formatDate(date)
           ) : (
             <span className="opacity-50">Pick a date</span>
           )}
@@ -46,9 +45,9 @@ export function DatePicker({
       <PopoverContent className="w-auto p-0">
         <Calendar
           mode="single"
-          selected={date}
+          selected={date || undefined}
           onSelect={(selected) => {
-            onDateChange(selected);
+            onDateChange(selected || null);
             setOpen(false);
           }}
           autoFocus
@@ -56,4 +55,9 @@ export function DatePicker({
       </PopoverContent>
     </Popover>
   );
+}
+
+export function formatDate(date: Date | null) {
+  if (!date) return null;
+  return format(date, dateFormat);
 }

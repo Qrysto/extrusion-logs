@@ -29,7 +29,7 @@ const filterableFields = [
   'dieCode', // cmd
   'cavity', // cmd
   'lotNo',
-  'yield',
+  'outputYield',
   'ok',
   'remark',
 ];

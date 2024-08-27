@@ -19,12 +19,12 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const [account] = await db
+    const account = await db
       .selectFrom('accounts')
       .selectAll()
       .where('username', '=', username)
       .where('password', '=', password)
-      .execute();
+      .executeTakeFirst();
     if (!account) {
       return Response.json(
         { message: 'Incorrect username or password!' },
