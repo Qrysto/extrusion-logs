@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
+import { Toaster } from '@/components/ui/toaster';
+import DisableNumberInputScroll from '@/components/DisableNumberInputScroll';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--inter' });
@@ -24,6 +26,8 @@ export default function RootLayout({
         )}
       >
         {children}
+        <Toaster />
+        <DisableNumberInputScroll />
       </body>
     </html>
   );
