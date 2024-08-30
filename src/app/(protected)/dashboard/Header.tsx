@@ -17,13 +17,14 @@ export default function Header({ account }: { account: LoggedInAccount }) {
         <AddExtrusionLog employeeId={employeeId} />
       </div>
 
-      <Link href="#" className="flex items-center" prefetch={false}>
+      <Link href="/dashboard" className="flex items-center" prefetch={false}>
         <Image
           src="/aluko-logo.png"
           alt="Aluko logo"
           width={230}
           height={226}
           className="mx-auto h-12 w-auto"
+          priority
         />
         <span className="sr-only">Acme Inc</span>
       </Link>

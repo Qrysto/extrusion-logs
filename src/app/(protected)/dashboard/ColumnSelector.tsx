@@ -12,12 +12,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { ListChecks } from 'lucide-react';
 
+const adminOnlyColumns = ['plant', 'createdBy'];
+
 const columns = [
   'date',
   'shift',
-  // --Admin only--
-  'plant',
-  'createdBy',
   'employeeId',
 
   'item',
@@ -103,8 +102,9 @@ const columnLabels: Record<string, string> = {
 
 const storageKey = 'columns';
 
-export default function ColumnSelector() {
+export default function ColumnSelector({ isAdmin }: { isAdmin: boolean }) {
   const { hiddenColumns, toggleColumn } = useHiddenColumns();
+  const allColumns = [...(isAdmin ? adminOnlyColumns : []), ...columns];
 
   return (
     <DropdownMenu>
@@ -121,7 +121,7 @@ export default function ColumnSelector() {
         className="w-[200px] overflow-auto max-h-96"
         avoidCollisions
       >
-        {columns.map((column) => (
+        {allColumns.map((column) => (
           <DropdownMenuCheckboxItem
             key={column}
             className="cursor-pointer"

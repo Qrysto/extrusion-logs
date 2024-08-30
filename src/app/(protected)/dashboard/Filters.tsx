@@ -36,8 +36,10 @@ const filterableFields = [
 
 export default function Filters({
   suggestionData,
+  isAdmin,
 }: {
   suggestionData: SuggestionData;
+  isAdmin: boolean;
 }) {
   const [searchParams, updateSearchParams] = useUpdateSearchParams();
   const {
@@ -83,19 +85,23 @@ export default function Filters({
         </SelectContent>
       </Select>
 
-      <Combobox
-        placeholder="Select plant..."
-        value={searchParams.get('plant')}
-        onValueChange={(value) => updateSearchParams('plant', value)}
-        list={plantList}
-      />
+      {isAdmin && (
+        <>
+          <Combobox
+            placeholder="Select plant..."
+            value={searchParams.get('plant')}
+            onValueChange={(value) => updateSearchParams('plant', value)}
+            list={plantList}
+          />
 
-      <Combobox
-        placeholder="Select machine..."
-        value={searchParams.get('machine')}
-        onValueChange={(value) => updateSearchParams('machine', value)}
-        list={machineList}
-      />
+          <Combobox
+            placeholder="Select machine..."
+            value={searchParams.get('machine')}
+            onValueChange={(value) => updateSearchParams('machine', value)}
+            list={machineList}
+          />
+        </>
+      )}
 
       <Combobox
         placeholder="Select item..."

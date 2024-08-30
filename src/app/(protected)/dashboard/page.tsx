@@ -16,14 +16,15 @@ import Header from './Header';
 export default async function Dashboard() {
   const account = await protectPage();
   const suggestionData = await loadSuggestionData();
+  const isAdmin = account.role === 'admin';
 
   return (
     <div className="flex flex-col w-full min-h-screen px-6">
       <Header account={account} />
 
       <div className="my-3 flex gap-4 items-center flex-wrap">
-        <ColumnSelector />
-        <Filters suggestionData={suggestionData} />
+        <ColumnSelector isAdmin={isAdmin} />
+        <Filters suggestionData={suggestionData} isAdmin={isAdmin} />
       </div>
 
       <main className="flex-1 overflow-auto">
