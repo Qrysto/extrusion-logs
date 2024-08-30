@@ -1,7 +1,7 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
-import { useUpdateSearchParams } from '@/lib/clientUtils';
+import { useUpdateSearchParams } from '@/lib/client';
 import {
   DateRangePicker,
   formatDateRange,
@@ -15,33 +15,11 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { Combobox } from '@/components/ui/combobox';
-import type { SuggestionData } from './loadSuggestionData';
+import { useSuggestionData } from '@/lib/client';
 
-const filterableFields = [
-  'plant', // admin only cbb
-  'machine', // admin only cbb
-
-  'date', // date
-  'shift', // toggle group
-
-  'items', // cmd
-  'customer', // cmd
-  'dieCode', // cmd
-  'cavity', // cmd
-  'lotNo',
-  'outputYield',
-  'ok',
-  'remark',
-];
-
-export default function Filters({
-  suggestionData,
-  isAdmin,
-}: {
-  suggestionData: SuggestionData;
-  isAdmin: boolean;
-}) {
+export default function Filters({ isAdmin }: { isAdmin: boolean }) {
   const [searchParams, updateSearchParams] = useUpdateSearchParams();
+  const { data } = useSuggestionData();
   const {
     plantList,
     machineList,
@@ -49,7 +27,7 @@ export default function Filters({
     customerList,
     dieCodeList,
     lotNoList,
-  } = suggestionData;
+  } = data || {};
 
   return (
     <>

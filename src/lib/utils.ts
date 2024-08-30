@@ -1,15 +1,24 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { RequestInit } from 'next/dist/server/web/spec-extension/request';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function get(url: string, params?: object, nextCache?: object) {
+export function get(
+  url: string,
+  params?: object,
+  nextCache?: RequestInit['next']
+) {
   return call('GET', url, params, nextCache);
 }
 
-export function post(url: string, params?: object, nextCache?: object) {
+export function post(
+  url: string,
+  params?: object,
+  nextCache?: RequestInit['next']
+) {
   return call('POST', url, params, nextCache);
 }
 
@@ -17,13 +26,13 @@ async function call(
   method: 'GET' | 'POST',
   url: string,
   params?: object,
-  nextCache?: object
+  nextCache?: RequestInit['next']
 ) {
   const res = await fetch(
     `${url}${method === 'GET' ? toQueryString(params) : ''}`,
     {
       cache: nextCache ? undefined : 'no-store',
-      next: nextCache || undefined,
+      next: nextCache,
       method,
       headers: {
         'Content-Type': 'application/json',

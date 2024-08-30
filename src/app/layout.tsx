@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
-import { TooltipProvider } from '@/components/ui/tooltip';
 import DisableNumberInputScroll from '@/components/DisableNumberInputScroll';
 import './globals.css';
+import ClientWrappers from './ClientWrappers';
 
 const inter = Inter({ subsets: ['latin'], variable: '--inter' });
 
@@ -26,7 +26,7 @@ export default function RootLayout({
           inter.variable
         )}
       >
-        <TooltipProvider>{children}</TooltipProvider>
+        <ClientWrappers>{children}</ClientWrappers>
         <Toaster />
         <DisableNumberInputScroll />
       </body>

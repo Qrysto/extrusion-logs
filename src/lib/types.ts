@@ -13,3 +13,12 @@ export type AlertDescriptor = {
   title?: ReactNode;
   description?: ReactNode;
 };
+
+export type SuggestionData = {
+  plantList?: string[];
+  machineList?: string[];
+  itemList: string[];
+  customerList: string[];
+  dieCodeList: string[];
+  lotNoList: string[];
+};

@@ -10,12 +10,10 @@ import { Badge } from '@/components/ui/badge';
 import { protectPage } from '@/lib/auth';
 import ColumnSelector from './ColumnSelector';
 import Filters from './Filters';
-import { loadSuggestionData } from './loadSuggestionData';
 import Header from './Header';
 
 export default async function Dashboard() {
   const account = await protectPage();
-  const suggestionData = await loadSuggestionData();
   const isAdmin = account.role === 'admin';
 
   return (
@@ -24,7 +22,7 @@ export default async function Dashboard() {
 
       <div className="my-3 flex gap-4 items-center flex-wrap">
         <ColumnSelector isAdmin={isAdmin} />
-        <Filters suggestionData={suggestionData} isAdmin={isAdmin} />
+        <Filters isAdmin={isAdmin} />
       </div>
 
       <main className="flex-1 overflow-auto">

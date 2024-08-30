@@ -31,6 +31,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/components/ui/use-toast';
+import { useSuggestionData, refreshSuggestionData } from '@/lib/client';
 import { post } from '@/lib/utils';
 
 const formSchema = z.object({
@@ -89,6 +90,7 @@ export default function AddExtrusionLog({
   const {
     formState: { isDirty, isLoading, isSubmitting },
   } = form;
+  const { data } = useSuggestionData();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const finalValues = {
@@ -111,6 +113,7 @@ export default function AddExtrusionLog({
     toast({
       title: 'Extrusion log has been added',
     });
+    refreshSuggestionData();
   }
 
   return (
