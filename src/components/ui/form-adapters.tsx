@@ -1,8 +1,9 @@
-import { ComponentProps, ReactNode } from 'react';
+import { ComponentProps } from 'react';
 import { FormControl } from './form';
 import { Input } from './input';
-import { ToggleGroup, ToggleGroupItem } from './toggle-group';
+import { ToggleGroup } from './toggle-group';
 import { DatePicker } from './date-picker';
+import { TimePicker } from './time-picker';
 
 export function FormInput(props: ComponentProps<typeof Input>) {
   return (
@@ -40,6 +41,25 @@ export function FormDatePicker(
           <DatePicker
             date={value}
             onDateChange={onChange}
+            {...fieldRest}
+            {...props}
+          />
+        );
+      }}
+    />
+  );
+}
+
+export function FormTimePicker(
+  props: Omit<ComponentProps<typeof TimePicker>, 'value' | 'onChange'>
+) {
+  return (
+    <FormControl
+      render={({ field: { value, onChange, ...fieldRest } }) => {
+        return (
+          <TimePicker
+            value={value}
+            onChange={onChange}
             {...fieldRest}
             {...props}
           />

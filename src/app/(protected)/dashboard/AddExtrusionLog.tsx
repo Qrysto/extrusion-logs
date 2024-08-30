@@ -16,7 +16,9 @@ import {
   FormInput,
   FormToggleGroup,
   FormDatePicker,
+  FormTimePicker,
 } from '@/components/ui/form-adapters';
+import { timeFormat } from '@/components/ui/time-picker';
 import {
   Dialog,
   DialogContent,
@@ -72,8 +74,6 @@ const formSchema = z.object({
   buttWeight: z.coerce.number().min(0),
 });
 
-const timeFormat = 'HH:mm';
-
 export default function AddExtrusionLog({
   employeeId,
 }: {
@@ -87,12 +87,11 @@ export default function AddExtrusionLog({
     // @ts-ignore react-hook-form doesn't think we can set invalid default form values
     defaultValues: getDefaultValues({ employeeId }),
   });
-  useEffect(() => {
-    form.reset();
-  }, []);
+  // useEffect(() => {
+  //   form.reset();
+  // }, []);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log('submit', values);
     const finalValues = {
       ...values,
       ok: values.result === 'OK',
@@ -108,6 +107,7 @@ export default function AddExtrusionLog({
       });
       return;
     }
+    form.reset();
     setDialogOpen(false);
     toast({
       title: 'Extrusion log has been added',
@@ -148,11 +148,11 @@ export default function AddExtrusionLog({
             </FormItem>
 
             <FormItem name="startTime" label="Start time" className="flex-1">
-              <FormInput type="time" />
+              <FormTimePicker />
             </FormItem>
 
             <FormItem name="endTime" label="End time" className="flex-1">
-              <FormInput type="time" />
+              <FormTimePicker />
             </FormItem>
           </div>
 
