@@ -71,7 +71,7 @@ export default function Filters({
           )
         }
       >
-        <SelectTrigger className="w-20">
+        <SelectTrigger className="w-24">
           <SelectValue
             placeholder={<span className="opacity-50">Shift</span>}
           />
@@ -146,7 +146,7 @@ export default function Filters({
           )
         }
       >
-        <SelectTrigger className="w-20">
+        <SelectTrigger className="w-24">
           <SelectValue
             placeholder={<span className="opacity-50">Result</span>}
           />

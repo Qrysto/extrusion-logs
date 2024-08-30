@@ -2,7 +2,7 @@
 
 import { format, parse } from 'date-fns';
 // import { vi } from 'date-fns/locale/vi';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, CircleX } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -34,14 +34,27 @@ export function DateRangePicker({
             id="date"
             variant={'outline'}
             className={cn(
-              'w-60 justify-start text-left font-normal',
+              'w-72 justify-between text-left font-normal',
               !dateRange && 'text-muted-foreground'
             )}
           >
-            <CalendarIcon
-              className={cn('mr-2 h-4 w-4', { 'opacity-50': !dateRange })}
-            />
-            {dateRangeStr || <span className="opacity-50">Pick a date</span>}
+            <span className="flex items-center">
+              <CalendarIcon
+                className={cn('mr-2 h-4 w-4', { 'opacity-50': !dateRange })}
+              />
+              {dateRangeStr || (
+                <span className="opacity-50">Pick a date range</span>
+              )}
+            </span>
+            {!!dateRange && (
+              <CircleX
+                className=" h-4 w-4 opacity-50 hover:opacity-75 cursor-pointer"
+                onClick={(evt) => {
+                  evt.stopPropagation();
+                  onDateRangeChange(null);
+                }}
+              />
+            )}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, ComponentProps } from 'react';
 import { Button } from '@/components/ui/button';
-import { Check, ChevronDown } from 'lucide-react';
+import { Check, ChevronDown, CircleX } from 'lucide-react';
 import {
   Popover,
   PopoverTrigger,
@@ -18,17 +18,21 @@ import {
 } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 
+interface ComboboxProps extends Omit<ComponentProps<typeof Button>, 'value'> {
+  list?: ComboboxListItem[];
+  placeholder?: string;
+  value: string | null;
+  onValueChange: (value: string | null) => void;
+}
+
 export function Combobox({
   list = fakeItems,
   placeholder = '',
   value,
   onValueChange,
-}: {
-  list?: ComboboxListItem[];
-  placeholder?: string;
-  value: string | null;
-  onValueChange: (value: string | null) => void;
-}) {
+  className,
+  ...rest
+}: ComboboxProps) {
   const [open, setOpen] = useState(false);
   const item = useMemo(
     () => list?.find((item) => String(getValue(item)) === value),
@@ -43,10 +47,22 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-60 justify-between"
+          className={cn('w-52 justify-between', className)}
+          {...rest}
         >
           {label || <span className="opacity-50">{placeholder}</span>}
-          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <span className="flex items-center">
+            {!!value && (
+              <CircleX
+                className="h-4 w-4 opacity-50 hover:opacity-75 cursor-pointer"
+                onClick={(evt) => {
+                  evt.stopPropagation();
+                  onValueChange(null);
+                }}
+              />
+            )}
+            <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-60 p-0">
