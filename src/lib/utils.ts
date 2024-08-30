@@ -28,7 +28,7 @@ async function call(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: method === 'POST' ? JSON.stringify(params) : undefined,
+      body: method === 'POST' && params ? JSON.stringify(params) : undefined,
     }
   );
   const json = await res.json();

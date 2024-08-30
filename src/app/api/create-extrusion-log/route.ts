@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
         .executeTakeFirst(),
     ]);
 
-  await db.transaction().execute(async () => {
+  try {
     await Promise.all([
       !existingCustomer
         ? db
@@ -133,9 +133,20 @@ export async function POST(request: NextRequest) {
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
     ]);
+  } catch (err: any) {
+    console.error('Error when preparing reference tables', err);
+    return Response.json({ message: err?.message }, { status: 500 });
+  }
+
+  try {
     await db
       .insertInto('extrusions')
       .values(extrusionLogValues)
-      .executeTakeFirstOrThrow();
-  });
+      .executeTakeFirst();
+
+    return Response.json({ ok: true });
+  } catch (err: any) {
+    console.error('Error when inserting extrusion', err);
+    return Response.json({ message: err?.message }, { status: 500 });
+  }
 }

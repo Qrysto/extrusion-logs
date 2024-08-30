@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, ComponentProps } from 'react';
 import { format, parse } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 
@@ -18,10 +18,12 @@ export const dateFormat = 'PP';
 export function DatePicker({
   date,
   onDateChange,
+  className,
+  ...rest
 }: {
   date: Date | null;
   onDateChange: (date: Date | null) => void;
-}) {
+} & ComponentProps<typeof Button>) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -31,8 +33,10 @@ export function DatePicker({
           variant={'outline'}
           className={cn(
             'w-[280px] justify-start text-left font-normal',
-            !date && 'text-muted-foreground'
+            !date && 'text-muted-foreground',
+            className
           )}
+          {...rest}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? (
