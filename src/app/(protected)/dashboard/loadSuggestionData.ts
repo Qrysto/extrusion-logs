@@ -1,6 +1,6 @@
 import db from '@/lib/db';
 
-export async function loadData() {
+export async function loadSuggestionData() {
   const [accounts, items, customers, dies, lotNumbers] = await Promise.all([
     accountQuery,
     itemQuery,
@@ -51,4 +51,4 @@ const dieQuery = db.selectFrom('dies').selectAll().execute();
 
 const lotNoQuery = db.selectFrom('lotNumbers').selectAll().execute();
 
-export type LoadDataResult = Awaited<ReturnType<typeof loadData>>;
+export type SuggestionData = Awaited<ReturnType<typeof loadSuggestionData>>;

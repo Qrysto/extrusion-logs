@@ -15,7 +15,7 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { Combobox } from '@/components/ui/combobox';
-import type { LoadDataResult } from './loadData';
+import type { SuggestionData } from './loadSuggestionData';
 
 const filterableFields = [
   'plant', // admin only cbb
@@ -34,7 +34,11 @@ const filterableFields = [
   'remark',
 ];
 
-export default function Filters({ data }: { data: LoadDataResult }) {
+export default function Filters({
+  suggestionData,
+}: {
+  suggestionData: SuggestionData;
+}) {
   const [searchParams, updateSearchParams] = useUpdateSearchParams();
   const {
     plantList,
@@ -43,7 +47,7 @@ export default function Filters({ data }: { data: LoadDataResult }) {
     customerList,
     dieCodeList,
     lotNoList,
-  } = data;
+  } = suggestionData;
 
   return (
     <>

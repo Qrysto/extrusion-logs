@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { z } from 'zod';
 import { format } from 'date-fns';
 import { useForm } from 'react-hook-form';
@@ -27,6 +26,7 @@ import {
   DialogFooter,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Power, Check, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -84,12 +84,11 @@ export default function AddExtrusionLog({
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    // @ts-ignore react-hook-form doesn't think we can set invalid default form values
     defaultValues: getDefaultValues({ employeeId }),
   });
-  // useEffect(() => {
-  //   form.reset();
-  // }, []);
+  const {
+    formState: { isDirty, isLoading, isSubmitting },
+  } = form;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const finalValues = {
@@ -107,7 +106,7 @@ export default function AddExtrusionLog({
       });
       return;
     }
-    form.reset();
+    form.reset(getDefaultValues({ employeeId }));
     setDialogOpen(false);
     toast({
       title: 'Extrusion log has been added',
@@ -291,10 +290,34 @@ export default function AddExtrusionLog({
           </div>
         </Form>
 
-        <DialogFooter className="px-6">
-          <Button type="submit" form={formId}>
-            Submit
-          </Button>
+        <DialogFooter className="px-6 sm:justify-between">
+          <div>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                // TODO: add confirmation
+                form.reset(getDefaultValues({ employeeId }));
+              }}
+            >
+              <Power className="mr-2 h-4 w-4" />
+              Reset form
+            </Button>
+          </div>
+
+          <div>
+            <Button variant="secondary" className="mr-4" disabled={!isDirty}>
+              <Save className="mr-2 h-4 w-4" />
+              Save
+            </Button>
+            <Button
+              type="submit"
+              form={formId}
+              disabled={isSubmitting || isLoading}
+            >
+              <Check className="mr-2 h-4 w-4" />
+              Submit
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -315,12 +338,15 @@ function FormItem({
     <FormField name={name} {...rest}>
       <FormLabel>{label}</FormLabel>
       {children}
-      <FormMessage />
     </FormField>
   );
 }
 
-function getDefaultValues({ employeeId }: { employeeId: string }) {
+function getDefaultValues<T extends object>({
+  employeeId,
+}: {
+  employeeId: string;
+}) {
   const now = new Date();
 
   return {
@@ -359,7 +385,7 @@ function getDefaultValues({ employeeId }: { employeeId: string }) {
     ngPercentage: null,
     code: '',
     buttWeight: null,
-  };
+  } as T;
 }
 
 const shiftItems = [

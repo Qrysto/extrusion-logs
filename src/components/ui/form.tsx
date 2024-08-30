@@ -13,23 +13,20 @@ import {
   ComponentType,
 } from 'react';
 import * as LabelPrimitive from '@radix-ui/react-label';
-import { Slot } from '@radix-ui/react-slot';
 import {
   useController,
-  Controller,
-  ControllerProps,
   FieldPath,
   FieldValues,
   FormProvider,
   useFormContext,
   type UseFormReturn,
   type SubmitHandler,
-  type Path,
   type ControllerRenderProps,
   type ControllerFieldState,
   type FormState,
 } from 'react-hook-form';
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from './tooltip';
 import { Label } from '@/components/ui/label';
 
 const Form = <TFieldValues extends FieldValues = FieldValues>({
@@ -43,7 +40,7 @@ const Form = <TFieldValues extends FieldValues = FieldValues>({
   onSubmit: SubmitHandler<TFieldValues>;
 }) => {
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} {...props}>
+    <form autoComplete="off" onSubmit={form.handleSubmit(onSubmit)} {...props}>
       <FormProvider {...form}>{children}</FormProvider>
     </form>
   );
@@ -73,10 +70,20 @@ function FormField<
 ) {
   const { field, fieldState } = useController({ name });
   const id = useId();
+  const errMessage = fieldState.error && String(fieldState.error?.message);
 
   return (
     <FormFieldContext.Provider value={{ id, name, field, fieldState }}>
-      <div ref={ref} className={cn('space-y-2', className)} {...props} />
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          <div ref={ref} className={cn('space-y-2', className)} {...props} />
+        </TooltipTrigger>
+        {errMessage && (
+          <TooltipContent side="bottom" className="text-destructive">
+            {errMessage}
+          </TooltipContent>
+        )}
+      </Tooltip>
     </FormFieldContext.Provider>
   );
 }

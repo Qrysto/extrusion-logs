@@ -10,12 +10,12 @@ import { Badge } from '@/components/ui/badge';
 import { protectPage } from '@/lib/auth';
 import ColumnSelector from './ColumnSelector';
 import Filters from './Filters';
-import { loadData } from './loadData';
+import { loadSuggestionData } from './loadSuggestionData';
 import Header from './Header';
 
 export default async function Dashboard() {
   const account = await protectPage();
-  const data = await loadData();
+  const suggestionData = await loadSuggestionData();
 
   return (
     <div className="flex flex-col w-full min-h-screen px-6">
@@ -23,7 +23,7 @@ export default async function Dashboard() {
 
       <div className="my-3 flex gap-4 items-center flex-wrap">
         <ColumnSelector />
-        <Filters data={data} />
+        <Filters suggestionData={suggestionData} />
       </div>
 
       <main className="flex-1 overflow-auto">

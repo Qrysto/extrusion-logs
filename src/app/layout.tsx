@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import DisableNumberInputScroll from '@/components/DisableNumberInputScroll';
 import './globals.css';
 
@@ -25,7 +26,7 @@ export default function RootLayout({
           inter.variable
         )}
       >
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
         <Toaster />
         <DisableNumberInputScroll />
       </body>
