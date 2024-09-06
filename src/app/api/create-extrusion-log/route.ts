@@ -82,29 +82,45 @@ export async function POST(request: NextRequest) {
     createdBy: account.id,
   };
 
-  const [existingCustomer, existingDie, existingItem, existingLotNo] =
-    await Promise.all([
-      db
-        .selectFrom('customers')
-        .selectAll()
-        .where('name', '=', customer)
-        .executeTakeFirst(),
-      db
-        .selectFrom('dies')
-        .selectAll()
-        .where('code', '=', dieCode)
-        .executeTakeFirst(),
-      db
-        .selectFrom('items')
-        .selectAll()
-        .where('item', '=', item)
-        .executeTakeFirst(),
-      db
-        .selectFrom('lotNumbers')
-        .selectAll()
-        .where('code', '=', lotNumberCode)
-        .executeTakeFirst(),
-    ]);
+  const [
+    existingCustomer,
+    existingDie,
+    existingItem,
+    existingLotNo,
+    existingBilletType,
+    existingCode,
+  ] = await Promise.all([
+    db
+      .selectFrom('customers')
+      .selectAll()
+      .where('name', '=', customer)
+      .executeTakeFirst(),
+    db
+      .selectFrom('dies')
+      .selectAll()
+      .where('code', '=', dieCode)
+      .executeTakeFirst(),
+    db
+      .selectFrom('items')
+      .selectAll()
+      .where('item', '=', item)
+      .executeTakeFirst(),
+    db
+      .selectFrom('lotNumbers')
+      .selectAll()
+      .where('code', '=', lotNumberCode)
+      .executeTakeFirst(),
+    db
+      .selectFrom('billetTypes')
+      .selectAll()
+      .where('name', '=', billetType)
+      .executeTakeFirst(),
+    db
+      .selectFrom('codes')
+      .selectAll()
+      .where('code', '=', code)
+      .executeTakeFirst(),
+  ]);
 
   try {
     await Promise.all([
@@ -130,6 +146,18 @@ export async function POST(request: NextRequest) {
         ? db
             .insertInto('lotNumbers')
             .values({ code: lotNumberCode })
+            .executeTakeFirstOrThrow()
+        : Promise.resolve(),
+      !existingBilletType
+        ? db
+            .insertInto('billetTypes')
+            .values({ name: billetType })
+            .executeTakeFirstOrThrow()
+        : Promise.resolve(),
+      !existingCode
+        ? db
+            .insertInto('codes')
+            .values({ code: code })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
     ]);

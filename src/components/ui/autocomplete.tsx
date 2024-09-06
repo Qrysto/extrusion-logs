@@ -105,7 +105,7 @@ export const AutoComplete = ({
             isOpen ? 'block' : 'hidden'
           )}
         >
-          <CommandList className="rounded-lg ring-1 ring-slate-200">
+          <CommandList className="rounded-md ring-1 ring-slate-200">
             {isLoading ? (
               <CommandPrimitive.Loading>
                 <div className="p-1">

@@ -1,8 +1,7 @@
-import { type NextRequest } from 'next/server';
 import db from '@/lib/db';
 import { getAccount } from '@/lib/auth';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   const account = await getAccount();
   if (!account) {
     return Response.json({ message: 'Unauthorized!' }, { status: 401 });
@@ -24,14 +23,19 @@ async function loadSuggestionData(admin: boolean) {
   const customerQuery = db.selectFrom('customers').selectAll().execute();
   const dieQuery = db.selectFrom('dies').selectAll().execute();
   const lotNoQuery = db.selectFrom('lotNumbers').selectAll().execute();
+  const billetTypeQuery = db.selectFrom('billetTypes').selectAll().execute();
+  const codeQuery = db.selectFrom('codes').selectAll().execute();
 
-  const [accounts, items, customers, dies, lotNumbers] = await Promise.all([
-    accountQuery || Promise.resolve(),
-    itemQuery,
-    customerQuery,
-    dieQuery,
-    lotNoQuery,
-  ]);
+  const [accounts, items, customers, dies, lotNumbers, billetTypes, codes] =
+    await Promise.all([
+      accountQuery || Promise.resolve(),
+      itemQuery,
+      customerQuery,
+      dieQuery,
+      lotNoQuery,
+      billetTypeQuery,
+      codeQuery,
+    ]);
 
   const plantSet = new Set<string>();
   accounts &&
@@ -46,12 +50,16 @@ async function loadSuggestionData(admin: boolean) {
   const customerList = customers.map(({ name }) => name);
   const dieCodeList = dies.map(({ code }) => code);
   const lotNoList = lotNumbers.map(({ code }) => code);
+  const billetTypeList = billetTypes.map(({ name }) => name);
+  const codeList = codes.map(({ code }) => code);
 
   const data: any = {
     itemList,
     customerList,
     dieCodeList,
     lotNoList,
+    billetTypeList,
+    codeList,
   };
 
   if (admin) {

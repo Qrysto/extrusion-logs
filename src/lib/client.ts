@@ -49,3 +49,7 @@ export function useSuggestionData() {
 export async function refreshSuggestionData() {
   return await queryClient.invalidateQueries({ queryKey: ['suggestion-data'] });
 }
+
+export async function refreshAllExtrusionQueries() {
+  return await queryClient.invalidateQueries({ queryKey: ['extrusion-logs'] });
+}

@@ -21,6 +21,8 @@ export type SuggestionData = {
   customerList: string[];
   dieCodeList: string[];
   lotNoList: string[];
+  billetTypeList: string[];
+  codeList: string[];
 };
 
 export type { ExtrusionLog } from '@/app/api/extrusion-logs/route';

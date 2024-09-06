@@ -32,7 +32,11 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/components/ui/use-toast';
-import { useSuggestionData, refreshSuggestionData } from '@/lib/client';
+import {
+  useSuggestionData,
+  refreshSuggestionData,
+  refreshAllExtrusionQueries,
+} from '@/lib/client';
 import { post } from '@/lib/utils';
 
 const formSchema = z.object({
@@ -115,6 +119,7 @@ export default function AddExtrusionLog({
       title: 'Extrusion log has been added',
     });
     refreshSuggestionData();
+    refreshAllExtrusionQueries();
   }
 
   return (
@@ -164,12 +169,12 @@ export default function AddExtrusionLog({
           </FormItem>
 
           <FormItem name="customer" label="Customer">
-            <FormInput />
+            <FormAutoComplete options={data?.customerList || []} />
           </FormItem>
 
           <div className="flex gap-x-4">
             <FormItem name="dieCode" label="Die code" className="flex-[2_2_0]">
-              <FormInput />
+              <FormAutoComplete options={data?.dieCodeList || []} />
             </FormItem>
 
             <FormItem name="dieNumber" label="Die number" className="flex-1">
@@ -189,11 +194,11 @@ export default function AddExtrusionLog({
 
           <div className="flex gap-x-4">
             <FormItem name="billetType" label="Billet type">
-              <FormInput />
+              <FormAutoComplete options={data?.billetTypeList || []} />
             </FormItem>
 
             <FormItem name="lotNumberCode" label="Lot number">
-              <FormInput />
+              <FormAutoComplete options={data?.lotNoList || []} />
             </FormItem>
           </div>
 
@@ -285,7 +290,7 @@ export default function AddExtrusionLog({
 
           <div className="flex gap-x-4">
             <FormItem name="code" label="Code">
-              <FormInput />
+              <FormAutoComplete options={data?.codeList || []} />
             </FormItem>
 
             <FormItem name="buttWeight" label="Butt weight (g)">
