@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 export interface AuthData {
   sessionId: number;
@@ -22,3 +22,5 @@ export type SuggestionData = {
   dieCodeList: string[];
   lotNoList: string[];
 };
+
+export type { ExtrusionLog } from '@/app/api/extrusion-logs/route';
