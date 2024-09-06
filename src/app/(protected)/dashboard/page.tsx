@@ -18,7 +18,7 @@ export default async function Dashboard() {
       </div>
 
       <main className="flex-1 overflow-auto">
-        <DashboardTable />
+        <DashboardTable isAdmin={isAdmin} />
       </main>
     </div>
   );
