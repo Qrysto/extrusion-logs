@@ -1,6 +1,8 @@
 import { ComponentProps } from 'react';
 import { FormControl } from './form';
 import { Input } from './input';
+import { SuggestedInput } from './suggested-input';
+import { AutoComplete } from './autocomplete';
 import { ToggleGroup } from './toggle-group';
 import { DatePicker } from './date-picker';
 import { TimePicker } from './time-picker';
@@ -8,6 +10,26 @@ import { TimePicker } from './time-picker';
 export function FormInput(props: ComponentProps<typeof Input>) {
   return (
     <FormControl render={({ field }) => <Input {...field} {...props} />} />
+  );
+}
+
+export function FormSuggestedInput(
+  props: ComponentProps<typeof SuggestedInput>
+) {
+  return (
+    <FormControl
+      render={({ field }) => <SuggestedInput {...field} {...props} />}
+    />
+  );
+}
+
+export function FormAutoComplete(props: ComponentProps<typeof AutoComplete>) {
+  return (
+    <FormControl
+      render={({ field: { onChange, ...field } }) => (
+        <AutoComplete {...field} onValueChange={onChange} {...props} />
+      )}
+    />
   );
 }
 

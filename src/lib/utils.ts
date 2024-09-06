@@ -43,7 +43,7 @@ async function call(
   const json = await res.json();
 
   if (res.ok) {
-    return json?.result;
+    return json;
   } else {
     console.log(json);
     throw json?.error || json;

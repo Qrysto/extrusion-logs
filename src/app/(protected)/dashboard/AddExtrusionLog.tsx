@@ -13,6 +13,7 @@ import {
 import { Form, FormField, FormLabel, FormMessage } from '@/components/ui/form';
 import {
   FormInput,
+  FormAutoComplete,
   FormToggleGroup,
   FormDatePicker,
   FormTimePicker,
@@ -159,7 +160,7 @@ export default function AddExtrusionLog({
           </div>
 
           <FormItem name="item" label="Item">
-            <FormInput />
+            <FormAutoComplete options={data?.itemList || []} />
           </FormItem>
 
           <FormItem name="customer" label="Customer">

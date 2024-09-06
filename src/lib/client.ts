@@ -41,8 +41,8 @@ export const queryClient = new QueryClient();
 export function useSuggestionData() {
   return useQuery<SuggestionData>({
     queryKey: ['suggestion-data'],
-    queryFn: () => get('/api/suggestion-data'),
-    staleTime: 86400000, // 1 day
+    queryFn: async () => await get('/api/suggestion-data'),
+    // staleTime: 86400000, // 1 day
   });
 }
 
