@@ -1,53 +1,125 @@
 'use client';
 
-import { type ColumnDef } from '@tanstack/react-table';
+import { type ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import type { ExtrusionLog } from '@/lib/types';
 import { get } from '@/lib/utils';
+import { format as formatDate } from 'date-fns';
 import { ExtrusionLogTable } from './DataTable';
 
+const dateFormat = 'PP';
+const ch = createColumnHelper<ExtrusionLog>();
+const formatNumber = Intl.NumberFormat('en-US').format;
+
 export const getColumns = (isAdmin: boolean) => {
-  const columns: ColumnDef<ExtrusionLog>[] = isAdmin
+  const adminColumns: ColumnDef<ExtrusionLog>[] = isAdmin
     ? [
         { accessorKey: 'machine', header: 'Machine' },
         { accessorKey: 'plant', header: 'Plant' },
         { accessorKey: 'inch', header: 'Inch' },
       ]
     : [];
+
   return [
-    ...columns,
-    { accessorKey: 'employeeId', header: 'Employee ID' },
-    { accessorKey: 'date', header: 'Date' },
-    { accessorKey: 'shift', header: 'Shift' },
-    { accessorKey: 'item', header: 'Item' },
-    { accessorKey: 'customer', header: 'Customer' },
-    { accessorKey: 'billetType', header: 'Billet type' },
-    { accessorKey: 'lotNumberCode', header: 'Lot No.' },
-    { accessorKey: 'billetLength', header: 'Billet length' },
-    { accessorKey: 'billetQuantity', header: 'Billet quantity' },
-    { accessorKey: 'billetKgpm', header: 'Billet kg/m' },
-    { accessorKey: 'ramSpeed', header: 'Ram speed' },
-    { accessorKey: 'dieCode', header: 'Die code' },
-    { accessorKey: 'dieNumber', header: 'Die number' },
-    { accessorKey: 'cavity', header: 'Cavity' },
-    { accessorKey: 'productKgpm', header: 'Product kg/m' },
-    { accessorKey: 'ingotRatio', header: 'Ingot ratio' },
-    { accessorKey: 'orderLength', header: 'Order length' },
-    { accessorKey: 'billetTemp', header: 'Billet temp.' },
-    { accessorKey: 'outputTemp', header: 'Output temp.' },
-    { accessorKey: 'productionQuantity', header: 'Oroduction quantity' },
-    { accessorKey: 'productionWeight', header: 'Production weight' },
-    { accessorKey: 'outputRate', header: 'Output rate' },
-    { accessorKey: 'outputYield', header: 'Yield' },
-    { accessorKey: 'ok', header: 'OK/NG' },
-    { accessorKey: 'remark', header: 'Remark' },
-    { accessorKey: 'startTime', header: 'Start time' },
-    { accessorKey: 'endTime', header: 'End time' },
-    { accessorKey: 'ngQuantity', header: 'NG quantity' },
-    { accessorKey: 'ngWeight', header: 'NG weight' },
-    { accessorKey: 'ngPercentage', header: 'NG %' },
-    { accessorKey: 'code', header: 'Code' },
-    { accessorKey: 'buttWeight', header: 'Butt weight' },
+    ch.accessor('date', {
+      header: 'Date',
+      cell: ({ getValue }) => formatDate(getValue<Date>(), dateFormat),
+    }),
+    ch.accessor('shift', {
+      header: 'Shift',
+      cell: ({ getValue }) => (getValue<string>() === 'day' ? 'Day' : 'Night'),
+    }),
+    ch.accessor('item', { header: 'Item' }),
+    ch.accessor('customer', { header: 'Customer' }),
+    ch.accessor('billetType', { header: 'Billet type' }),
+    ch.accessor('lotNumberCode', { header: 'Lot No.' }),
+    ch.accessor('billetLength', {
+      header: 'Billet length',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('billetQuantity', {
+      header: 'Billet quantity',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('billetKgpm', {
+      header: 'Billet kg/m',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('ramSpeed', {
+      header: 'Ram speed',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('dieCode', { header: 'Die code' }),
+    ch.accessor('dieNumber', {
+      header: 'Die number',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('cavity', {
+      header: 'Cavity',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('productKgpm', {
+      header: 'Product kg/m',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('ingotRatio', {
+      header: 'Ingot ratio',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('orderLength', {
+      header: 'Order length',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('billetTemp', {
+      header: 'Billet temp.',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('outputTemp', {
+      header: 'Output temp.',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('productionQuantity', {
+      header: 'Oroduction quantity',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('productionWeight', {
+      header: 'Production weight',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('outputRate', {
+      header: 'Output rate',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('outputYield', {
+      header: 'Yield',
+      cell: ({ getValue }) => formatNumber(getValue<number>()) + '%',
+    }),
+    ch.accessor('ok', {
+      header: 'OK/NG',
+      cell: ({ getValue }) => (getValue<boolean>() ? 'OK' : 'NG'),
+    }),
+    ch.accessor('remark', { header: 'Remark' }),
+    ch.accessor('startTime', { header: 'Start time' }),
+    ch.accessor('endTime', { header: 'End time' }),
+    ch.accessor('ngQuantity', {
+      header: 'NG quantity',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('ngWeight', {
+      header: 'NG weight',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('ngPercentage', {
+      header: 'NG',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ch.accessor('code', { header: 'Code' }),
+    ch.accessor('buttWeight', {
+      header: 'Butt weight',
+      cell: ({ getValue }) => formatNumber(getValue<number>()),
+    }),
+    ...adminColumns,
+    ch.accessor('employeeId', { header: 'Employee ID' }),
   ];
 };
 
@@ -59,6 +131,8 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
   });
 
   if (!data) return null;
+  console.log(data);
+
   const columns = getColumns(isAdmin);
 
   return <ExtrusionLogTable data={data} columns={columns} />;
