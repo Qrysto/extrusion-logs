@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { QueryClient } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
-import type { SuggestionData } from './types';
+import type { SuggestionData, ExtrusionLog } from './types';
 import { get } from './utils';
 
 export function useUpdateSearchParams() {
@@ -48,6 +48,77 @@ export function useSuggestionData() {
 
 export async function refreshSuggestionData() {
   return await queryClient.invalidateQueries({ queryKey: ['suggestion-data'] });
+}
+
+export function useExtrusionLogs() {
+  const searchParams = useSearchParams();
+  const date = searchParams.get('date');
+  const shift = searchParams.get('shift');
+  const plant = searchParams.get('plant');
+  const machine = searchParams.get('machine');
+  const item = searchParams.get('item');
+  const customer = searchParams.get('customer');
+  const dieCode = searchParams.get('dieCode');
+  const cavity = searchParams.get('cavity');
+  const lotNo = searchParams.get('lotNo');
+  const result = searchParams.get('result');
+  const remarkSearch = searchParams.get('remarkSearch');
+
+  const params: Record<string, any> = {};
+  if (date) {
+    params.date = date;
+  }
+  if (shift) {
+    params.shift = shift;
+  }
+  if (plant) {
+    params.plant = plant;
+  }
+  if (machine) {
+    params.machine = machine;
+  }
+  if (item) {
+    params.item = item;
+  }
+  if (customer) {
+    params.customer = customer;
+  }
+  if (dieCode) {
+    params.dieCode = dieCode;
+  }
+  if (cavity) {
+    params.cavity = cavity;
+  }
+  if (lotNo) {
+    params.lotNo = lotNo;
+  }
+  if (result) {
+    params.result = result;
+  }
+  if (remarkSearch) {
+    params.remarkSearch = remarkSearch;
+  }
+
+  return useQuery<ExtrusionLog[]>({
+    queryKey: [
+      'extrusion-logs',
+      {
+        date,
+        shift,
+        plant,
+        machine,
+        item,
+        customer,
+        dieCode,
+        cavity,
+        lotNo,
+        result,
+        remarkSearch,
+      },
+    ],
+    queryFn: () => get('/api/extrusion-logs', params),
+    staleTime: 60000, // 1 minute
+  });
 }
 
 export async function refreshAllExtrusionQueries() {

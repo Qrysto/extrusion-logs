@@ -2,10 +2,9 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { format, parse } from 'date-fns';
 import { type Locale, enUS } from 'date-fns/locale';
-import { Clock } from 'lucide-react';
 import * as React from 'react';
 import { useImperativeHandle } from 'react';
-
+import { timeFormat } from '@/lib/dateTime';
 import {
   Select,
   SelectContent,
@@ -13,10 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { DayPicker } from 'react-day-picker';
 
 // ---------- utils start ----------
-const timeFormat = 'HH:mm';
 
 /**
  * regular expression to check for valid hour format (01-23)

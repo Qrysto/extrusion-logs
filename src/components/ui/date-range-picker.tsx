@@ -1,7 +1,5 @@
 'use client';
 
-import { format, parse } from 'date-fns';
-// import { vi } from 'date-fns/locale/vi';
 import { Calendar as CalendarIcon, CircleX } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -12,9 +10,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-
-export const dateFormat = 'PP';
-// vi = 'EEEEE P'
+import { type DateRange } from '@/lib/types';
+import {
+  formatDateRange,
+  displayDateFormat,
+  referenceDate,
+} from '@/lib/dateTime';
 
 export function DateRangePicker({
   className,
@@ -24,7 +25,7 @@ export function DateRangePicker({
   dateRange: DateRange | null;
   onDateRangeChange: (dateRange: DateRange | null) => void;
 }) {
-  const dateRangeStr = formatDateRange(dateRange);
+  const dateRangeStr = formatDateRange(dateRange, displayDateFormat);
 
   return (
     <div className={cn('grid gap-2', className)}>
@@ -84,36 +85,3 @@ export function DateRangePicker({
     </div>
   );
 }
-
-export function formatDateRange(dateRange: DateRange | null) {
-  if (!dateRange) return null;
-  try {
-    return `${format(dateRange.from, dateFormat)} - ${format(
-      dateRange.to,
-      dateFormat
-    )}`;
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-}
-
-export function parseDateRange(dateRangeStr: string | null) {
-  if (!dateRangeStr) return null;
-  try {
-    const [fromStr, toStr] = dateRangeStr.split(' - ');
-    const from = parse(fromStr, dateFormat, referenceDate);
-    const to = parse(toStr, dateFormat, referenceDate);
-    return { from, to };
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-}
-
-const referenceDate = new Date();
-
-export type DateRange = {
-  from: Date;
-  to: Date;
-};

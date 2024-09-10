@@ -1,13 +1,12 @@
 'use client';
 
 import { type ColumnDef, createColumnHelper } from '@tanstack/react-table';
-import { useQuery } from '@tanstack/react-query';
 import type { ExtrusionLog } from '@/lib/types';
-import { get } from '@/lib/utils';
 import { format as formatDate } from 'date-fns';
-import { DataTable } from '../../../components/ui/DataTable';
+import { DataTable } from '@/components/ui/DataTable';
+import { displayDateFormat } from '@/lib/dateTime';
+import { useExtrusionLogs } from '@/lib/client';
 
-const dateFormat = 'PP';
 const ch = createColumnHelper<ExtrusionLog>();
 const formatNumber = Intl.NumberFormat('en-US').format;
 
@@ -23,7 +22,7 @@ export const getColumns = (isAdmin: boolean) => {
   const columns: ColumnDef<ExtrusionLog>[] = [
     ch.accessor('date', {
       header: 'Date',
-      cell: ({ getValue }) => formatDate(getValue<Date>(), dateFormat),
+      cell: ({ getValue }) => formatDate(getValue<Date>(), displayDateFormat),
     }),
     ch.accessor('shift', {
       header: 'Shift',
@@ -168,14 +167,8 @@ export const getColumns = (isAdmin: boolean) => {
 };
 
 export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
-  const { data } = useQuery<ExtrusionLog[]>({
-    queryKey: ['extrusion-logs'],
-    queryFn: () => get('/api/extrusion-logs'),
-    staleTime: 60000, // 1 minute
-  });
-
+  const { data } = useExtrusionLogs();
   if (!data) return null;
-  console.log(data);
 
   const columns = getColumns(isAdmin);
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, ComponentProps } from 'react';
-import { format, parse } from 'date-fns';
+import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -12,8 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-
-export const dateFormat = 'PP';
+import { displayDateFormat } from '@/lib/dateTime';
 
 export function DatePicker({
   date,
@@ -63,5 +62,5 @@ export function DatePicker({
 
 export function formatDate(date: Date | null) {
   if (!date) return null;
-  return format(date, dateFormat);
+  return format(date, displayDateFormat);
 }

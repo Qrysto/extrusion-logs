@@ -18,7 +18,7 @@ import {
   FormDatePicker,
   FormTimePicker,
 } from '@/components/ui/form-adapters';
-import { timeFormat } from '@/components/ui/time-picker';
+import { timeFormat } from '@/lib/dateTime';
 import {
   Dialog,
   DialogContent,

@@ -26,3 +26,8 @@ export type SuggestionData = {
 };
 
 export type { ExtrusionLog } from '@/app/api/extrusion-logs/route';
+
+export type DateRange = {
+  from: Date;
+  to: Date;
+};

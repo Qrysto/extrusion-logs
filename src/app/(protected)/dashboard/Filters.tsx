@@ -2,11 +2,7 @@
 
 import { Input } from '@/components/ui/input';
 import { useUpdateSearchParams } from '@/lib/client';
-import {
-  DateRangePicker,
-  formatDateRange,
-  parseDateRange,
-} from '@/components/ui/date-range-picker';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
 import {
   Select,
   SelectTrigger,
@@ -16,6 +12,7 @@ import {
 } from '@/components/ui/select';
 import { Combobox } from '@/components/ui/combobox';
 import { useSuggestionData } from '@/lib/client';
+import { formatDateRange, parseDateRange } from '@/lib/dateTime';
 
 export default function Filters({ isAdmin }: { isAdmin: boolean }) {
   const [searchParams, updateSearchParams] = useUpdateSearchParams();
