@@ -32,6 +32,7 @@ export default function Header({ account }: { account: LoggedInAccount }) {
       <div className="flex justify-end items-center flex-1">
         <Input
           value={employeeId}
+          name="employee_id"
           onChange={(evt) => setEmployeeId(evt.target.value)}
           placeholder="Employee ID"
           className="w-40"

@@ -5,7 +5,11 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  SortingState,
+  getSortedRowModel,
+  Updater,
 } from '@tanstack/react-table';
+import { useUpdateSearchParams } from '@/lib/client';
 import {
   Table,
   TableBody,
@@ -24,10 +28,16 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useSortingState();
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
   });
 
   return (
@@ -76,4 +86,20 @@ export function DataTable<TData, TValue>({
       </Table>
     </div>
   );
+}
+
+function useSortingState() {
+  const [searchParams, updateSearchParams] = useUpdateSearchParams();
+  const sort = searchParams.get('sort');
+  const sortingState: SortingState = sort ? JSON.parse(sort) : [];
+  const setSortingState = (sorting: Updater<SortingState>) => {
+    if (typeof sorting === 'function') {
+      updateSearchParams('sort', JSON.stringify(sorting(sortingState)));
+      console.log(sorting(sortingState));
+    } else {
+      updateSearchParams('sort', JSON.stringify(sorting));
+      console.log(sorting);
+    }
+  };
+  return [sortingState, setSortingState] as const;
 }

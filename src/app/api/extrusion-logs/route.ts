@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
   const lotNo = searchParams.get('lotNo');
   const result = searchParams.get('result');
   const remarkSearch = searchParams.get('remarkSearch');
+  const sort = searchParams.get('sort');
 
   const res = await fetchExtrusionLogs({
     account,
@@ -36,6 +37,7 @@ export async function GET(request: NextRequest) {
     lotNo,
     ok: result === 'OK' ? true : result === 'NG' ? false : null,
     remarkSearch,
+    sort: sort && JSON.parse(sort),
   });
   return Response.json(res);
 }
@@ -53,6 +55,7 @@ async function fetchExtrusionLogs({
   lotNo,
   ok,
   remarkSearch,
+  sort,
 }: {
   account: Awaited<ReturnType<typeof getAccount>>;
   dateRange: DateRange | null;
@@ -66,6 +69,7 @@ async function fetchExtrusionLogs({
   lotNo: string | null;
   ok: boolean | null;
   remarkSearch: string | null;
+  sort: { id: string; desc: boolean }[] | null;
 }) {
   let query = db
     .selectFrom('extrusions')
@@ -150,8 +154,16 @@ async function fetchExtrusionLogs({
   if (remarkSearch) {
     query = query.where('extrusions.remark', 'like', `%${remarkSearch}%`);
   }
-  console.log('=======================', query.compile());
+  if (sort) {
+    for (const { id, desc } of sort) {
+      // @ts-ignore
+      query = query.orderBy(`${id} ${desc ? 'desc' : 'asc'}`);
+    }
+  } else {
+    query = query.orderBy('date desc').orderBy('startTime desc');
+  }
 
+  console.log('QUERY', query.compile());
   return await query.execute();
 }
 

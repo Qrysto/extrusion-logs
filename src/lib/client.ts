@@ -14,13 +14,18 @@ export function useUpdateSearchParams() {
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
-  const createQueryString = useCallback(
+  const updateQueryString = useCallback(
     (name: string, value: any) => {
       const params = new URLSearchParams(searchParams.toString());
-      if (value) {
-        params.set(name, String(value));
-      } else {
+      if (
+        value === null ||
+        value === undefined ||
+        value === '' ||
+        Number.isNaN(value)
+      ) {
         params.delete(name);
+      } else {
+        params.set(name, String(value));
       }
 
       return params.toString();
@@ -29,7 +34,9 @@ export function useUpdateSearchParams() {
   );
 
   const updateSearchParams = (name: string, value: any) => {
-    const queryString = createQueryString(name, value);
+    const queryString = updateQueryString(name, value);
+    console.log('qs', queryString);
+
     router.push(pathname + (queryString ? `?${queryString}` : ''));
   };
 
@@ -63,6 +70,7 @@ export function useExtrusionLogs() {
   const lotNo = searchParams.get('lotNo');
   const result = searchParams.get('result');
   const remarkSearch = searchParams.get('remarkSearch');
+  const sort = searchParams.get('sort');
 
   const params: Record<string, any> = {};
   if (date) {
@@ -98,6 +106,9 @@ export function useExtrusionLogs() {
   if (remarkSearch) {
     params.remarkSearch = remarkSearch;
   }
+  if (sort) {
+    params.sort = sort;
+  }
 
   return useQuery<ExtrusionLog[]>({
     queryKey: [
@@ -114,6 +125,7 @@ export function useExtrusionLogs() {
         lotNo,
         result,
         remarkSearch,
+        sort,
       },
     ],
     queryFn: () => get('/api/extrusion-logs', params),

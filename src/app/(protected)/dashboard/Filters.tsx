@@ -101,6 +101,7 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
 
       <Input
         type="number"
+        name="cavity"
         min={0}
         step={1}
         placeholder="Cavity"
@@ -141,6 +142,7 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
 
       <Input
         placeholder="Search remark"
+        name="remark"
         value={searchParams.get('remarkSearch') || ''}
         onChange={(evt) =>
           updateSearchParams('remarkSearch', evt.target.value || undefined)
