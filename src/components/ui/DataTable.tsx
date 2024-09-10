@@ -15,15 +15,15 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-interface ExtrusionLogTableProps<TData, TValue> {
+interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function ExtrusionLogTable<TData, TValue>({
+export function DataTable<TData, TValue>({
   columns,
   data,
-}: ExtrusionLogTableProps<TData, TValue>) {
+}: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,

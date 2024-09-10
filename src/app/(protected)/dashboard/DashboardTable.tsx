@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { ExtrusionLog } from '@/lib/types';
 import { get } from '@/lib/utils';
 import { format as formatDate } from 'date-fns';
-import { ExtrusionLogTable } from './DataTable';
+import { DataTable } from '../../../components/ui/DataTable';
 
 const dateFormat = 'PP';
 const ch = createColumnHelper<ExtrusionLog>();
@@ -20,7 +20,7 @@ export const getColumns = (isAdmin: boolean) => {
       ]
     : [];
 
-  return [
+  const columns: ColumnDef<ExtrusionLog>[] = [
     ch.accessor('date', {
       header: 'Date',
       cell: ({ getValue }) => formatDate(getValue<Date>(), dateFormat),
@@ -162,7 +162,9 @@ export const getColumns = (isAdmin: boolean) => {
     }),
     ...adminColumns,
     ch.accessor('employeeId', { header: 'Employee ID' }),
-  ];
+  ] as ColumnDef<ExtrusionLog>[];
+
+  return columns;
 };
 
 export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
@@ -177,5 +179,5 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
 
   const columns = getColumns(isAdmin);
 
-  return <ExtrusionLogTable data={data} columns={columns} />;
+  return <DataTable data={data} columns={columns} />;
 }
