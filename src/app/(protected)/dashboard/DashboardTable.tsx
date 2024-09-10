@@ -34,65 +34,97 @@ export const getColumns = (isAdmin: boolean) => {
     ch.accessor('billetType', { header: 'Billet type' }),
     ch.accessor('lotNumberCode', { header: 'Lot No.' }),
     ch.accessor('billetLength', {
-      header: 'Billet length',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Billet length</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('billetQuantity', {
-      header: 'Billet quantity',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Billet quantity</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('billetKgpm', {
-      header: 'Billet kg/m',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Billet kg/m</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('ramSpeed', {
-      header: 'Ram speed',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Ram speed</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('dieCode', { header: 'Die code' }),
     ch.accessor('dieNumber', {
-      header: 'Die number',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Die number</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('cavity', {
-      header: 'Cavity',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Cavity</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('productKgpm', {
-      header: 'Product kg/m',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Product kg/m</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('ingotRatio', {
-      header: 'Ingot ratio',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Ingot ratio</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('orderLength', {
-      header: 'Order length',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Order length</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('billetTemp', {
-      header: 'Billet temp.',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Billet temp.</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('outputTemp', {
-      header: 'Output temp.',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Output temp.</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('productionQuantity', {
-      header: 'Oroduction quantity',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Oroduction quantity</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('productionWeight', {
-      header: 'Production weight',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Production weight</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('outputRate', {
-      header: 'Output rate',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Output rate</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('outputYield', {
-      header: 'Yield',
-      cell: ({ getValue }) => formatNumber(getValue<number>()) + '%',
+      header: () => <div className="text-right">Yield</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">
+          {formatNumber(getValue<number>()) + '%'}
+        </div>
+      ),
     }),
     ch.accessor('ok', {
       header: 'OK/NG',
@@ -102,21 +134,31 @@ export const getColumns = (isAdmin: boolean) => {
     ch.accessor('startTime', { header: 'Start time' }),
     ch.accessor('endTime', { header: 'End time' }),
     ch.accessor('ngQuantity', {
-      header: 'NG quantity',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">NG quantity</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('ngWeight', {
-      header: 'NG weight',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">NG weight</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ch.accessor('ngPercentage', {
-      header: 'NG',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">NG</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">
+          {formatNumber(getValue<number>()) + '%'}
+        </div>
+      ),
     }),
     ch.accessor('code', { header: 'Code' }),
     ch.accessor('buttWeight', {
-      header: 'Butt weight',
-      cell: ({ getValue }) => formatNumber(getValue<number>()),
+      header: () => <div className="text-right">Butt weight</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right">{formatNumber(getValue<number>())}</div>
+      ),
     }),
     ...adminColumns,
     ch.accessor('employeeId', { header: 'Employee ID' }),
