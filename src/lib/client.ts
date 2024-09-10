@@ -125,8 +125,8 @@ export function useExtrusionLogs() {
         lotNo,
         result,
         remarkSearch,
-        sort,
       },
+      sort,
     ],
     queryFn: () => get('/api/extrusion-logs', params),
     staleTime: 60000, // 1 minute

@@ -11,7 +11,7 @@ import {
 import type { ExtrusionLog } from '@/lib/types';
 import { format as formatDate } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { DataTable } from '@/components/ui/DataTable';
 import { displayDateFormat } from '@/lib/dateTime';
 import { useExtrusionLogs } from '@/lib/client';
@@ -175,13 +175,19 @@ const renderHeader: HeaderRenderer =
     );
 
     if (sortable) {
+      const sorted = column.getIsSorted();
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          onClick={() => column.toggleSorting(sorted !== 'desc')}
+          className="group"
         >
           {headerLabel}
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          {sorted === false && (
+            <ArrowUpDown className="ml-2 h-4 w-4 opacity-30 group-hover:opacity-60" />
+          )}
+          {sorted === 'asc' && <ArrowUp className="ml-2 h-4 w-4" />}
+          {sorted === 'desc' && <ArrowDown className="ml-2 h-4 w-4" />}
         </Button>
       );
     } else {
