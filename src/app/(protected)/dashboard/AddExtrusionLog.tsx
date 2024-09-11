@@ -3,13 +3,7 @@
 import { z } from 'zod';
 import { format } from 'date-fns';
 import { useForm } from 'react-hook-form';
-import {
-  useId,
-  ReactNode,
-  ComponentProps,
-  useState,
-  ComponentType,
-} from 'react';
+import { useId, ReactNode, ComponentProps, useState, useEffect } from 'react';
 import { Form, FormField, FormLabel, FormMessage } from '@/components/ui/form';
 import {
   FormInput,
@@ -88,9 +82,10 @@ export default function AddExtrusionLog({
   const formId = useId();
   const [dialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
+  const defaultValues = getDefaultValues({ employeeId });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: getDefaultValues({ employeeId }),
+    defaultValues,
   });
   const {
     formState: { isDirty, isLoading, isSubmitting },
@@ -123,7 +118,15 @@ export default function AddExtrusionLog({
   }
 
   return (
-    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+    <Dialog
+      open={dialogOpen}
+      onOpenChange={(open) => {
+        setDialogOpen(open);
+        if (open) {
+          form.reset(defaultValues);
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button variant="default">
           <Plus className="mr-2" />
