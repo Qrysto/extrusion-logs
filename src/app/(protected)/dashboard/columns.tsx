@@ -167,12 +167,18 @@ const renderHeader: HeaderRenderer =
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(sorted !== 'desc')}
+          onClick={() => {
+            if (sorted === 'asc') {
+              column.clearSorting();
+            } else {
+              column.toggleSorting(sorted !== 'desc');
+            }
+          }}
           className="group"
         >
           {headerLabel}
           {sorted === false && (
-            <ArrowUpDown className="ml-2 h-4 w-4 opacity-30 group-hover:opacity-60" />
+            <ArrowUpDown className="ml-2 h-4 w-4 opacity-20 group-hover:opacity-40" />
           )}
           {sorted === 'asc' && <ArrowUp className="ml-2 h-4 w-4" />}
           {sorted === 'desc' && <ArrowDown className="ml-2 h-4 w-4" />}
