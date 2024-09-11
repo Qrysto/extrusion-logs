@@ -14,7 +14,14 @@ import {
   Table as TableType,
 } from '@tanstack/react-table';
 import { useUpdateSearchParams } from '@/lib/client';
-import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import {
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  SortAsc,
+  SortDesc,
+  ListRestart,
+} from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -23,6 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { colVisibilityKey } from '@/lib/const';
 import { ExtrusionLog } from '@/lib/types';
@@ -55,6 +63,16 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
       <div className="my-3 flex gap-4 items-center flex-wrap flex-shrink-0">
         <ColumnSelector table={table} />
         <Filters isAdmin={isAdmin} />
+        <Button
+          variant="outline"
+          disabled={sorting.length === 0}
+          onClick={() => {
+            table.resetSorting();
+          }}
+        >
+          <ListRestart className="mr-2 h-4 w-4" />
+          Reset sorting
+        </Button>
       </div>
 
       <main className="flex-1 min-h-0 w-full">
@@ -113,10 +131,10 @@ function DataTable<TData>({
                       <ArrowUpDown className="inline-block ml-2 h-4 w-4 opacity-20 group-hover:opacity-40" />
                     )}
                     {sorted === 'asc' && (
-                      <ArrowUp className="inline-block ml-2 h-4 w-4" />
+                      <SortAsc className="inline-block ml-2 h-4 w-4" />
                     )}
                     {sorted === 'desc' && (
-                      <ArrowDown className="inline-block ml-2 h-4 w-4" />
+                      <SortDesc className="inline-block ml-2 h-4 w-4" />
                     )}
                   </TableHead>
                 );
