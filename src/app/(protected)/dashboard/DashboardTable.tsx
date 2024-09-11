@@ -14,6 +14,7 @@ import {
   Table as TableType,
 } from '@tanstack/react-table';
 import { useUpdateSearchParams } from '@/lib/client';
+import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -75,23 +76,51 @@ function DataTable<TData>({
   return (
     <div className="relative rounded-md border h-full overflow-auto">
       <Table>
-        <TableHeader className="sticky top-0 flex-shrink-0 whitespace-nowrap bg-background">
+        <TableHeader className="sticky top-0 flex-shrink-0 bg-zinc-50">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead
-                  key={header.id}
-                  colSpan={header.colSpan}
-                  className={cn(header.depth === 1 && 'text-center')}
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              ))}
+              {headerGroup.headers.map((header) => {
+                const sortable = header.column.getCanSort();
+                const sorted = header.column.getIsSorted();
+                return (
+                  <TableHead
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    className={cn(
+                      'font-bold whitespace-nowrap hover:bg-secondary group border',
+                      header.depth === 1 && 'text-center',
+                      sortable && 'cursor-pointer'
+                    )}
+                    onClick={
+                      sortable
+                        ? () => {
+                            if (sorted === 'asc') {
+                              header.column.clearSorting();
+                            } else {
+                              header.column.toggleSorting(sorted !== 'desc');
+                            }
+                          }
+                        : undefined
+                    }
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                    {sortable && sorted === false && (
+                      <ArrowUpDown className="inline-block ml-2 h-4 w-4 opacity-20 group-hover:opacity-40" />
+                    )}
+                    {sorted === 'asc' && (
+                      <ArrowUp className="inline-block ml-2 h-4 w-4" />
+                    )}
+                    {sorted === 'desc' && (
+                      <ArrowDown className="inline-block ml-2 h-4 w-4" />
+                    )}
+                  </TableHead>
+                );
+              })}
             </TableRow>
           ))}
         </TableHeader>
@@ -103,7 +132,10 @@ function DataTable<TData>({
                 data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="whitespace-nowrap">
+                  <TableCell
+                    key={cell.id}
+                    className="whitespace-nowrap hover:bg-secondary"
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

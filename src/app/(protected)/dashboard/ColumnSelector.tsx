@@ -76,7 +76,7 @@ const columnLabels: Record<string, string> = {
   billetTemp: 'Billet temp.',
   outputTemp: 'Output temp.',
   orderLength: 'Order length',
-  outputRate: 'Output rate (kg/h)',
+  outputRate: 'kg/h',
   productionQuantity: 'Production quantity',
   productionWeight: 'Production weight',
 

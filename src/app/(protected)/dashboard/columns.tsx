@@ -8,9 +8,6 @@ import {
 } from '@tanstack/react-table';
 import type { ExtrusionLog } from '@/lib/types';
 import { format as formatDate } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { displayDateFormat } from '@/lib/dateTime';
 import { memoize } from '@/lib/utils';
 
@@ -31,7 +28,7 @@ export const getColumns = memoize((isAdmin: boolean) => {
       header: 'Date & time',
       columns: [
         ch.accessor('date', {
-          header: renderHeader('Date', { number: false }),
+          header: 'Date',
           cell: ({ getValue }) =>
             formatDate(getValue<Date>(), displayDateFormat),
         }),
@@ -40,8 +37,14 @@ export const getColumns = memoize((isAdmin: boolean) => {
           cell: ({ getValue }) =>
             getValue<string>() === 'day' ? 'Day' : 'Night',
         }),
-        ch.accessor('startTime', { header: 'Start time' }),
-        ch.accessor('endTime', { header: 'End time' }),
+        ch.accessor('startTime', {
+          header: 'Start time',
+          cell: ({ getValue }) => stripSeconds(getValue()),
+        }),
+        ch.accessor('endTime', {
+          header: 'End time',
+          cell: ({ getValue }) => stripSeconds(getValue()),
+        }),
       ],
     }),
     ch.group({
@@ -57,15 +60,15 @@ export const getColumns = memoize((isAdmin: boolean) => {
         ch.accessor('billetType', { header: 'Billet type' }),
         ch.accessor('lotNumberCode', { header: 'Lot No.' }),
         ch.accessor('billetLength', {
-          header: renderHeader('Billet length'),
+          header: 'Billet length',
           cell: renderNumberCell,
         }),
         ch.accessor('billetQuantity', {
-          header: renderHeader('Billet quantity'),
+          header: 'Billet quantity',
           cell: renderNumberCell,
         }),
         ch.accessor('billetKgpm', {
-          header: renderHeader('Billet kg/m'),
+          header: 'Billet kg/m',
           cell: renderNumberCell,
         }),
       ],
@@ -74,28 +77,28 @@ export const getColumns = memoize((isAdmin: boolean) => {
       header: 'Input',
       columns: [
         ch.accessor('ramSpeed', {
-          header: renderHeader('Ram speed'),
+          header: 'Ram speed',
           cell: renderNumberCell,
         }),
         ch.accessor('dieCode', { header: 'Die code' }),
         ch.accessor('dieNumber', {
-          header: renderHeader('Die number'),
+          header: 'Die number',
           cell: renderNumberCell,
         }),
         ch.accessor('cavity', {
-          header: renderHeader('Cavity'),
+          header: 'Cavity',
           cell: renderNumberCell,
         }),
         ch.accessor('productKgpm', {
-          header: renderHeader('Product kg/m'),
+          header: 'Product kg/m',
           cell: renderNumberCell,
         }),
         ch.accessor('ingotRatio', {
-          header: renderHeader('Ingot ratio'),
+          header: 'Ingot ratio',
           cell: renderNumberCell,
         }),
         ch.accessor('orderLength', {
-          header: renderHeader('Order length'),
+          header: 'Order length',
           cell: renderNumberCell,
         }),
       ],
@@ -104,11 +107,11 @@ export const getColumns = memoize((isAdmin: boolean) => {
       header: 'Temperature',
       columns: [
         ch.accessor('billetTemp', {
-          header: renderHeader('Billet temp.'),
+          header: 'Billet temp.',
           cell: renderNumberCell,
         }),
         ch.accessor('outputTemp', {
-          header: renderHeader('Output temp.'),
+          header: 'Output temp.',
           cell: renderNumberCell,
         }),
       ],
@@ -117,19 +120,19 @@ export const getColumns = memoize((isAdmin: boolean) => {
       header: 'Output',
       columns: [
         ch.accessor('productionQuantity', {
-          header: renderHeader('Oroduction quantity'),
+          header: "Prod. Q'ty",
           cell: renderNumberCell,
         }),
         ch.accessor('productionWeight', {
-          header: renderHeader('Production weight'),
+          header: 'Prod. Weight',
           cell: renderNumberCell,
         }),
         ch.accessor('outputRate', {
-          header: renderHeader('Output rate'),
+          header: 'kg/h',
           cell: renderNumberCell,
         }),
         ch.accessor('outputYield', {
-          header: renderHeader('Yield'),
+          header: 'Yield',
           cell: ({ getValue }) => (
             <div className="text-right">
               {formatNumber(getValue<number>()) + '%'}
@@ -140,18 +143,16 @@ export const getColumns = memoize((isAdmin: boolean) => {
           header: 'OK/NG',
           cell: ({ getValue }) => (getValue<boolean>() ? 'OK' : 'NG'),
         }),
-        ch.accessor('remark', { header: 'Remark' }),
-
         ch.accessor('ngQuantity', {
-          header: renderHeader('NG quantity'),
+          header: "NG Q'ty",
           cell: renderNumberCell,
         }),
         ch.accessor('ngWeight', {
-          header: renderHeader('NG weight'),
+          header: 'NG Weight',
           cell: renderNumberCell,
         }),
         ch.accessor('ngPercentage', {
-          header: renderHeader('NG'),
+          header: 'NG %',
           cell: ({ getValue }) => (
             <div className="text-right">
               {formatNumber(getValue<number>()) + '%'}
@@ -160,9 +161,10 @@ export const getColumns = memoize((isAdmin: boolean) => {
         }),
         ch.accessor('code', { header: 'Code' }),
         ch.accessor('buttWeight', {
-          header: renderHeader('Butt weight'),
+          header: 'Butt weight',
           cell: renderNumberCell,
         }),
+        ch.accessor('remark', { header: 'Remark' }),
       ],
     }),
     ch.group({
@@ -183,47 +185,5 @@ const renderNumberCell: ColumnDefTemplate<
   <div className="text-right">{formatNumber(getValue<number>())}</div>
 );
 
-type HeaderRenderer = (
-  label: ReactNode,
-  options?: {
-    sortable?: boolean;
-    number?: boolean;
-  }
-) => StringOrTemplateHeader<ExtrusionLog, unknown>;
-
-const renderHeader: HeaderRenderer =
-  (label, options) =>
-  ({ column }) => {
-    const { sortable = true, number = true } = options || {};
-    const headerLabel = number ? (
-      <div className="text-right">{label}</div>
-    ) : (
-      label
-    );
-
-    if (sortable) {
-      const sorted = column.getIsSorted();
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => {
-            if (sorted === 'asc') {
-              column.clearSorting();
-            } else {
-              column.toggleSorting(sorted !== 'desc');
-            }
-          }}
-          className={cn('group', sortable && 'mx-[-0.75rem]')}
-        >
-          {headerLabel}
-          {sorted === false && (
-            <ArrowUpDown className="ml-2 h-4 w-4 opacity-20 group-hover:opacity-40" />
-          )}
-          {sorted === 'asc' && <ArrowUp className="ml-2 h-4 w-4" />}
-          {sorted === 'desc' && <ArrowDown className="ml-2 h-4 w-4" />}
-        </Button>
-      );
-    } else {
-      return headerLabel;
-    }
-  };
+const stripSeconds = (time: string | null) =>
+  time && time.substring(0, time.lastIndexOf(':'));
