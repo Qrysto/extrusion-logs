@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
   const result = searchParams.get('result');
   const remarkSearch = searchParams.get('remarkSearch');
   const sort = searchParams.get('sort');
+  const skip = searchParams.get('skip');
 
   const res = await fetchExtrusionLogs({
     account,
@@ -38,6 +39,7 @@ export async function GET(request: NextRequest) {
     ok: result === 'OK' ? true : result === 'NG' ? false : null,
     remarkSearch,
     sort: sort && JSON.parse(sort),
+    skip: skip ? parseInt(skip) : undefined,
   });
   return Response.json(res);
 }
@@ -56,6 +58,7 @@ async function fetchExtrusionLogs({
   ok,
   remarkSearch,
   sort,
+  skip = 0,
 }: {
   account: Awaited<ReturnType<typeof getAccount>>;
   dateRange: DateRange | null;
@@ -70,6 +73,7 @@ async function fetchExtrusionLogs({
   ok: boolean | null;
   remarkSearch: string | null;
   sort: { id: string; desc: boolean }[] | null;
+  skip?: number;
 }) {
   let query = db
     .selectFrom('extrusions')
@@ -161,6 +165,9 @@ async function fetchExtrusionLogs({
     }
   } else {
     query = query.orderBy('date desc').orderBy('startTime desc');
+  }
+  if (skip) {
+    query = query.offset(skip);
   }
 
   console.log('QUERY', query.compile());

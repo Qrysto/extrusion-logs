@@ -1,7 +1,7 @@
 'use client';
 
 import { useExtrusionLogs } from '@/lib/client';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import {
   type ColumnDef,
   flexRender,
@@ -14,14 +14,7 @@ import {
   Table as TableType,
 } from '@tanstack/react-table';
 import { useUpdateSearchParams } from '@/lib/client';
-import {
-  ArrowUpDown,
-  ArrowUp,
-  ArrowDown,
-  SortAsc,
-  SortDesc,
-  ListRestart,
-} from 'lucide-react';
+import { ArrowUpDown, SortAsc, SortDesc, ListRestart } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -31,6 +24,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { colVisibilityKey } from '@/lib/const';
 import { ExtrusionLog } from '@/lib/types';
@@ -41,12 +35,16 @@ import ColumnSelector from './ColumnSelector';
 const emptyData: ExtrusionLog[] = [];
 
 export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
-  const { data } = useExtrusionLogs();
+  const { data, isFetching, hasNextPage, fetchNextPage } = useExtrusionLogs();
+  const flatData = useMemo(
+    () => data?.pages?.flatMap((page) => page) ?? [],
+    [data]
+  );
   const columns = getColumns(isAdmin);
   const [sorting, setSorting] = useSortingState();
   const [columnVisibility, setColumnVisibility] = useColumnVisibility();
   const table = useReactTable<ExtrusionLog>({
-    data: data || emptyData,
+    data: flatData || emptyData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -76,7 +74,13 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
       </div>
 
       <main className="flex-1 min-h-0 w-full">
-        <DataTable table={table} columns={columns} />
+        <DataTable
+          table={table}
+          columns={columns}
+          isFetching={isFetching}
+          hasNextPage={hasNextPage}
+          fetchNextPage={fetchNextPage}
+        />
       </main>
     </>
   );
@@ -85,14 +89,39 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
 function DataTable<TData>({
   table,
   columns,
+  isFetching,
+  hasNextPage,
+  fetchNextPage,
 }: {
   table: TableType<TData>;
   columns: ColumnDef<TData>[];
+  isFetching: boolean;
+  hasNextPage: boolean;
+  fetchNextPage: Function;
 }) {
   const { rows } = table.getRowModel();
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const fetchMoreOnBottomReached = useCallback(
+    (containerRefElement?: HTMLDivElement | null) => {
+      if (containerRefElement) {
+        const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
+        if (
+          hasNextPage &&
+          !isFetching &&
+          scrollHeight - scrollTop - clientHeight < 200
+        ) {
+          fetchNextPage();
+        }
+      }
+    },
+    [isFetching, hasNextPage, , fetchNextPage]
+  );
 
   return (
-    <div className="relative rounded-md border h-full overflow-auto">
+    <div
+      ref={scrollerRef}
+      className="relative rounded-md border h-full overflow-auto"
+    >
       <Table>
         <TableHeader className="sticky top-0 flex-shrink-0 bg-zinc-50">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -164,6 +193,15 @@ function DataTable<TData>({
               <TableCell colSpan={columns.length} className="h-24 text-center">
                 No results.
               </TableCell>
+            </TableRow>
+          )}
+          {isFetching && (
+            <TableRow className="hover:bg-background">
+              {table.getVisibleLeafColumns().map((column) => (
+                <TableCell key={column.id}>
+                  <Skeleton className="w-full h-[20px]" />
+                </TableCell>
+              ))}
             </TableRow>
           )}
         </TableBody>

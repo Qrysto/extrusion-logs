@@ -3,7 +3,12 @@
 import { useCallback } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { QueryClient } from '@tanstack/react-query';
-import { useQuery } from '@tanstack/react-query';
+import {
+  useQuery,
+  useInfiniteQuery,
+  keepPreviousData,
+} from '@tanstack/react-query';
+import { fetchLimit } from './const';
 import type { SuggestionData, ExtrusionLog } from './types';
 import { get } from './utils';
 
@@ -108,7 +113,7 @@ export function useExtrusionLogs() {
     params.sort = sort;
   }
 
-  return useQuery<ExtrusionLog[]>({
+  return useInfiniteQuery<ExtrusionLog[]>({
     queryKey: [
       'extrusion-logs',
       {
@@ -126,8 +131,15 @@ export function useExtrusionLogs() {
       },
       sort,
     ],
-    queryFn: () => get('/api/extrusion-logs', params),
+    queryFn: ({ pageParam }) =>
+      get('/api/extrusion-logs', { ...params, skip: pageParam }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage?.length === fetchLimit ? pages.length * fetchLimit : null,
+    getPreviousPageParam: (lastPage, pages) =>
+      pages?.length ? (pages.length - 1) * fetchLimit : null,
     staleTime: 60000, // 1 minute
+    placeholderData: keepPreviousData,
   });
 }
 
