@@ -90,71 +90,83 @@ export async function POST(request: NextRequest) {
     existingBilletType,
     existingCode,
   ] = await Promise.all([
-    db
-      .selectFrom('customers')
-      .selectAll()
-      .where('name', '=', customer)
-      .executeTakeFirst(),
-    db
-      .selectFrom('dies')
-      .selectAll()
-      .where('code', '=', dieCode)
-      .executeTakeFirst(),
-    db
-      .selectFrom('items')
-      .selectAll()
-      .where('item', '=', item)
-      .executeTakeFirst(),
-    db
-      .selectFrom('lotNumbers')
-      .selectAll()
-      .where('code', '=', lotNumberCode)
-      .executeTakeFirst(),
-    db
-      .selectFrom('billetTypes')
-      .selectAll()
-      .where('name', '=', billetType)
-      .executeTakeFirst(),
-    db
-      .selectFrom('codes')
-      .selectAll()
-      .where('code', '=', code)
-      .executeTakeFirst(),
+    customer
+      ? db
+          .selectFrom('customers')
+          .selectAll()
+          .where('name', '=', customer)
+          .executeTakeFirst()
+      : Promise.resolve(),
+    dieCode
+      ? db
+          .selectFrom('dies')
+          .selectAll()
+          .where('code', '=', dieCode)
+          .executeTakeFirst()
+      : Promise.resolve(),
+    item
+      ? db
+          .selectFrom('items')
+          .selectAll()
+          .where('item', '=', item)
+          .executeTakeFirst()
+      : Promise.resolve(),
+    lotNumberCode
+      ? db
+          .selectFrom('lotNumbers')
+          .selectAll()
+          .where('code', '=', lotNumberCode)
+          .executeTakeFirst()
+      : Promise.resolve(),
+    billetType
+      ? db
+          .selectFrom('billetTypes')
+          .selectAll()
+          .where('name', '=', billetType)
+          .executeTakeFirst()
+      : Promise.resolve(),
+    code
+      ? db
+          .selectFrom('codes')
+          .selectAll()
+          .where('code', '=', code)
+          .executeTakeFirst()
+      : Promise.resolve(),
   ]);
 
   try {
     await Promise.all([
-      !existingCustomer
+      customer && !existingCustomer
         ? db
             .insertInto('customers')
             .values({ name: customer })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
-      !existingDie
+      dieCode && !existingDie
         ? db
             .insertInto('dies')
             .values({ code: dieCode })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
-      !existingItem
+      item && !existingItem
         ? db
             .insertInto('items')
             .values({ item: item })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
-      !existingLotNo
+      lotNumberCode && !existingLotNo
         ? db
             .insertInto('lotNumbers')
             .values({ code: lotNumberCode })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
-      !existingBilletType
+      billetType && !existingBilletType
         ? db
             .insertInto('billetTypes')
             .values({ name: billetType })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
-      !existingCode
+      code && !existingCode
         ? db
             .insertInto('codes')
             .values({ code: code })
