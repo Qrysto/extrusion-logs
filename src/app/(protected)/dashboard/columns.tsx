@@ -7,7 +7,8 @@ import {
   createColumnHelper,
 } from '@tanstack/react-table';
 import type { ExtrusionLog } from '@/lib/types';
-import { format as formatDate } from 'date-fns';
+import { format as formatDate, parse, formatDuration } from 'date-fns';
+import { timeFormat } from '@/lib/dateTime';
 import { displayDateFormat } from '@/lib/dateTime';
 import { memoize } from '@/lib/utils';
 
@@ -28,47 +29,52 @@ export const getColumns = memoize((isAdmin: boolean) => {
       header: 'Date & time',
       columns: [
         ch.accessor('date', {
-          header: 'Date',
+          header: headerLabel,
           cell: ({ getValue }) =>
             formatDate(getValue<Date>(), displayDateFormat),
         }),
         ch.accessor('shift', {
-          header: 'Shift',
+          header: headerLabel,
           cell: ({ getValue }) =>
             getValue<string>() === 'day' ? 'Day' : 'Night',
         }),
         ch.accessor('startTime', {
-          header: 'Start time',
-          cell: ({ getValue }) => stripSeconds(getValue()),
+          header: headerLabel,
+          cell: ({ getValue }) => stripSeconds(getValue<string>()),
         }),
         ch.accessor('endTime', {
-          header: 'End time',
-          cell: ({ getValue }) => stripSeconds(getValue()),
+          header: headerLabel,
+          cell: ({ getValue }) => stripSeconds(getValue<string>()),
+        }),
+        ch.display({
+          id: 'workingTime',
+          header: headerLabel,
+          cell: workingTime,
         }),
       ],
     }),
     ch.group({
       header: 'General',
       columns: [
-        ch.accessor('item', { header: 'Item' }),
-        ch.accessor('customer', { header: 'Customer' }),
+        ch.accessor('item', { header: headerLabel }),
+        ch.accessor('customer', { header: headerLabel }),
       ],
     }),
     ch.group({
       header: 'Billet',
       columns: [
-        ch.accessor('billetType', { header: 'Billet type' }),
-        ch.accessor('lotNumberCode', { header: 'Lot No.' }),
+        ch.accessor('billetType', { header: headerLabel }),
+        ch.accessor('lotNumberCode', { header: headerLabel }),
         ch.accessor('billetLength', {
-          header: 'Billet length',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
         ch.accessor('billetQuantity', {
-          header: 'Billet quantity',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
         ch.accessor('billetKgpm', {
-          header: 'Billet kg/m',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
       ],
@@ -77,28 +83,28 @@ export const getColumns = memoize((isAdmin: boolean) => {
       header: 'Input',
       columns: [
         ch.accessor('ramSpeed', {
-          header: 'Ram speed',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
-        ch.accessor('dieCode', { header: 'Die code' }),
+        ch.accessor('dieCode', { header: headerLabel }),
         ch.accessor('dieNumber', {
-          header: 'Die number',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
         ch.accessor('cavity', {
-          header: 'Cavity',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
         ch.accessor('productKgpm', {
-          header: 'Product kg/m',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
         ch.accessor('ingotRatio', {
-          header: 'Ingot ratio',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
         ch.accessor('orderLength', {
-          header: 'Order length',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
       ],
@@ -107,11 +113,11 @@ export const getColumns = memoize((isAdmin: boolean) => {
       header: 'Temperature',
       columns: [
         ch.accessor('billetTemp', {
-          header: 'Billet temp.',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
         ch.accessor('outputTemp', {
-          header: 'Output temp.',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
       ],
@@ -120,19 +126,19 @@ export const getColumns = memoize((isAdmin: boolean) => {
       header: 'Output',
       columns: [
         ch.accessor('productionQuantity', {
-          header: "Prod. Q'ty",
+          header: headerLabel,
           cell: renderNumberCell,
         }),
         ch.accessor('productionWeight', {
-          header: 'Prod. Weight',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
         ch.accessor('outputRate', {
-          header: 'kg/h',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
         ch.accessor('outputYield', {
-          header: 'Yield',
+          header: headerLabel,
           cell: ({ getValue }) => (
             <div className="text-right">
               {formatNumber(getValue<number>()) + '%'}
@@ -140,31 +146,31 @@ export const getColumns = memoize((isAdmin: boolean) => {
           ),
         }),
         ch.accessor('ok', {
-          header: 'OK/NG',
+          header: headerLabel,
           cell: ({ getValue }) => (getValue<boolean>() ? 'OK' : 'NG'),
         }),
         ch.accessor('ngQuantity', {
-          header: "NG Q'ty",
+          header: headerLabel,
           cell: renderNumberCell,
         }),
         ch.accessor('ngWeight', {
-          header: 'NG Weight',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
         ch.accessor('ngPercentage', {
-          header: 'NG %',
+          header: headerLabel,
           cell: ({ getValue }) => (
             <div className="text-right">
               {formatNumber(getValue<number>()) + '%'}
             </div>
           ),
         }),
-        ch.accessor('code', { header: 'Code' }),
+        ch.accessor('code', { header: headerLabel }),
         ch.accessor('buttWeight', {
-          header: 'Butt weight',
+          header: headerLabel,
           cell: renderNumberCell,
         }),
-        ch.accessor('remark', { header: 'Remark' }),
+        ch.accessor('remark', { header: headerLabel }),
       ],
     }),
     ch.group({
@@ -185,5 +191,77 @@ const renderNumberCell: ColumnDefTemplate<
   <div className="text-right">{formatNumber(getValue<number>())}</div>
 );
 
+const headerLabel: StringOrTemplateHeader<ExtrusionLog, unknown> = ({
+  column,
+}) => columnLabels[column.id];
+
 const stripSeconds = (time: string | null) =>
   time && time.substring(0, time.lastIndexOf(':'));
+
+function workingTime({ row }: CellContext<ExtrusionLog, unknown>) {
+  const startTime = row.getValue<string>('startTime');
+  const endTime = row.getValue<string>('endTime');
+  if (!startTime || !endTime) {
+    return '';
+  }
+
+  const date = new Date();
+  const start = Math.round(
+    parse(startTime, 'HH:mm:ss', date).getTime() / 60000
+  );
+  const end = Math.round(parse(endTime, 'HH:mm:ss', date).getTime() / 60000);
+  let minutes = end - start + (end < start ? 1440 : 0);
+  let hours = Math.floor(minutes / 60);
+  minutes = minutes - hours * 60;
+  return (
+    <div className="text-right">
+      {hours ? hours + 'h ' : ''}
+      {minutes}m
+    </div>
+  );
+}
+
+export const columnLabels: Record<string, string> = {
+  date: 'Date',
+  shift: 'Shift',
+  plant: 'Plant',
+  machine: 'Machine',
+  inch: 'Inch',
+  employeeId: 'Employee ID',
+
+  item: 'Item',
+  customer: 'Customer',
+  dieCode: 'Die Code',
+
+  dieNumber: 'Die Number',
+  cavity: 'Cavity',
+  productKgpm: 'Product kg/m',
+
+  billetType: 'Billet Type',
+  billetKgpm: 'Billet kg/m',
+  billetLength: 'Length',
+  billetQuantity: 'Quantity',
+  billetWeight: 'Weight',
+  ingotRatio: 'Ingot Ratio',
+  lotNumberCode: 'Lot No.',
+
+  ramSpeed: 'Ram Speed',
+  billetTemp: 'Billet Temp.',
+  outputTemp: 'Output Temp.',
+  orderLength: 'Order Length',
+  outputRate: 'kg/h',
+  productionQuantity: 'Prod. Qty',
+  productionWeight: 'Prod. Weight',
+
+  ok: 'OK/NG',
+  outputYield: 'Yield',
+  ngQuantity: 'NG Qty',
+  ngWeight: 'NG Weight',
+  ngPercentage: 'NG %',
+  remark: 'Remark',
+  buttWeight: 'Butt Weight',
+  code: 'Code',
+  startTime: 'Start',
+  endTime: 'Finish',
+  workingTime: 'Working Time',
+};
