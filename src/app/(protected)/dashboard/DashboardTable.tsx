@@ -223,7 +223,7 @@ function useSortingState() {
         typeof sorting === 'function' ? sorting(sortingState) : sorting;
       updateSearchParams('sort', JSON.stringify(newState));
     },
-    [sortingState]
+    [sortingState, updateSearchParams]
   );
   return [sortingState, setSortingState] as const;
 }

@@ -59,7 +59,7 @@ export const AutoComplete = ({
         input.blur();
       }
     },
-    [isOpen, options, onValueChange, inputRef.current]
+    [isOpen, options, onValueChange]
   );
 
   const handleSelectOption = useCallback(

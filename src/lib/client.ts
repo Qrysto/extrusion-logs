@@ -114,23 +114,7 @@ export function useExtrusionLogs() {
   }
 
   return useInfiniteQuery<ExtrusionLog[]>({
-    queryKey: [
-      'extrusion-logs',
-      {
-        date,
-        shift,
-        plant,
-        machine,
-        item,
-        customer,
-        dieCode,
-        cavity,
-        lotNo,
-        result,
-        remarkSearch,
-      },
-      sort,
-    ],
+    queryKey: ['extrusion-logs', params, sort],
     queryFn: ({ pageParam }) =>
       get('/api/extrusion-logs', { ...params, skip: pageParam }),
     initialPageParam: 0,

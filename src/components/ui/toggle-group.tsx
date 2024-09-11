@@ -71,6 +71,7 @@ const ToggleGroup = React.forwardRef<
     ))}
   </ToggleGroupRoot>
 ));
+ToggleGroup.displayName = 'ToggleGroup';
 
 type ToggleGroupItem = {
   value: any;
