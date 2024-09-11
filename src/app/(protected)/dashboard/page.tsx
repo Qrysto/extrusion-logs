@@ -7,7 +7,7 @@ export default async function Dashboard() {
   const isAdmin = account.role === 'admin';
 
   return (
-    <div className="flex flex-col w-full min-h-screen px-6">
+    <div className="flex flex-col w-full h-screen px-6">
       <Header account={account} />
 
       <DashboardTable isAdmin={isAdmin} />

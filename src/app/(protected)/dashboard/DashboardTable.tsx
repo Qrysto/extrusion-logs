@@ -51,12 +51,12 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
 
   return (
     <>
-      <div className="my-3 flex gap-4 items-center flex-wrap">
+      <div className="my-3 flex gap-4 items-center flex-wrap flex-shrink-0">
         <ColumnSelector table={table} />
         <Filters isAdmin={isAdmin} />
       </div>
 
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 min-h-0 w-full">
         <DataTable table={table} columns={columns} />
       </main>
     </>
@@ -73,9 +73,9 @@ function DataTable<TData>({
   const { rows } = table.getRowModel();
 
   return (
-    <div className="rounded-md border">
+    <div className="relative rounded-md border h-full overflow-auto">
       <Table>
-        <TableHeader>
+        <TableHeader className="sticky top-0 flex-shrink-0 whitespace-nowrap bg-background">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
@@ -95,7 +95,7 @@ function DataTable<TData>({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className="flex-1">
           {rows?.length ? (
             rows.map((row) => (
               <TableRow
