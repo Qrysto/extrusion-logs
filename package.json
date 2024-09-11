@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "kysely-codegen --camel-case && next build",
     "start": "next start",
     "lint": "next lint",
     "codegen": "env-cmd -f ./.env.local kysely-codegen --camel-case"
