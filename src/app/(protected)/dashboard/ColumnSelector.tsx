@@ -31,7 +31,7 @@ export default function ColumnSelector<TData>({
         avoidCollisions
       >
         {table
-          ?.getAllColumns()
+          ?.getAllLeafColumns()
           .filter((col) => col.getCanHide())
           .map((column, i) => (
             <DropdownMenuCheckboxItem

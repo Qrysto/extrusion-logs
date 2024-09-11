@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-table';
 import type { ExtrusionLog } from '@/lib/types';
 import { format as formatDate } from 'date-fns';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { displayDateFormat } from '@/lib/dateTime';
@@ -26,113 +27,151 @@ export const getColumns = memoize((isAdmin: boolean) => {
     : [];
 
   const columns: ColumnDef<ExtrusionLog>[] = [
-    ch.accessor('date', {
-      header: renderHeader('Date', { number: false }),
-      cell: ({ getValue }) => formatDate(getValue<Date>(), displayDateFormat),
+    ch.group({
+      header: 'Date & time',
+      columns: [
+        ch.accessor('date', {
+          header: renderHeader('Date', { number: false }),
+          cell: ({ getValue }) =>
+            formatDate(getValue<Date>(), displayDateFormat),
+        }),
+        ch.accessor('shift', {
+          header: 'Shift',
+          cell: ({ getValue }) =>
+            getValue<string>() === 'day' ? 'Day' : 'Night',
+        }),
+        ch.accessor('startTime', { header: 'Start time' }),
+        ch.accessor('endTime', { header: 'End time' }),
+      ],
     }),
-    ch.accessor('shift', {
-      header: 'Shift',
-      cell: ({ getValue }) => (getValue<string>() === 'day' ? 'Day' : 'Night'),
+    ch.group({
+      header: 'General',
+      columns: [
+        ch.accessor('item', { header: 'Item' }),
+        ch.accessor('customer', { header: 'Customer' }),
+      ],
     }),
-    ch.accessor('item', { header: 'Item' }),
-    ch.accessor('customer', { header: 'Customer' }),
-    ch.accessor('billetType', { header: 'Billet type' }),
-    ch.accessor('lotNumberCode', { header: 'Lot No.' }),
-    ch.accessor('billetLength', {
-      header: renderHeader('Billet length'),
-      cell: renderNumberCell,
+    ch.group({
+      header: 'Billet',
+      columns: [
+        ch.accessor('billetType', { header: 'Billet type' }),
+        ch.accessor('lotNumberCode', { header: 'Lot No.' }),
+        ch.accessor('billetLength', {
+          header: renderHeader('Billet length'),
+          cell: renderNumberCell,
+        }),
+        ch.accessor('billetQuantity', {
+          header: renderHeader('Billet quantity'),
+          cell: renderNumberCell,
+        }),
+        ch.accessor('billetKgpm', {
+          header: renderHeader('Billet kg/m'),
+          cell: renderNumberCell,
+        }),
+      ],
     }),
-    ch.accessor('billetQuantity', {
-      header: renderHeader('Billet quantity'),
-      cell: renderNumberCell,
+    ch.group({
+      header: 'Input',
+      columns: [
+        ch.accessor('ramSpeed', {
+          header: renderHeader('Ram speed'),
+          cell: renderNumberCell,
+        }),
+        ch.accessor('dieCode', { header: 'Die code' }),
+        ch.accessor('dieNumber', {
+          header: renderHeader('Die number'),
+          cell: renderNumberCell,
+        }),
+        ch.accessor('cavity', {
+          header: renderHeader('Cavity'),
+          cell: renderNumberCell,
+        }),
+        ch.accessor('productKgpm', {
+          header: renderHeader('Product kg/m'),
+          cell: renderNumberCell,
+        }),
+        ch.accessor('ingotRatio', {
+          header: renderHeader('Ingot ratio'),
+          cell: renderNumberCell,
+        }),
+        ch.accessor('orderLength', {
+          header: renderHeader('Order length'),
+          cell: renderNumberCell,
+        }),
+      ],
     }),
-    ch.accessor('billetKgpm', {
-      header: renderHeader('Billet kg/m'),
-      cell: renderNumberCell,
+    ch.group({
+      header: 'Temperature',
+      columns: [
+        ch.accessor('billetTemp', {
+          header: renderHeader('Billet temp.'),
+          cell: renderNumberCell,
+        }),
+        ch.accessor('outputTemp', {
+          header: renderHeader('Output temp.'),
+          cell: renderNumberCell,
+        }),
+      ],
     }),
-    ch.accessor('ramSpeed', {
-      header: renderHeader('Ram speed'),
-      cell: renderNumberCell,
+    ch.group({
+      header: 'Output',
+      columns: [
+        ch.accessor('productionQuantity', {
+          header: renderHeader('Oroduction quantity'),
+          cell: renderNumberCell,
+        }),
+        ch.accessor('productionWeight', {
+          header: renderHeader('Production weight'),
+          cell: renderNumberCell,
+        }),
+        ch.accessor('outputRate', {
+          header: renderHeader('Output rate'),
+          cell: renderNumberCell,
+        }),
+        ch.accessor('outputYield', {
+          header: renderHeader('Yield'),
+          cell: ({ getValue }) => (
+            <div className="text-right">
+              {formatNumber(getValue<number>()) + '%'}
+            </div>
+          ),
+        }),
+        ch.accessor('ok', {
+          header: 'OK/NG',
+          cell: ({ getValue }) => (getValue<boolean>() ? 'OK' : 'NG'),
+        }),
+        ch.accessor('remark', { header: 'Remark' }),
+
+        ch.accessor('ngQuantity', {
+          header: renderHeader('NG quantity'),
+          cell: renderNumberCell,
+        }),
+        ch.accessor('ngWeight', {
+          header: renderHeader('NG weight'),
+          cell: renderNumberCell,
+        }),
+        ch.accessor('ngPercentage', {
+          header: renderHeader('NG'),
+          cell: ({ getValue }) => (
+            <div className="text-right">
+              {formatNumber(getValue<number>()) + '%'}
+            </div>
+          ),
+        }),
+        ch.accessor('code', { header: 'Code' }),
+        ch.accessor('buttWeight', {
+          header: renderHeader('Butt weight'),
+          cell: renderNumberCell,
+        }),
+      ],
     }),
-    ch.accessor('dieCode', { header: 'Die code' }),
-    ch.accessor('dieNumber', {
-      header: renderHeader('Die number'),
-      cell: renderNumberCell,
+    ch.group({
+      header: 'Administration',
+      columns: [
+        ...adminColumns,
+        ch.accessor('employeeId', { header: 'Employee ID' }),
+      ],
     }),
-    ch.accessor('cavity', {
-      header: renderHeader('Cavity'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('productKgpm', {
-      header: renderHeader('Product kg/m'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('ingotRatio', {
-      header: renderHeader('Ingot ratio'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('orderLength', {
-      header: renderHeader('Order length'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('billetTemp', {
-      header: renderHeader('Billet temp.'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('outputTemp', {
-      header: renderHeader('Output temp.'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('productionQuantity', {
-      header: renderHeader('Oroduction quantity'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('productionWeight', {
-      header: renderHeader('Production weight'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('outputRate', {
-      header: renderHeader('Output rate'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('outputYield', {
-      header: renderHeader('Yield'),
-      cell: ({ getValue }) => (
-        <div className="text-right">
-          {formatNumber(getValue<number>()) + '%'}
-        </div>
-      ),
-    }),
-    ch.accessor('ok', {
-      header: 'OK/NG',
-      cell: ({ getValue }) => (getValue<boolean>() ? 'OK' : 'NG'),
-    }),
-    ch.accessor('remark', { header: 'Remark' }),
-    ch.accessor('startTime', { header: 'Start time' }),
-    ch.accessor('endTime', { header: 'End time' }),
-    ch.accessor('ngQuantity', {
-      header: renderHeader('NG quantity'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('ngWeight', {
-      header: renderHeader('NG weight'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('ngPercentage', {
-      header: renderHeader('NG'),
-      cell: ({ getValue }) => (
-        <div className="text-right">
-          {formatNumber(getValue<number>()) + '%'}
-        </div>
-      ),
-    }),
-    ch.accessor('code', { header: 'Code' }),
-    ch.accessor('buttWeight', {
-      header: renderHeader('Butt weight'),
-      cell: renderNumberCell,
-    }),
-    ...adminColumns,
-    ch.accessor('employeeId', { header: 'Employee ID' }),
   ] as ColumnDef<ExtrusionLog>[];
 
   return columns;
@@ -174,7 +213,7 @@ const renderHeader: HeaderRenderer =
               column.toggleSorting(sorted !== 'desc');
             }
           }}
-          className="group"
+          className={cn('group', sortable && 'mx-[-0.75rem]')}
         >
           {headerLabel}
           {sorted === false && (
