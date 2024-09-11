@@ -1,66 +1,59 @@
 'use client';
 
-import { useState } from 'react';
+import { Table } from '@tanstack/react-table';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuCheckboxItem,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { ListChecks } from 'lucide-react';
 
-const adminOnlyColumns = ['plant', 'createdBy'];
-
-const columns = [
-  'date',
-  'shift',
-  'employeeId',
-
-  'item',
-  'customer',
-  'dieCode',
-
-  'dieNumber',
-  'cavity',
-  'productKgpm',
-
-  'billetType',
-  'billetKgpm',
-  'billetLength',
-  'billetQuantity',
-  'billetWeight',
-  'ingotRatio',
-  'lotNumberCode',
-
-  'ramSpeed',
-  'billetTemp',
-  'outputTemp',
-  'orderLength',
-  'outputRate',
-  'productionQuantity',
-  'productionWeight',
-
-  'ok',
-  'outputYield',
-  'ngPercentage',
-  'ngQuantity',
-  'ngWeight',
-  'remark',
-  'buttWeight',
-  'code',
-  'startTime',
-  'endTime',
-  'workingTime', // derived
-];
+export default function ColumnSelector<TData>({
+  table,
+}: {
+  table: Table<TData>;
+}) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className="h-10 gap-1">
+          <ListChecks className="h-4 w-4" />
+          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+            Columns
+          </span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="start"
+        className="w-[200px] overflow-auto max-h-96"
+        avoidCollisions
+      >
+        {table
+          ?.getAllColumns()
+          .filter((col) => col.getCanHide())
+          .map((column, i) => (
+            <DropdownMenuCheckboxItem
+              key={column.id || i}
+              className="cursor-pointer"
+              checked={column.getIsVisible()}
+              onCheckedChange={(value) => column.toggleVisibility(!!value)}
+            >
+              {columnLabels[column.id]}
+            </DropdownMenuCheckboxItem>
+          ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 const columnLabels: Record<string, string> = {
   date: 'Date',
   shift: 'Shift',
   plant: 'Plant',
-  createdBy: 'Machine',
+  machine: 'Machine',
+  inch: 'Inch',
   employeeId: 'Employee ID',
 
   item: 'Item',
@@ -99,89 +92,3 @@ const columnLabels: Record<string, string> = {
   endTime: 'Finish',
   workingTime: 'Working time',
 };
-
-const storageKey = 'columns';
-
-export default function ColumnSelector({ isAdmin }: { isAdmin: boolean }) {
-  const { hiddenColumns, toggleColumn } = useHiddenColumns();
-  const allColumns = [...(isAdmin ? adminOnlyColumns : []), ...columns];
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="h-10 gap-1">
-          <ListChecks className="h-4 w-4" />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Columns
-          </span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="start"
-        className="w-[200px] overflow-auto max-h-96"
-        avoidCollisions
-      >
-        {allColumns.map((column) => (
-          <DropdownMenuCheckboxItem
-            key={column}
-            className="cursor-pointer"
-            checked={!hiddenColumns.has(column)}
-            onSelect={(evt) => {
-              evt.preventDefault();
-              toggleColumn(column);
-            }}
-          >
-            {columnLabels[column]}
-          </DropdownMenuCheckboxItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-function useHiddenColumns() {
-  const [hiddenColumns, setHiddenColumns] = useState<Set<string>>(() => {
-    if (typeof localStorage === 'undefined') {
-      return new Set();
-    }
-
-    const defaultJson = localStorage.getItem(storageKey);
-    let defaultValue = [];
-    try {
-      defaultValue = defaultJson && JSON.parse(defaultJson);
-    } catch (err) {}
-
-    return new Set(defaultValue);
-  });
-
-  const updateValue = () => {
-    const newValue = new Set(hiddenColumns);
-    setHiddenColumns(newValue);
-    localStorage.setItem(storageKey, JSON.stringify(Array.from(newValue)));
-  };
-
-  const hideColumn = (colName: string) => {
-    hiddenColumns.add(colName);
-    updateValue();
-  };
-
-  const unhideColumn = (colName: string) => {
-    hiddenColumns.delete(colName);
-    updateValue();
-  };
-
-  const toggleColumn = (colName: string) => {
-    if (hiddenColumns.has(colName)) {
-      unhideColumn(colName);
-    } else {
-      hideColumn(colName);
-    }
-  };
-
-  return { hiddenColumns, hideColumn, unhideColumn, toggleColumn } as {
-    hiddenColumns: ReadonlySet<string>;
-    hideColumn: typeof hideColumn;
-    unhideColumn: typeof unhideColumn;
-    toggleColumn: typeof toggleColumn;
-  };
-}

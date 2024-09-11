@@ -35,8 +35,6 @@ export function useUpdateSearchParams() {
 
   const updateSearchParams = (name: string, value: any) => {
     const queryString = updateQueryString(name, value);
-    console.log('qs', queryString);
-
     router.push(pathname + (queryString ? `?${queryString}` : ''));
   };
 

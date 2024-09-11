@@ -1,196 +1,163 @@
 'use client';
 
-import { ReactNode } from 'react';
-import {
-  ColumnDef,
-  ColumnDefTemplate,
-  CellContext,
-  StringOrTemplateHeader,
-  createColumnHelper,
-} from '@tanstack/react-table';
-import type { ExtrusionLog } from '@/lib/types';
-import { format as formatDate } from 'date-fns';
-import { Button } from '@/components/ui/button';
-import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
-import { DataTable } from '@/components/ui/DataTable';
-import { displayDateFormat } from '@/lib/dateTime';
 import { useExtrusionLogs } from '@/lib/client';
+import { useState, useMemo, useCallback } from 'react';
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  SortingState,
+  getSortedRowModel,
+  Updater,
+  VisibilityState,
+  Table as TableType,
+} from '@tanstack/react-table';
+import { useUpdateSearchParams } from '@/lib/client';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { colVisibilityKey } from '@/lib/const';
+import { ExtrusionLog } from '@/lib/types';
+import { getColumns } from './columns';
+import Filters from './Filters';
+import ColumnSelector from './ColumnSelector';
 
-const ch = createColumnHelper<ExtrusionLog>();
-const formatNumber = Intl.NumberFormat('en-US').format;
-
-export const getColumns = (isAdmin: boolean) => {
-  const adminColumns: ColumnDef<ExtrusionLog>[] = isAdmin
-    ? [
-        { accessorKey: 'machine', header: 'Machine' },
-        { accessorKey: 'plant', header: 'Plant' },
-        { accessorKey: 'inch', header: 'Inch' },
-      ]
-    : [];
-
-  const columns: ColumnDef<ExtrusionLog>[] = [
-    ch.accessor('date', {
-      header: renderHeader('Date', { number: false }),
-      cell: ({ getValue }) => formatDate(getValue<Date>(), displayDateFormat),
-    }),
-    ch.accessor('shift', {
-      header: 'Shift',
-      cell: ({ getValue }) => (getValue<string>() === 'day' ? 'Day' : 'Night'),
-    }),
-    ch.accessor('item', { header: 'Item' }),
-    ch.accessor('customer', { header: 'Customer' }),
-    ch.accessor('billetType', { header: 'Billet type' }),
-    ch.accessor('lotNumberCode', { header: 'Lot No.' }),
-    ch.accessor('billetLength', {
-      header: renderHeader('Billet length'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('billetQuantity', {
-      header: renderHeader('Billet quantity'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('billetKgpm', {
-      header: renderHeader('Billet kg/m'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('ramSpeed', {
-      header: renderHeader('Ram speed'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('dieCode', { header: 'Die code' }),
-    ch.accessor('dieNumber', {
-      header: renderHeader('Die number'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('cavity', {
-      header: renderHeader('Cavity'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('productKgpm', {
-      header: renderHeader('Product kg/m'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('ingotRatio', {
-      header: renderHeader('Ingot ratio'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('orderLength', {
-      header: renderHeader('Order length'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('billetTemp', {
-      header: renderHeader('Billet temp.'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('outputTemp', {
-      header: renderHeader('Output temp.'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('productionQuantity', {
-      header: renderHeader('Oroduction quantity'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('productionWeight', {
-      header: renderHeader('Production weight'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('outputRate', {
-      header: renderHeader('Output rate'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('outputYield', {
-      header: renderHeader('Yield'),
-      cell: ({ getValue }) => (
-        <div className="text-right">
-          {formatNumber(getValue<number>()) + '%'}
-        </div>
-      ),
-    }),
-    ch.accessor('ok', {
-      header: 'OK/NG',
-      cell: ({ getValue }) => (getValue<boolean>() ? 'OK' : 'NG'),
-    }),
-    ch.accessor('remark', { header: 'Remark' }),
-    ch.accessor('startTime', { header: 'Start time' }),
-    ch.accessor('endTime', { header: 'End time' }),
-    ch.accessor('ngQuantity', {
-      header: renderHeader('NG quantity'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('ngWeight', {
-      header: renderHeader('NG weight'),
-      cell: renderNumberCell,
-    }),
-    ch.accessor('ngPercentage', {
-      header: renderHeader('NG'),
-      cell: ({ getValue }) => (
-        <div className="text-right">
-          {formatNumber(getValue<number>()) + '%'}
-        </div>
-      ),
-    }),
-    ch.accessor('code', { header: 'Code' }),
-    ch.accessor('buttWeight', {
-      header: renderHeader('Butt weight'),
-      cell: renderNumberCell,
-    }),
-    ...adminColumns,
-    ch.accessor('employeeId', { header: 'Employee ID' }),
-  ] as ColumnDef<ExtrusionLog>[];
-
-  return columns;
-};
+const emptyData: ExtrusionLog[] = [];
 
 export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
   const { data } = useExtrusionLogs();
-  if (!data) return null;
-
   const columns = getColumns(isAdmin);
+  const [sorting, setSorting] = useSortingState();
+  const [columnVisibility, setColumnVisibility] = useColumnVisibility();
+  const table = useReactTable<ExtrusionLog>({
+    data: data || emptyData,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+      columnVisibility,
+    },
+    onSortingChange: setSorting,
+    onColumnVisibilityChange: setColumnVisibility,
+  });
 
-  return <DataTable data={data} columns={columns} />;
+  return (
+    <>
+      <div className="my-3 flex gap-4 items-center flex-wrap">
+        <ColumnSelector table={table} />
+        <Filters isAdmin={isAdmin} />
+      </div>
+
+      <main className="flex-1 overflow-auto">
+        <DataTable table={table} columns={columns} />
+      </main>
+    </>
+  );
 }
 
-const renderNumberCell: ColumnDefTemplate<
-  CellContext<ExtrusionLog, unknown>
-> = ({ getValue }) => (
-  <div className="text-right">{formatNumber(getValue<number>())}</div>
-);
-
-type HeaderRenderer = (
-  label: ReactNode,
-  options?: {
-    sortable?: boolean;
-    number?: boolean;
-  }
-) => StringOrTemplateHeader<ExtrusionLog, unknown>;
-
-const renderHeader: HeaderRenderer =
-  (label, options) =>
-  ({ column }) => {
-    const { sortable = true, number = true } = options || {};
-    const headerLabel = number ? (
-      <div className="text-right">{label}</div>
-    ) : (
-      label
-    );
-
-    if (sortable) {
-      const sorted = column.getIsSorted();
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(sorted !== 'desc')}
-          className="group"
-        >
-          {headerLabel}
-          {sorted === false && (
-            <ArrowUpDown className="ml-2 h-4 w-4 opacity-30 group-hover:opacity-60" />
+function DataTable<TData>({
+  table,
+  columns,
+}: {
+  table: TableType<TData>;
+  columns: ColumnDef<TData>[];
+}) {
+  const { rows } = table.getRowModel();
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {rows?.length ? (
+            rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && 'selected'}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id} className="whitespace-nowrap">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                No results.
+              </TableCell>
+            </TableRow>
           )}
-          {sorted === 'asc' && <ArrowUp className="ml-2 h-4 w-4" />}
-          {sorted === 'desc' && <ArrowDown className="ml-2 h-4 w-4" />}
-        </Button>
-      );
-    } else {
-      return headerLabel;
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+
+function useSortingState() {
+  const [searchParams, updateSearchParams] = useUpdateSearchParams();
+  const sort = searchParams.get('sort');
+  const sortingState: SortingState = useMemo(
+    () => (sort ? JSON.parse(sort) : []),
+    [sort]
+  );
+  const setSortingState = useCallback(
+    (sorting: Updater<SortingState>) => {
+      const newState =
+        typeof sorting === 'function' ? sorting(sortingState) : sorting;
+      updateSearchParams('sort', JSON.stringify(newState));
+    },
+    [sortingState]
+  );
+  return [sortingState, setSortingState] as const;
+}
+
+function useColumnVisibility() {
+  const [visibilityState, setVisibilityState] = useState<VisibilityState>(
+    () => {
+      if (typeof localStorage === 'undefined') {
+        return {};
+      }
+      const defaultJson = localStorage.getItem(colVisibilityKey);
+      let defaultValue = {};
+      try {
+        defaultValue = defaultJson && JSON.parse(defaultJson);
+      } catch (err) {}
+      return defaultValue;
     }
-  };
+  );
+  const setColumnVisibility = useCallback(
+    (colVis: Updater<VisibilityState>) => {
+      const newState =
+        typeof colVis === 'function' ? colVis(visibilityState) : colVis;
+      setVisibilityState(newState);
+      localStorage.setItem(colVisibilityKey, JSON.stringify(newState));
+    },
+    [visibilityState]
+  );
+  return [visibilityState, setColumnVisibility] as const;
+}
