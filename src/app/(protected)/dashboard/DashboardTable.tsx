@@ -134,7 +134,7 @@ function DataTable<TData>({
                     key={header.id}
                     colSpan={header.colSpan}
                     className={cn(
-                      'font-bold whitespace-nowrap hover:bg-secondary group border',
+                      'font-bold whitespace-nowrap hover:bg-accent hover:text-accent-foreground group border',
                       header.depth === 1 && 'text-center',
                       sortable && 'cursor-pointer'
                     )}
@@ -181,7 +181,7 @@ function DataTable<TData>({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="whitespace-nowrap hover:bg-secondary"
+                    className="whitespace-nowrap hover:bg-accent hover:text-accent-foreground"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
