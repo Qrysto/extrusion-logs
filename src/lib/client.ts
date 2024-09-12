@@ -52,7 +52,7 @@ export function useSuggestionData() {
   return useQuery<SuggestionData>({
     queryKey: ['suggestion-data'],
     queryFn: async () => await get('/api/suggestion-data'),
-    // staleTime: 86400000, // 1 day
+    staleTime: 3600000, // 1 hour
   });
 }
 
