@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/alert-dialog';
 
 const TOAST_LIMIT = 1;
-const TOAST_REMOVE_DELAY = 1000000;
+const TOAST_REMOVE_DELAY = 1000; // 1000000;
 const DIALOG_REMOVE_DELAY = 150;
 
 type ToasterToast = ToastProps & {
