@@ -7,8 +7,7 @@ import {
   createColumnHelper,
 } from '@tanstack/react-table';
 import type { ExtrusionLog } from '@/lib/types';
-import { format as formatDate, parse, formatDuration } from 'date-fns';
-import { timeFormat } from '@/lib/dateTime';
+import { format as formatDate, parse } from 'date-fns';
 import { displayDateFormat } from '@/lib/dateTime';
 import { memoize } from '@/lib/utils';
 
@@ -263,5 +262,5 @@ export const columnLabels: Record<string, string> = {
   code: 'Code',
   startTime: 'Start',
   endTime: 'Finish',
-  workingTime: 'Working Time',
+  workingTime: 'Duration',
 };
