@@ -6,7 +6,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/lib/use-toast';
 import {
   ExtrusionLogForm,
   getDefaultValues,

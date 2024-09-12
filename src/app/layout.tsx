@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
-import { Toaster } from '@/components/ui/toaster';
 import DisableNumberInputScroll from '@/components/DisableNumberInputScroll';
 import './globals.css';
 import ClientWrappers from './ClientWrappers';
+import { Toaster } from './toaster';
 
 const inter = Inter({ subsets: ['latin'], variable: '--inter' });
 
