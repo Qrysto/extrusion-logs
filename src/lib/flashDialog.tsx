@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, ComponentProps } from 'react';
 import { OctagonX } from 'lucide-react';
 import {
   AlertDialogCancel,
@@ -24,11 +24,13 @@ export function confirm({
   description,
   yesLabel = 'Yes',
   noLabel = 'No',
+  variant,
 }: {
   title: ReactNode;
   description?: ReactNode;
   yesLabel?: ReactNode;
   noLabel?: ReactNode;
+  variant?: ComponentProps<typeof AlertDialogAction>['variant'];
 }) {
   return new Promise<boolean>((resolve, reject) => {
     flashDialog({
@@ -44,6 +46,7 @@ export function confirm({
           {noLabel}
         </AlertDialogCancel>,
         <AlertDialogAction
+          variant={variant}
           key="yes"
           onClick={() => {
             resolve(true);

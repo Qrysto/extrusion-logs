@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { TriangleAlert } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { confirm } from '@/lib/flashDialog';
 import { useToast } from '@/lib/use-toast';
@@ -61,7 +62,23 @@ export default function AddExtrusionLog({
   return (
     <Dialog
       open={dialogOpen}
-      onOpenChange={(open) => {
+      onOpenChange={async (open) => {
+        if (!open && form.formState.isDirty) {
+          const confirmed = await confirm({
+            title: (
+              <span className="flex items-center space-x-2 text-destructive">
+                <TriangleAlert className="w-4 h-4" />
+                <span>Closing form</span>
+              </span>
+            ),
+            description:
+              'Are you sure you want to close and discard all unsaved changes?',
+            yesLabel: 'Close and discard form',
+            variant: 'destructive',
+            noLabel: 'Go back',
+          });
+          if (!confirmed) return;
+        }
         setDialogOpen(open);
         if (open) {
           form.reset(defaultValues);
