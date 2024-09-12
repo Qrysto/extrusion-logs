@@ -6,6 +6,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { confirm } from '@/lib/flashDialog';
 import { useToast } from '@/lib/use-toast';
 import {
   ExtrusionLogForm,
@@ -79,9 +80,14 @@ export default function AddExtrusionLog({
         form={form}
         onSubmit={onSubmit}
         saveForm={undefined}
-        resetForm={() => {
-          // TODO: add confirmation
-          form.reset(getDefaultValues({ employeeId }));
+        resetForm={async () => {
+          const confirmed = await confirm({
+            title: 'Reset form',
+            description: 'Are you sure you want to reset all form values?',
+          });
+          if (confirmed) {
+            form.reset(getDefaultValues({ employeeId }));
+          }
         }}
       />
     </Dialog>

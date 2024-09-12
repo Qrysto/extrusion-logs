@@ -1,6 +1,9 @@
 import { ReactNode } from 'react';
 import { OctagonX } from 'lucide-react';
-import { AlertDialogCancel, AlertDialogAction } from './alert-dialog';
+import {
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog';
 import { flashDialog } from '@/lib/use-toast';
 
 export function flashError({ message }: { message: ReactNode }) {
