@@ -5,6 +5,10 @@ import { format } from 'date-fns';
 import { readFile } from 'fs/promises';
 
 export async function POST(request: NextRequest) {
+  if (process.env.LOCAL !== 'true') {
+    return Response.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+
   const content = await readFile('imports/sample1.csv');
   const rawData: any[] = parse(content, {
     columns: true,
