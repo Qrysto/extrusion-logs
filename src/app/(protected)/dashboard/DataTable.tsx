@@ -11,6 +11,7 @@ import {
 import {
   flexRender,
   Table as TableType,
+  HeaderGroup,
   Header,
   Row,
   Cell,
@@ -55,7 +56,6 @@ export default function DataTable<TData>({
   deleteRow: (row: Row<TData>) => Promise<void>;
 }) {
   const { rows } = table.getRowModel();
-  const [deletingRow, setDeletingRow] = useState<string | null>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const fetchMoreOnBottomReached = useCallback(
     (containerRefElement?: HTMLDivElement | null) => {
@@ -85,37 +85,16 @@ export default function DataTable<TData>({
       <Table>
         <TableHeader className="sticky top-0 flex-shrink-0 bg-zinc-50">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <DataTableHeaderCell
-                  key={header.id}
-                  header={header}
-                  sorted={header.column.getIsSorted()}
-                />
-              ))}
-            </TableRow>
+            <DataTableHeaderRow
+              key={headerGroup.id}
+              headerGroup={headerGroup}
+            />
           ))}
         </TableHeader>
         <TableBody className="flex-1">
           {rows?.length ? (
             rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
-                className={cn(
-                  deletingRow === row.id &&
-                    'bg-destructive text-destructive-foreground'
-                )}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <DataTableCell
-                    key={cell.id}
-                    cell={cell}
-                    deleteRow={deleteRow}
-                    setDeletingRow={setDeletingRow}
-                  />
-                ))}
-              </TableRow>
+              <DataTableRow key={row.id} row={row} deleteRow={deleteRow} />
             ))
           ) : (
             <TableRow>
@@ -141,6 +120,20 @@ export default function DataTable<TData>({
     </div>
   );
 }
+
+const DataTableHeaderRow = genericMemo(
+  <TData,>({ headerGroup }: { headerGroup: HeaderGroup<TData> }) => (
+    <TableRow>
+      {headerGroup.headers.map((header) => (
+        <DataTableHeaderCell
+          key={header.id}
+          header={header}
+          sorted={header.column.getIsSorted()}
+        />
+      ))}
+    </TableRow>
+  )
+);
 
 const DataTableHeaderCell = genericMemo(
   <TData,>({
@@ -186,15 +179,60 @@ const DataTableHeaderCell = genericMemo(
   }
 );
 
+const DataTableRow = genericMemo(
+  <TData,>({
+    row,
+    deleteRow,
+  }: {
+    row: Row<TData>;
+    deleteRow: (row: Row<TData>) => Promise<void>;
+  }) => {
+    const [deleting, setDeleting] = useState<boolean>(false);
+    return (
+      <TableRow
+        data-state={row.getIsSelected() && 'selected'}
+        className={cn(deleting && 'bg-destructive text-destructive-foreground')}
+      >
+        {row.getVisibleCells().map((cell) => (
+          <DataTableCell
+            key={cell.id}
+            cell={cell}
+            deleteRow={async () => {
+              setDeleting(true);
+              try {
+                const confirmed = await confirm({
+                  title: (
+                    <span className="text-destructive">
+                      Delete Extrusion Log?
+                    </span>
+                  ),
+                  description:
+                    'Are you sure you want to delete this extrusion log?',
+                  variant: 'destructive',
+                  yesLabel: 'Delete',
+                  noLabel: 'Go back',
+                });
+                if (confirmed) {
+                  await deleteRow(cell.row);
+                }
+              } finally {
+                setDeleting(false);
+              }
+            }}
+          />
+        ))}
+      </TableRow>
+    );
+  }
+);
+
 const DataTableCell = genericMemo(
   <TData,>({
     cell,
-    setDeletingRow,
     deleteRow,
   }: {
     cell: Cell<TData, unknown>;
-    setDeletingRow: Dispatch<SetStateAction<string | null>>;
-    deleteRow: (row: Row<TData>) => Promise<void>;
+    deleteRow: () => Promise<void>;
   }) => (
     <ContextMenu>
       <ContextMenuTrigger asChild>
@@ -207,31 +245,7 @@ const DataTableCell = genericMemo(
           <FilePenLine className="w-4 h-4 mr-2" />
           Edit
         </ContextMenuItem>
-        <ContextMenuItem
-          className="cursor-pointer"
-          onClick={async () => {
-            setDeletingRow(cell.row.id);
-            try {
-              const confirmed = await confirm({
-                title: (
-                  <span className="text-destructive">
-                    Delete Extrusion Log?
-                  </span>
-                ),
-                description:
-                  'Are you sure you want to delete this extrusion log?',
-                variant: 'destructive',
-                yesLabel: 'Delete',
-                noLabel: 'Go back',
-              });
-              if (confirmed) {
-                await deleteRow(cell.row);
-              }
-            } finally {
-              setDeletingRow(null);
-            }
-          }}
-        >
+        <ContextMenuItem className="cursor-pointer" onClick={deleteRow}>
           <Trash2 className="w-4 h-4 mr-2" />
           Delete Extrusion Log
         </ContextMenuItem>
