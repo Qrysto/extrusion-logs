@@ -160,7 +160,7 @@ async function fetchExtrusionLogs({
   if (remarkSearch) {
     query = query.where('extrusions.remark', 'like', `%${remarkSearch}%`);
   }
-  if (sort) {
+  if (sort?.length) {
     for (const { id, desc } of sort) {
       // @ts-ignore
       query = query.orderBy(`${id} ${desc ? 'desc' : 'asc'}`);
