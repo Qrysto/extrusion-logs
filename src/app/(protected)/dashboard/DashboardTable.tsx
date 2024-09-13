@@ -16,7 +16,7 @@ import { ListRestart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { colVisibilityKey } from '@/lib/const';
 import { ExtrusionLog } from '@/lib/types';
-import { post } from '@/lib/utils';
+import { del } from '@/lib/utils';
 import { toast } from '@/lib/use-toast';
 import { flashError } from '@/lib/flashDialog';
 import { getColumns } from './columns';
@@ -51,11 +51,11 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
 
   const deleteRow = useCallback(async (row: Row<ExtrusionLog>) => {
     try {
-      await post('/api/delete-extrusion-log', { id: row.original.id });
+      await del(`/api/extrusion-logs/${row.original.id}`);
       toast({
         title: 'Extrusion log has been deleted',
       });
-      refetch();
+      await refetch();
     } catch (err: any) {
       flashError({
         message: err?.message || String(err),

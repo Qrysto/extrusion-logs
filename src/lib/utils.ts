@@ -72,8 +72,24 @@ export function post(
   return call('POST', url, params, nextCache);
 }
 
+export function del(
+  url: string,
+  params?: object,
+  nextCache?: RequestInit['next']
+) {
+  return call('DELETE', url, params, nextCache);
+}
+
+export function path(
+  url: string,
+  params?: object,
+  nextCache?: RequestInit['next']
+) {
+  return call('PATCH', url, params, nextCache);
+}
+
 async function call(
-  method: 'GET' | 'POST',
+  method: 'GET' | 'POST' | 'DELETE' | 'PATCH',
   url: string,
   params?: object,
   nextCache?: RequestInit['next']
@@ -87,7 +103,7 @@ async function call(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: method === 'POST' && params ? JSON.stringify(params) : undefined,
+      body: method !== 'GET' && params ? JSON.stringify(params) : undefined,
     }
   );
   const json = await res.json();

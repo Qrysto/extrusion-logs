@@ -2,16 +2,18 @@ import { type NextRequest } from 'next/server';
 import db from '@/lib/db';
 import { getAccount } from '@/lib/auth';
 
-export async function POST(request: NextRequest) {
+export async function DELETE(
+  request: NextRequest,
+  { params: { id: idStr } }: { params: { id: string } }
+) {
   const account = await getAccount();
   if (!account) {
     return Response.json({ message: 'Unauthorized!' }, { status: 401 });
   }
 
-  const body = await request.json();
-  const { id } = body || {};
+  const id = parseInt(idStr);
   if (!id) {
-    return Response.json({ message: 'ID is required!' }, { status: 400 });
+    return Response.json({ message: 'Invalid ID!' }, { status: 400 });
   }
 
   const item = await db
