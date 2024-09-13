@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  Dispatch,
-  SetStateAction,
-} from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import {
   flexRender,
   Table as TableType,
@@ -188,38 +181,33 @@ const DataTableRow = genericMemo(
     deleteRow: (row: Row<TData>) => Promise<void>;
   }) => {
     const [deleting, setDeleting] = useState<boolean>(false);
+    const del = useCallback(async () => {
+      setDeleting(true);
+      try {
+        const confirmed = await confirm({
+          title: (
+            <span className="text-destructive">Delete Extrusion Log?</span>
+          ),
+          description: 'Are you sure you want to delete this extrusion log?',
+          variant: 'destructive',
+          yesLabel: 'Delete',
+          noLabel: 'Go back',
+        });
+        if (confirmed) {
+          await deleteRow(row);
+        }
+      } finally {
+        setDeleting(false);
+      }
+    }, [row]);
+
     return (
       <TableRow
         data-state={row.getIsSelected() && 'selected'}
         className={cn(deleting && 'bg-destructive text-destructive-foreground')}
       >
         {row.getVisibleCells().map((cell) => (
-          <DataTableCell
-            key={cell.id}
-            cell={cell}
-            deleteRow={async () => {
-              setDeleting(true);
-              try {
-                const confirmed = await confirm({
-                  title: (
-                    <span className="text-destructive">
-                      Delete Extrusion Log?
-                    </span>
-                  ),
-                  description:
-                    'Are you sure you want to delete this extrusion log?',
-                  variant: 'destructive',
-                  yesLabel: 'Delete',
-                  noLabel: 'Go back',
-                });
-                if (confirmed) {
-                  await deleteRow(cell.row);
-                }
-              } finally {
-                setDeleting(false);
-              }
-            }}
-          />
+          <DataTableCell key={cell.id} cell={cell} deleteRow={del} />
         ))}
       </TableRow>
     );
