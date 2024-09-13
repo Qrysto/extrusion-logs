@@ -1,3 +1,3 @@
 export const colVisibilityKey = 'columns';
 
-export const fetchLimit = 25;
+export const fetchLimit = 50;
