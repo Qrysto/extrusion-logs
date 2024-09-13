@@ -7,9 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { TriangleAlert } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { confirm } from '@/lib/flashDialog';
-import { useToast } from '@/lib/use-toast';
-import { flashError } from '@/lib/flashDialog';
+import { confirm, flashError } from '@/lib/ui';
+import { toast } from '@/lib/ui';
 import {
   ExtrusionLogForm,
   getDefaultValues,
@@ -20,7 +19,7 @@ import {
   refreshSuggestionData,
   refreshAllExtrusionQueries,
 } from '@/lib/client';
-import { post } from '@/lib/utils';
+import { post } from '@/lib/api';
 
 export default function AddExtrusionLog({
   employeeId,
@@ -28,7 +27,6 @@ export default function AddExtrusionLog({
   employeeId: string;
 }) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { toast } = useToast();
   const defaultValues = getDefaultValues({ employeeId });
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),

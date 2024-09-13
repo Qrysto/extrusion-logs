@@ -1,10 +1,15 @@
+'use client';
+
 import { ReactNode, ComponentProps } from 'react';
 import { OctagonX } from 'lucide-react';
 import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
-import { flashDialog } from '@/lib/use-toast';
+import { flashDialog } from '@/components/DialogController';
+import { toast } from '@/components/ToastController';
+
+export { toast };
 
 export function flashError({ message }: { message: ReactNode }) {
   return flashDialog({

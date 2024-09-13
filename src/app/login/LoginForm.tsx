@@ -7,7 +7,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { post } from '@/lib/utils';
+import { post } from '@/lib/api';
 
 interface FormValues {
   username: string;

@@ -31,9 +31,8 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
-import { genericMemo } from '@/lib/utils';
-import { confirm } from '@/lib/flashDialog';
+import { cn, genericMemo } from '@/lib/utils';
+import { confirm } from '@/lib/ui';
 
 export default function DataTable<TData>({
   table,

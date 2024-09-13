@@ -4,7 +4,8 @@ import { cn } from '@/lib/utils';
 import DisableNumberInputScroll from '@/components/DisableNumberInputScroll';
 import './globals.css';
 import ClientWrappers from './ClientWrappers';
-import { Toaster } from './toaster';
+import { ToastController } from '@/components/ToastController';
+import { DialogController } from '@/components/DialogController';
 
 const inter = Inter({ subsets: ['latin'], variable: '--inter' });
 
@@ -26,7 +27,8 @@ export default function RootLayout({
         )}
       >
         <ClientWrappers>{children}</ClientWrappers>
-        <Toaster />
+        <DialogController />
+        <ToastController />
         <DisableNumberInputScroll />
       </body>
     </html>

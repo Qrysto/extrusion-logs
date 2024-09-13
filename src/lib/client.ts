@@ -10,7 +10,7 @@ import {
 } from '@tanstack/react-query';
 import { fetchLimit } from './const';
 import type { SuggestionData, ExtrusionLog } from './types';
-import { get } from './utils';
+import { get } from './api';
 
 export function useUpdateSearchParams() {
   const router = useRouter();

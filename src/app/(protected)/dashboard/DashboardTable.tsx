@@ -16,13 +16,13 @@ import { ListRestart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { colVisibilityKey } from '@/lib/const';
 import { ExtrusionLog } from '@/lib/types';
-import { del } from '@/lib/utils';
-import { toast } from '@/lib/use-toast';
-import { flashError } from '@/lib/flashDialog';
+import { del } from '@/lib/api';
+import { toast } from '@/lib/ui';
+import { flashError } from '@/lib/ui';
 import { getColumns } from './columns';
 import Filters from './Filters';
 import ColumnSelector from './ColumnSelector';
-import DataTable from './DataTable';
+import DataTable from '@/components/DataTable';
 
 const emptyData: ExtrusionLog[] = [];
 

@@ -19,7 +19,7 @@ import {
   DropdownMenuArrow,
 } from '@/components/ui/dropdown-menu';
 import { ChevronDown } from 'lucide-react';
-import { post } from '@/lib/utils';
+import { post } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import type { LoggedInAccount } from '@/lib/auth';
 
