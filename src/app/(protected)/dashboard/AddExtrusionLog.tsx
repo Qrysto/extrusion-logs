@@ -9,6 +9,7 @@ import { TriangleAlert } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { confirm } from '@/lib/flashDialog';
 import { useToast } from '@/lib/use-toast';
+import { flashError } from '@/lib/flashDialog';
 import {
   ExtrusionLogForm,
   getDefaultValues,
@@ -43,11 +44,7 @@ export default function AddExtrusionLog({
     try {
       await post('/api/create-extrusion-log', finalValues);
     } catch (err: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Error!',
-        description: err?.message,
-      });
+      flashError({ message: err?.message || String(err) });
       return;
     }
     form.reset(getDefaultValues({ employeeId }));
