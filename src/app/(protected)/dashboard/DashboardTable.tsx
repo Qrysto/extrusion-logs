@@ -1,9 +1,8 @@
 'use client';
 
 import { useExtrusionLogs } from '@/lib/client';
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import {
-  type ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -155,13 +154,17 @@ function DataTable<TData>({
         }
       }
     },
-    [isFetching, hasNextPage, , fetchNextPage]
+    [isFetching, hasNextPage, fetchNextPage]
   );
+  useEffect(() => {
+    fetchMoreOnBottomReached(scrollerRef.current);
+  }, [fetchMoreOnBottomReached]);
 
   return (
     <div
       ref={scrollerRef}
       className="relative rounded-md border h-full overflow-auto"
+      onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
     >
       <Table>
         <TableHeader className="sticky top-0 flex-shrink-0 bg-zinc-50">

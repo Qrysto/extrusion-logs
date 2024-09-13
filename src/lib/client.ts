@@ -119,9 +119,9 @@ export function useExtrusionLogs() {
       get('/api/extrusion-logs', { ...params, skip: pageParam }),
     initialPageParam: 0,
     getNextPageParam: (lastPage, pages) =>
-      lastPage?.length === fetchLimit ? pages.length * fetchLimit : null,
+      lastPage?.length === fetchLimit ? flatLength(pages) : null,
     getPreviousPageParam: (lastPage, pages) =>
-      pages?.length ? (pages.length - 1) * fetchLimit : null,
+      pages?.length ? flatLength(pages.slice(0, pages.length - 1)) : null,
     staleTime: 60000, // 1 minute
     placeholderData: keepPreviousData,
   });
@@ -130,3 +130,6 @@ export function useExtrusionLogs() {
 export async function refreshAllExtrusionQueries() {
   return await queryClient.invalidateQueries({ queryKey: ['extrusion-logs'] });
 }
+
+const flatLength = (arr: any[]) =>
+  arr.reduce((sum, page) => sum + page.length, 0);

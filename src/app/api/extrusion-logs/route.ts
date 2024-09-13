@@ -3,6 +3,7 @@ import db from '@/lib/db';
 import { getAccount } from '@/lib/auth';
 import { parseDateRange } from '@/lib/dateTime';
 import { DateRange } from '@/lib/types';
+import { fetchLimit } from '@/lib/const';
 
 export async function GET(request: NextRequest) {
   const account = await getAccount();
@@ -115,7 +116,8 @@ async function fetchExtrusionLogs({
       'extrusions.ngPercentage',
       'extrusions.code',
       'extrusions.buttWeight',
-    ]);
+    ])
+    .limit(fetchLimit);
   if (account?.role === 'team') {
     query = query.where('extrusions.createdBy', '=', account.id);
   }
