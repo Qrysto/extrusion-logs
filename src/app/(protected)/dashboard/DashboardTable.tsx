@@ -1,7 +1,17 @@
 'use client';
 
 import { useExtrusionLogs } from '@/lib/client';
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import {
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
+  memo,
+  Dispatch,
+  SetStateAction,
+  ComponentType,
+} from 'react';
 import {
   flexRender,
   getCoreRowModel,
@@ -11,7 +21,9 @@ import {
   Updater,
   VisibilityState,
   Table as TableType,
+  Header,
   Row,
+  Cell,
 } from '@tanstack/react-table';
 import { useUpdateSearchParams } from '@/lib/client';
 import {
@@ -41,7 +53,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { colVisibilityKey } from '@/lib/const';
 import { ExtrusionLog } from '@/lib/types';
-import { post } from '@/lib/utils';
+import { post, genericMemo } from '@/lib/utils';
 import { toast } from '@/lib/use-toast';
 import { confirm, flashError } from '@/lib/flashDialog';
 import { getColumns } from './columns';
@@ -74,25 +86,16 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
   });
 
   const deleteRow = useCallback(async (row: Row<ExtrusionLog>) => {
-    const confirmed = await confirm({
-      title: <span className="text-destructive">Delete Extrusion Log?</span>,
-      description: 'Are you sure you want to delete this extrusion log?',
-      variant: 'destructive',
-      yesLabel: 'Delete',
-      noLabel: 'Go back',
-    });
-    if (confirmed) {
-      try {
-        await post('/api/delete-extrusion-log', { id: row.original.id });
-        toast({
-          title: 'Extrusion log has been deleted',
-        });
-        refetch();
-      } catch (err: any) {
-        flashError({
-          message: err?.message || String(err),
-        });
-      }
+    try {
+      await post('/api/delete-extrusion-log', { id: row.original.id });
+      toast({
+        title: 'Extrusion log has been deleted',
+      });
+      refetch();
+    } catch (err: any) {
+      flashError({
+        message: err?.message || String(err),
+      });
     }
   }, []);
 
@@ -137,9 +140,10 @@ function DataTable<TData>({
   isFetching: boolean;
   hasNextPage: boolean;
   fetchNextPage: Function;
-  deleteRow: (row: Row<TData>) => void;
+  deleteRow: (row: Row<TData>) => Promise<void>;
 }) {
   const { rows } = table.getRowModel();
+  const [deletingRow, setDeletingRow] = useState<string | null>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const fetchMoreOnBottomReached = useCallback(
     (containerRefElement?: HTMLDivElement | null) => {
@@ -170,48 +174,13 @@ function DataTable<TData>({
         <TableHeader className="sticky top-0 flex-shrink-0 bg-zinc-50">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                const sortable = header.column.getCanSort();
-                const sorted = header.column.getIsSorted();
-                return (
-                  <TableHead
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    className={cn(
-                      'font-bold whitespace-nowrap hover:bg-accent hover:text-accent-foreground group border',
-                      header.depth === 1 && 'text-center',
-                      sortable && 'cursor-pointer'
-                    )}
-                    onClick={
-                      sortable
-                        ? () => {
-                            if (sorted === 'asc') {
-                              header.column.clearSorting();
-                            } else {
-                              header.column.toggleSorting(sorted !== 'desc');
-                            }
-                          }
-                        : undefined
-                    }
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    {sortable && sorted === false && (
-                      <ArrowUpDown className="inline-block ml-2 h-4 w-4 opacity-20 group-hover:opacity-40" />
-                    )}
-                    {sorted === 'asc' && (
-                      <SortAsc className="inline-block ml-2 h-4 w-4" />
-                    )}
-                    {sorted === 'desc' && (
-                      <SortDesc className="inline-block ml-2 h-4 w-4" />
-                    )}
-                  </TableHead>
-                );
-              })}
+              {headerGroup.headers.map((header) => (
+                <DataTableHeaderCell
+                  key={header.id}
+                  header={header}
+                  sorted={header.column.getIsSorted()}
+                />
+              ))}
             </TableRow>
           ))}
         </TableHeader>
@@ -221,34 +190,18 @@ function DataTable<TData>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
+                className={cn(
+                  deletingRow === row.id &&
+                    'bg-destructive text-destructive-foreground'
+                )}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <ContextMenu>
-                    <ContextMenuTrigger asChild>
-                      <TableCell
-                        key={cell.id}
-                        className="whitespace-nowrap hover:bg-accent hover:text-accent-foreground"
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    </ContextMenuTrigger>
-                    <ContextMenuContent>
-                      <ContextMenuItem className="cursor-pointer">
-                        <FilePenLine className="w-4 h-4 mr-2" />
-                        Edit
-                      </ContextMenuItem>
-                      <ContextMenuItem
-                        className="cursor-pointer"
-                        onClick={() => deleteRow(row)}
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete Extrusion Log
-                      </ContextMenuItem>
-                    </ContextMenuContent>
-                  </ContextMenu>
+                  <DataTableCell
+                    key={cell.id}
+                    cell={cell}
+                    deleteRow={deleteRow}
+                    setDeletingRow={setDeletingRow}
+                  />
                 ))}
               </TableRow>
             ))
@@ -276,6 +229,104 @@ function DataTable<TData>({
     </div>
   );
 }
+
+const DataTableHeaderCell = genericMemo(
+  <TData,>({
+    header,
+    sorted,
+  }: {
+    header: Header<TData, unknown>;
+    sorted: false | 'asc' | 'desc';
+  }) => {
+    const sortable = header.column.getCanSort();
+    return (
+      <TableHead
+        colSpan={header.colSpan}
+        className={cn(
+          'font-bold whitespace-nowrap hover:bg-accent hover:text-accent-foreground group border',
+          header.depth === 1 && 'text-center',
+          sortable && 'cursor-pointer'
+        )}
+        onClick={
+          sortable
+            ? () => {
+                if (sorted === 'asc') {
+                  header.column.clearSorting();
+                } else {
+                  header.column.toggleSorting(sorted !== 'desc');
+                }
+              }
+            : undefined
+        }
+      >
+        {header.isPlaceholder
+          ? null
+          : flexRender(header.column.columnDef.header, header.getContext())}
+        {sortable && sorted === false && (
+          <ArrowUpDown className="inline-block ml-2 h-4 w-4 opacity-20 group-hover:opacity-40" />
+        )}
+        {sorted === 'asc' && <SortAsc className="inline-block ml-2 h-4 w-4" />}
+        {sorted === 'desc' && (
+          <SortDesc className="inline-block ml-2 h-4 w-4" />
+        )}
+      </TableHead>
+    );
+  }
+);
+
+const DataTableCell = genericMemo(
+  <TData,>({
+    cell,
+    setDeletingRow,
+    deleteRow,
+  }: {
+    cell: Cell<TData, unknown>;
+    setDeletingRow: Dispatch<SetStateAction<string | null>>;
+    deleteRow: (row: Row<TData>) => Promise<void>;
+  }) => (
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <TableCell className="whitespace-nowrap hover:bg-accent hover:text-accent-foreground">
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </TableCell>
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuItem className="cursor-pointer">
+          <FilePenLine className="w-4 h-4 mr-2" />
+          Edit
+        </ContextMenuItem>
+        <ContextMenuItem
+          className="cursor-pointer"
+          onClick={async () => {
+            setDeletingRow(cell.row.id);
+            try {
+              const confirmed = await confirm({
+                title: (
+                  <span className="text-destructive">
+                    Delete Extrusion Log?
+                  </span>
+                ),
+                description:
+                  'Are you sure you want to delete this extrusion log?',
+                variant: 'destructive',
+                yesLabel: 'Delete',
+                noLabel: 'Go back',
+              });
+              if (confirmed) {
+                await deleteRow(cell.row);
+              }
+            } finally {
+              setDeletingRow(null);
+            }
+          }}
+        >
+          <Trash2 className="w-4 h-4 mr-2" />
+          Delete Extrusion Log
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
+  )
+);
 
 function useSortingState() {
   const [searchParams, updateSearchParams] = useUpdateSearchParams();

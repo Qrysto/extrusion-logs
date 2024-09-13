@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { RequestInit } from 'next/dist/server/web/spec-extension/request';
@@ -5,6 +6,8 @@ import { RequestInit } from 'next/dist/server/web/spec-extension/request';
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export const genericMemo: <T>(component: T) => T = memo;
 
 export function memoize<T, P extends Array<any>, R>(
   resultFn: (this: T, ...args: P) => R,
