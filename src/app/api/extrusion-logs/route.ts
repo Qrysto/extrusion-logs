@@ -174,4 +174,4 @@ async function fetchExtrusionLogs({
   return await query.execute();
 }
 
-export type ExtrusionLog = Awaited<ReturnType<typeof fetchExtrusionLogs>>;
+export type ExtrusionLog = Awaited<ReturnType<typeof fetchExtrusionLogs>>[0];

@@ -12,9 +12,17 @@ import {
   Updater,
   VisibilityState,
   Table as TableType,
+  Row,
 } from '@tanstack/react-table';
 import { useUpdateSearchParams } from '@/lib/client';
-import { ArrowUpDown, SortAsc, SortDesc, ListRestart } from 'lucide-react';
+import {
+  ArrowUpDown,
+  SortAsc,
+  SortDesc,
+  ListRestart,
+  FilePenLine,
+  Trash2,
+} from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -23,11 +31,20 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { colVisibilityKey } from '@/lib/const';
 import { ExtrusionLog } from '@/lib/types';
+import { post } from '@/lib/utils';
+import { toast } from '@/lib/use-toast';
+import { confirm, flashError } from '@/lib/flashDialog';
 import { getColumns } from './columns';
 import Filters from './Filters';
 import ColumnSelector from './ColumnSelector';
@@ -35,7 +52,8 @@ import ColumnSelector from './ColumnSelector';
 const emptyData: ExtrusionLog[] = [];
 
 export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
-  const { data, isFetching, hasNextPage, fetchNextPage } = useExtrusionLogs();
+  const { data, isFetching, hasNextPage, fetchNextPage, refetch } =
+    useExtrusionLogs();
   const flatData = useMemo(
     () => data?.pages?.flatMap((page) => page) ?? [],
     [data]
@@ -55,6 +73,29 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
   });
+
+  const deleteRow = useCallback(async (row: Row<ExtrusionLog>) => {
+    const confirmed = await confirm({
+      title: <span className="text-destructive">Delete Extrusion Log?</span>,
+      description: 'Are you sure you want to delete this extrusion log?',
+      variant: 'destructive',
+      yesLabel: 'Delete',
+      noLabel: 'Go back',
+    });
+    if (confirmed) {
+      try {
+        await post('/api/delete-extrusion-log', { id: row.original.id });
+        toast({
+          title: 'Extrusion log has been deleted',
+        });
+        refetch();
+      } catch (err: any) {
+        flashError({
+          message: err?.message || String(err),
+        });
+      }
+    }
+  }, []);
 
   return (
     <>
@@ -76,10 +117,10 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
       <main className="flex-1 min-h-0 w-full">
         <DataTable
           table={table}
-          columns={columns}
           isFetching={isFetching}
           hasNextPage={hasNextPage}
           fetchNextPage={fetchNextPage}
+          deleteRow={deleteRow}
         />
       </main>
     </>
@@ -88,16 +129,16 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
 
 function DataTable<TData>({
   table,
-  columns,
   isFetching,
   hasNextPage,
   fetchNextPage,
+  deleteRow,
 }: {
   table: TableType<TData>;
-  columns: ColumnDef<TData>[];
   isFetching: boolean;
   hasNextPage: boolean;
   fetchNextPage: Function;
+  deleteRow: (row: Row<TData>) => void;
 }) {
   const { rows } = table.getRowModel();
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -179,18 +220,41 @@ function DataTable<TData>({
                 data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell
-                    key={cell.id}
-                    className="whitespace-nowrap hover:bg-accent hover:text-accent-foreground"
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
+                  <ContextMenu>
+                    <ContextMenuTrigger asChild>
+                      <TableCell
+                        key={cell.id}
+                        className="whitespace-nowrap hover:bg-accent hover:text-accent-foreground"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    </ContextMenuTrigger>
+                    <ContextMenuContent>
+                      <ContextMenuItem className="cursor-pointer">
+                        <FilePenLine className="w-4 h-4 mr-2" />
+                        Edit
+                      </ContextMenuItem>
+                      <ContextMenuItem
+                        className="cursor-pointer"
+                        onClick={() => deleteRow(row)}
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete Extrusion Log
+                      </ContextMenuItem>
+                    </ContextMenuContent>
+                  </ContextMenu>
                 ))}
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={table.getVisibleLeafColumns().length}
+                className="h-24 text-center"
+              >
                 No results.
               </TableCell>
             </TableRow>
