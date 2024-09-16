@@ -42,8 +42,10 @@ export function FormOkToggleGroup(props: ComponentProps<typeof ToggleGroup>) {
     <FormControl
       render={({ field: { value, onChange, ...fieldRest } }) => (
         <ToggleGroup
-          value={(value ? 'OK' : 'NG') as any}
-          onValueChange={(val: any) => onChange(val === 'OK')}
+          value={(value === true ? 'OK' : value === false ? 'NG' : null) as any}
+          onValueChange={(val: any) =>
+            onChange(val === 'OK' ? true : val === 'NG' ? false : null)
+          }
           {...fieldRest}
           {...props}
         />
