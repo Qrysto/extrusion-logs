@@ -80,8 +80,8 @@ export default function DataTable<TData>({
       className="relative rounded-md border h-full overflow-auto"
       onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
     >
-      <Table>
-        <TableHeader className="sticky top-0 flex-shrink-0 bg-zinc-50">
+      <Table className="border-separate border-spacing-0">
+        <TableHeader className="sticky top-0 rounded-t-md flex-shrink-0 bg-background shadow-[0_0_2px_1px_hsl(var(--border))]">
           {table.getHeaderGroups().map((headerGroup) => (
             <DataTableHeaderRow
               key={headerGroup.id}
@@ -127,7 +127,7 @@ export default function DataTable<TData>({
 
 const DataTableHeaderRow = genericMemo(
   <TData,>({ headerGroup }: { headerGroup: HeaderGroup<TData> }) => (
-    <TableRow>
+    <TableRow className="hover:bg-background">
       {headerGroup.headers.map((header) => (
         <DataTableHeaderCell
           key={header.id}
@@ -152,7 +152,7 @@ const DataTableHeaderCell = genericMemo(
       <TableHead
         colSpan={header.colSpan}
         className={cn(
-          'font-bold whitespace-nowrap hover:bg-accent hover:text-accent-foreground group border',
+          'font-bold whitespace-nowrap group border border-border/50',
           header.depth === 1 && 'text-center',
           sortable && 'cursor-pointer'
         )}

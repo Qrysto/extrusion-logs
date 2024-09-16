@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { ListChecks } from 'lucide-react';
-import { columnLabels } from './columns';
+import { columnLabels, ColumnNames } from './columns';
 
 export default function ColumnSelector<TData>({
   table,
@@ -19,7 +19,7 @@ export default function ColumnSelector<TData>({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="secondary" size="sm" className="h-10 gap-1">
+        <Button variant="outline" size="sm" className="h-10 gap-1">
           <ListChecks className="h-4 w-4" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
             Columns
@@ -41,7 +41,7 @@ export default function ColumnSelector<TData>({
               checked={column.getIsVisible()}
               onCheckedChange={(value) => column.toggleVisibility(!!value)}
             >
-              {columnLabels[column.id]}
+              {columnLabels[column.id as ColumnNames]}
             </DropdownMenuCheckboxItem>
           ))}
       </DropdownMenuContent>
