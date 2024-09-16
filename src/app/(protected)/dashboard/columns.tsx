@@ -196,7 +196,7 @@ const renderNumberCell: ColumnDefTemplate<
 
 const headerLabel: StringOrTemplateHeader<ExtrusionLog, unknown> = ({
   column,
-}) => columnLabels[column.id];
+}) => columnLabels[column.id as ColumnNames];
 
 const stripSeconds = (time: string | null) =>
   time && time.substring(0, time.lastIndexOf(':'));
