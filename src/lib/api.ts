@@ -24,7 +24,7 @@ export function del(
   return call('DELETE', url, params, nextCache);
 }
 
-export function path(
+export function patch(
   url: string,
   params?: object,
   nextCache?: RequestInit['next']

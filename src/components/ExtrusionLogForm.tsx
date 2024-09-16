@@ -9,6 +9,7 @@ import {
   FormInput,
   FormAutoComplete,
   FormToggleGroup,
+  FormOkToggleGroup,
   FormDatePicker,
   FormTimePicker,
 } from '@/components/ui/form-adapters';
@@ -24,44 +25,45 @@ import { Button } from '@/components/ui/button';
 import { useSuggestionData } from '@/lib/client';
 
 export const formSchema = z.object({
-  employeeId: z.string(),
-  date: z.date(),
-  shift: z.enum(['day', 'night']),
-  startTime: z.string(),
-  endTime: z.string(),
+  employeeId: z.string().nullable(),
+  date: z.date().nullable(),
+  shift: z.enum(['day', 'night']).nullable(),
+  startTime: z.string().nullable(),
+  endTime: z.string().nullable(),
 
-  item: z.string(),
-  customer: z.string(),
-  dieCode: z.string(),
+  item: z.string().nullable(),
+  customer: z.string().nullable(),
+  dieCode: z.string().nullable(),
   dieNumber: z.coerce
     .number()
     .min(0, 'Cannot be negative')
-    .int('Has to be integer'),
-  cavity: z.coerce.number().min(0).int(),
-  productKgpm: z.coerce.number().min(0),
-  billetType: z.string(),
-  lotNumberCode: z.string(),
-  ingotRatio: z.coerce.number().min(0),
-  billetKgpm: z.coerce.number().min(0),
-  billetLength: z.coerce.number().min(0),
-  billetQuantity: z.coerce.number().min(0).int(),
-  billetWeight: z.coerce.number().min(0),
-  orderLength: z.coerce.number().min(0),
-  ramSpeed: z.coerce.number().min(0),
-  billetTemp: z.coerce.number().min(0),
-  outputTemp: z.coerce.number().min(0),
+    .int('Has to be integer')
+    .nullable(),
+  cavity: z.coerce.number().min(0).int().nullable(),
+  productKgpm: z.coerce.number().min(0).nullable(),
+  billetType: z.string().nullable(),
+  lotNumberCode: z.string().nullable(),
+  ingotRatio: z.coerce.number().min(0).nullable(),
+  billetKgpm: z.coerce.number().min(0).nullable(),
+  billetLength: z.coerce.number().min(0).nullable(),
+  billetQuantity: z.coerce.number().min(0).int().nullable(),
+  billetWeight: z.coerce.number().min(0).nullable(),
+  orderLength: z.coerce.number().min(0).nullable(),
+  ramSpeed: z.coerce.number().min(0).nullable(),
+  billetTemp: z.coerce.number().min(0).nullable(),
+  outputTemp: z.coerce.number().min(0).nullable(),
 
-  result: z.enum(['OK', 'NG']),
-  outputYield: z.coerce.number().min(0),
-  productionQuantity: z.coerce.number().min(0).int(),
-  productionWeight: z.coerce.number().min(0),
-  remark: z.string(),
-  outputRate: z.coerce.number().min(0),
-  ngQuantity: z.coerce.number().min(0).int(),
-  ngWeight: z.coerce.number().min(0),
-  ngPercentage: z.coerce.number().min(0),
-  code: z.string(),
-  buttWeight: z.coerce.number().min(0),
+  ok: z.boolean().nullable(),
+  outputYield: z.coerce.number().min(0).nullable(),
+  productionQuantity: z.coerce.number().min(0).int().nullable(),
+  productionWeight: z.coerce.number().min(0).nullable(),
+  remark: z.string().nullable(),
+  outputRate: z.coerce.number().min(0).nullable(),
+  ngQuantity: z.coerce.number().min(0).int().nullable(),
+  ngWeight: z.coerce.number().min(0).nullable(),
+  ngPercentage: z.coerce.number().min(0).nullable(),
+  code: z.string().nullable(),
+  buttWeight: z.coerce.number().min(0).nullable(),
 });
 
 export type FormValues = z.infer<typeof formSchema>;
@@ -204,8 +206,8 @@ export function ExtrusionLogForm({
         </div>
 
         <div className="flex gap-x-4">
-          <FormItem name="result" label="Result">
-            <FormToggleGroup type="single" items={resultItems} />
+          <FormItem name="ok" label="Result">
+            <FormOkToggleGroup type="single" items={resultItems} />
           </FormItem>
 
           <FormItem name="outputYield" label="Yield (%)">
@@ -324,14 +326,14 @@ export function getDefaultValues<T extends object>({
     startTime: '',
     endTime: format(now, timeFormat),
 
-    item: '',
-    customer: '',
-    dieCode: '',
+    item: null,
+    customer: null,
+    dieCode: null,
     dieNumber: null,
     cavity: null,
     productKgpm: null,
-    billetType: '',
-    lotNumberCode: '',
+    billetType: null,
+    lotNumberCode: null,
     ingotRatio: null,
     billetKgpm: null,
     billetLength: null,
@@ -342,16 +344,16 @@ export function getDefaultValues<T extends object>({
     billetTemp: null,
     outputTemp: null,
 
-    result: null,
+    ok: null,
     outputYield: null,
     productionQuantity: null,
     productionWeight: null,
-    remark: '',
+    remark: null,
     outputRate: null,
     ngQuantity: null,
     ngWeight: null,
     ngPercentage: null,
-    code: '',
+    code: null,
     buttWeight: null,
   } as T;
 }

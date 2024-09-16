@@ -31,6 +31,10 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  isMutableField,
+  columnLabels,
+} from '@/app/(protected)/dashboard/columns';
 import { cn, genericMemo } from '@/lib/utils';
 import { confirm } from '@/lib/ui';
 
@@ -40,12 +44,14 @@ export default function DataTable<TData>({
   hasNextPage,
   fetchNextPage,
   deleteRow,
+  editCell,
 }: {
   table: TableType<TData>;
   isFetching: boolean;
   hasNextPage: boolean;
   fetchNextPage: Function;
   deleteRow: (row: Row<TData>) => Promise<void>;
+  editCell: (cell: Cell<TData, unknown>) => Promise<void>;
 }) {
   const { rows } = table.getRowModel();
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -86,7 +92,12 @@ export default function DataTable<TData>({
         <TableBody className="flex-1">
           {rows?.length ? (
             rows.map((row) => (
-              <DataTableRow key={row.id} row={row} deleteRow={deleteRow} />
+              <DataTableRow
+                key={row.id}
+                row={row}
+                deleteRow={deleteRow}
+                editCell={editCell}
+              />
             ))
           ) : (
             <TableRow>
@@ -175,9 +186,11 @@ const DataTableRow = genericMemo(
   <TData,>({
     row,
     deleteRow,
+    editCell,
   }: {
     row: Row<TData>;
     deleteRow: (row: Row<TData>) => Promise<void>;
+    editCell: (cell: Cell<TData, unknown>) => Promise<void>;
   }) => {
     const [deleting, setDeleting] = useState<boolean>(false);
     const del = useCallback(async () => {
@@ -206,7 +219,12 @@ const DataTableRow = genericMemo(
         className={cn(deleting && 'bg-destructive text-destructive-foreground')}
       >
         {row.getVisibleCells().map((cell) => (
-          <DataTableCell key={cell.id} cell={cell} deleteRow={del} />
+          <DataTableCell
+            key={cell.id}
+            cell={cell}
+            deleteRow={del}
+            editCell={editCell}
+          />
         ))}
       </TableRow>
     );
@@ -217,26 +235,48 @@ const DataTableCell = genericMemo(
   <TData,>({
     cell,
     deleteRow,
+    editCell,
   }: {
     cell: Cell<TData, unknown>;
     deleteRow: () => Promise<void>;
-  }) => (
-    <ContextMenu>
-      <ContextMenuTrigger asChild>
-        <TableCell className="whitespace-nowrap hover:bg-accent hover:text-accent-foreground">
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-        </TableCell>
-      </ContextMenuTrigger>
-      <ContextMenuContent>
-        <ContextMenuItem className="cursor-pointer">
-          <FilePenLine className="w-4 h-4 mr-2" />
-          Edit
-        </ContextMenuItem>
-        <ContextMenuItem className="cursor-pointer" onClick={deleteRow}>
-          <Trash2 className="w-4 h-4 mr-2" />
-          Delete Extrusion Log
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
-  )
+    editCell: (cell: Cell<TData, unknown>) => Promise<void>;
+  }) => {
+    const [editing, setEditing] = useState<boolean>(false);
+    const edit = useCallback(async () => {
+      setEditing(true);
+      try {
+        await editCell(cell);
+      } finally {
+        setEditing(false);
+      }
+    }, [cell]);
+    const { column } = cell;
+
+    return (
+      <ContextMenu>
+        <ContextMenuTrigger asChild>
+          <TableCell
+            className={cn(
+              'whitespace-nowrap hover:bg-accent hover:text-accent-foreground',
+              editing && 'bg-primary'
+            )}
+          >
+            {flexRender(column.columnDef.cell, cell.getContext())}
+          </TableCell>
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          {isMutableField(column.id) && (
+            <ContextMenuItem className="cursor-pointer" onClick={edit}>
+              <FilePenLine className="w-4 h-4 mr-2" />
+              Edit {columnLabels[column.id]}
+            </ContextMenuItem>
+          )}
+          <ContextMenuItem className="cursor-pointer" onClick={deleteRow}>
+            <Trash2 className="w-4 h-4 mr-2" />
+            Delete Extrusion Log
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    );
+  }
 );

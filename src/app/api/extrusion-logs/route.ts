@@ -94,6 +94,7 @@ async function fetchExtrusionLogs({
       'extrusions.billetLength',
       'extrusions.billetQuantity',
       'extrusions.billetKgpm',
+      'extrusions.billetWeight',
       'extrusions.ramSpeed',
       'extrusions.dieCode',
       'extrusions.dieNumber',

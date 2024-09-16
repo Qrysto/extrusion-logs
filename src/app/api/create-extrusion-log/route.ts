@@ -45,6 +45,8 @@ export async function POST(request: NextRequest) {
     outputYield,
   } = body || {};
 
+  console.log('body', body);
+
   const extrusionLogValues = {
     billetKgpm,
     billetLength,

@@ -48,6 +48,21 @@ export function FormToggleGroup(props: ComponentProps<typeof ToggleGroup>) {
   );
 }
 
+export function FormOkToggleGroup(props: ComponentProps<typeof ToggleGroup>) {
+  return (
+    <FormControl
+      render={({ field: { value, onChange, ...fieldRest } }) => (
+        <ToggleGroup
+          value={(value ? 'OK' : 'NG') as any}
+          onValueChange={(val: any) => onChange(val === 'OK')}
+          {...fieldRest}
+          {...props}
+        />
+      )}
+    />
+  );
+}
+
 export function FormDatePicker(
   props: Omit<ComponentProps<typeof DatePicker>, 'date' | 'onDateChange'>
 ) {

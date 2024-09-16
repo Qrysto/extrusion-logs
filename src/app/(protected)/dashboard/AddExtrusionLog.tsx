@@ -34,13 +34,8 @@ export default function AddExtrusionLog({
   });
 
   async function onSubmit(values: FormValues) {
-    const finalValues = {
-      ...values,
-      ok: values.result === 'OK',
-      result: undefined,
-    };
     try {
-      await post('/api/create-extrusion-log', finalValues);
+      await post('/api/create-extrusion-log', values);
     } catch (err: any) {
       flashError({ message: err?.message || String(err) });
       return;
@@ -48,7 +43,7 @@ export default function AddExtrusionLog({
     form.reset(getDefaultValues({ employeeId }));
     setDialogOpen(false);
     toast({
-      title: 'Extrusion log has been created',
+      title: 'Created successfully!',
     });
     refreshSuggestionData();
     refreshAllExtrusionQueries();

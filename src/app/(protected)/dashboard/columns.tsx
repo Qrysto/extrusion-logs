@@ -14,7 +14,7 @@ import { memoize } from '@/lib/utils';
 const ch = createColumnHelper<ExtrusionLog>();
 const formatNumber = Intl.NumberFormat('en-US').format;
 
-export const getColumns = memoize((isAdmin: boolean) => {
+const getColumns = memoize((isAdmin: boolean) => {
   const adminColumns: ColumnDef<ExtrusionLog>[] = isAdmin
     ? [
         { accessorKey: 'machine', header: 'Machine' },
@@ -73,6 +73,10 @@ export const getColumns = memoize((isAdmin: boolean) => {
           cell: renderNumberCell,
         }),
         ch.accessor('billetKgpm', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('billetWeight', {
           header: headerLabel,
           cell: renderNumberCell,
         }),
@@ -220,7 +224,71 @@ function workingTime({ row }: CellContext<ExtrusionLog, unknown>) {
   );
 }
 
-export const columnLabels: Record<string, string> = {
+type ColumnNames = Exclude<keyof ExtrusionLog, 'id'> | 'workingTime';
+
+function isColumnName(value: string): value is ColumnNames {
+  return columnNames.has(value as ColumnNames);
+}
+
+const columnNames = new Set<ColumnNames>([
+  'date',
+  'shift',
+  'plant',
+  'machine',
+  'inch',
+  'employeeId',
+
+  'item',
+  'customer',
+  'dieCode',
+
+  'dieNumber',
+  'cavity',
+  'productKgpm',
+
+  'billetType',
+  'billetKgpm',
+  'billetLength',
+  'billetQuantity',
+  'billetWeight',
+  'ingotRatio',
+  'lotNumberCode',
+
+  'ramSpeed',
+  'billetTemp',
+  'outputTemp',
+  'orderLength',
+  'outputRate',
+  'productionQuantity',
+  'productionWeight',
+
+  'ok',
+  'outputYield',
+  'ngQuantity',
+  'ngWeight',
+  'ngPercentage',
+  'remark',
+  'buttWeight',
+  'code',
+  'startTime',
+  'endTime',
+  'workingTime',
+]);
+
+type MutableFields = Exclude<
+  keyof ExtrusionLog,
+  'id' | 'plant' | 'machine' | 'inch' | 'workingTime'
+>;
+
+const mutableFields = columnNames.difference(
+  new Set(['id', 'plant', 'machine', 'inch', 'workingTime'])
+);
+
+function isMutableField(value: string): value is MutableFields {
+  return mutableFields.has(value as MutableFields);
+}
+
+const columnLabels: Record<ColumnNames, string> = {
   date: 'Date',
   shift: 'Shift',
   plant: 'Plant',
@@ -264,3 +332,13 @@ export const columnLabels: Record<string, string> = {
   endTime: 'Finish',
   workingTime: 'Duration',
 };
+
+export {
+  getColumns,
+  columnNames,
+  isColumnName,
+  columnLabels,
+  mutableFields,
+  isMutableField,
+};
+export type { ColumnNames, MutableFields };

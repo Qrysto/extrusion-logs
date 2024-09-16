@@ -10,6 +10,7 @@ import {
   Updater,
   VisibilityState,
   Row,
+  Cell,
 } from '@tanstack/react-table';
 import { useUpdateSearchParams } from '@/lib/client';
 import { ListRestart } from 'lucide-react';
@@ -19,10 +20,11 @@ import { ExtrusionLog } from '@/lib/types';
 import { del } from '@/lib/api';
 import { toast } from '@/lib/ui';
 import { flashError } from '@/lib/ui';
-import { getColumns } from './columns';
+import { getColumns, isMutableField, MutableFields } from './columns';
 import Filters from './Filters';
 import ColumnSelector from './ColumnSelector';
 import DataTable from '@/components/DataTable';
+import { EditExtrusionLogForm, EditingState } from './EditExtrusionLogField';
 
 const emptyData: ExtrusionLog[] = [];
 
@@ -48,6 +50,9 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
   });
+  const [editing, setEditing] = useState<EditingState<MutableFields> | null>(
+    null
+  );
 
   const deleteRow = useCallback(async (row: Row<ExtrusionLog>) => {
     try {
@@ -62,6 +67,24 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
       });
     }
   }, []);
+
+  const editCell = useCallback(
+    async (cell: Cell<ExtrusionLog, unknown>) =>
+      new Promise<void>((resolve) => {
+        const field = cell.column.id;
+        if (!isMutableField(field)) return;
+        setEditing({
+          extrusionLogId: cell.row.original.id,
+          field,
+          initialValue: cell.row.original[field],
+          removeDialog: () => {
+            setEditing(null);
+            resolve();
+          },
+        });
+      }),
+    []
+  );
 
   return (
     <>
@@ -87,8 +110,11 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
           hasNextPage={hasNextPage}
           fetchNextPage={fetchNextPage}
           deleteRow={deleteRow}
+          editCell={editCell}
         />
       </main>
+
+      {!!editing && <EditExtrusionLogForm {...editing} />}
     </>
   );
 }
