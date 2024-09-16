@@ -5,7 +5,8 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Check } from 'lucide-react';
+import { Check, MoonStar, Sun } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { LoggedInAccount } from '@/lib/auth';
 import AccountControl from './AccountControl';
 import AddExtrusionLog from './AddExtrusionLog';
@@ -13,6 +14,7 @@ import AddExtrusionLog from './AddExtrusionLog';
 export default function Header({ account }: { account: LoggedInAccount }) {
   const [employeeId, setEmployeeId] = useState('');
   const [editing, setEditing] = useState(false);
+  const { setTheme, theme } = useTheme();
 
   return (
     <header className="bg-background border-b py-6 flex justify-between items-start shrink-0">
@@ -32,27 +34,29 @@ export default function Header({ account }: { account: LoggedInAccount }) {
         <span className="sr-only">Acme Inc</span>
       </Link>
 
-      <div className="flex justify-end items-center flex-1">
-        {!editing && !!employeeId && (
-          <label
-            onClick={() => {
-              setEditing(true);
-            }}
-            className="cursor-pointer"
-          >
-            Employee ID: <strong>{employeeId}</strong>
-          </label>
-        )}
-        {!editing && (
-          <Button
-            variant="link"
-            onClick={() => {
-              setEditing(true);
-            }}
-          >
-            {employeeId ? 'Change' : 'Enter Employee ID'}
-          </Button>
-        )}
+      <div className="flex justify-end items-center flex-1 space-x-4">
+        <div className="flex items-center">
+          {!editing && !!employeeId && (
+            <label
+              onClick={() => {
+                setEditing(true);
+              }}
+              className="cursor-pointer"
+            >
+              Employee ID: <strong>{employeeId}</strong>
+            </label>
+          )}
+          {!editing && (
+            <Button
+              variant="link"
+              onClick={() => {
+                setEditing(true);
+              }}
+            >
+              {employeeId ? 'Change' : 'Enter Employee ID'}
+            </Button>
+          )}
+        </div>
         {editing && (
           <form
             className="flex items-center"
@@ -72,6 +76,15 @@ export default function Header({ account }: { account: LoggedInAccount }) {
               <Check className="h-4 w-4" />
             </Button>
           </form>
+        )}
+        {theme === 'light' ? (
+          <Button variant="ghost" onClick={() => setTheme('dark')}>
+            <Sun className="h-4 w-4" />
+          </Button>
+        ) : (
+          <Button variant="ghost" onClick={() => setTheme('light')}>
+            <MoonStar className="h-4 w-4" />
+          </Button>
         )}
         <AccountControl account={account} />
       </div>

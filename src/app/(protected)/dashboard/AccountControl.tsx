@@ -39,7 +39,7 @@ export default function AccountControl({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="ml-4">
+          <Button variant="ghost">
             <span className="font-bold mr-1">
               {account.plant ? `[${account.plant}] ` : ''}
               {account.username}
