@@ -59,7 +59,6 @@ export default function Header({ account }: { account: LoggedInAccount }) {
         </div>
         {editing && (
           <form
-            className="flex items-center"
             onSubmit={() => {
               setEditing(false);
             }}
@@ -71,10 +70,10 @@ export default function Header({ account }: { account: LoggedInAccount }) {
               onChange={(evt) => setEmployeeId(evt.target.value)}
               placeholder="Employee ID"
               className="w-40"
+              onBlur={() => {
+                setEditing(false);
+              }}
             />
-            <Button type="submit" className="ml-2">
-              <Check className="h-4 w-4" />
-            </Button>
           </form>
         )}
         {theme === 'light' ? (
