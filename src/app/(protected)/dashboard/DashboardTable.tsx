@@ -35,6 +35,7 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
     () => data?.pages?.flatMap((page) => page) ?? [],
     [data]
   );
+
   const columns = getColumns(isAdmin);
   const [sorting, setSorting] = useSortingState();
   const [columnVisibility, setColumnVisibility] = useColumnVisibility();

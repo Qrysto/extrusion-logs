@@ -111,7 +111,9 @@ export function ExtrusionLogForm({
           </FormItem>
 
           <FormItem name="date" label="Date">
-            <FormDatePicker />
+            <div>
+              <FormDatePicker />
+            </div>
           </FormItem>
 
           <FormItem name="startTime" label="Start time" className="flex-1">

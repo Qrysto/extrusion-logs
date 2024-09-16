@@ -90,7 +90,7 @@ export function EditExtrusionLogForm<T extends MutableFields>({
         }
       }}
     >
-      <DialogContent className="flex flex-col max-h-[90%] max-w-3xl px-0">
+      <DialogContent className="flex flex-col max-w-xl px-0">
         <DialogHeader className="flex-shrink-0 px-6">
           <DialogTitle>Edit {columnLabels[field]}</DialogTitle>
         </DialogHeader>
@@ -99,7 +99,7 @@ export function EditExtrusionLogForm<T extends MutableFields>({
           id={formId}
           form={form}
           onSubmit={onSubmit}
-          className="overflow-auto px-6 py-2 space-y-6"
+          className="px-6 py-2 space-y-6"
         >
           <Field field={field} data={data} />
         </Form>
@@ -148,7 +148,9 @@ function Field<T extends MutableFields>({
     case 'date':
       return (
         <FormItem name="date" label="Date">
-          <FormDatePicker />
+          <div>
+            <FormDatePicker />
+          </div>
         </FormItem>
       );
     case 'shift':
