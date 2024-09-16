@@ -105,7 +105,7 @@ export const AutoComplete = ({
             isOpen ? 'block' : 'hidden'
           )}
         >
-          <CommandList className="rounded-md ring-1 ring-slate-200">
+          <CommandList scrollAreaClassName="rounded-md border">
             {isLoading ? (
               <CommandPrimitive.Loading>
                 <div className="p-1">
@@ -113,9 +113,8 @@ export const AutoComplete = ({
                 </div>
               </CommandPrimitive.Loading>
             ) : null}
-            {options.length > 0 && !isLoading ? (
-              <CommandGroup>
-                {options.map((option) => {
+            {options.length > 0 && !isLoading
+              ? options.map((option) => {
                   // const isSelected = value === option;
                   return (
                     <CommandItem
@@ -134,9 +133,8 @@ export const AutoComplete = ({
                       {option}
                     </CommandItem>
                   );
-                })}
-              </CommandGroup>
-            ) : null}
+                })
+              : null}
             {!isLoading ? (
               <CommandPrimitive.Empty className="select-none rounded-sm px-2 py-3 text-center text-sm">
                 {emptyMessage}
