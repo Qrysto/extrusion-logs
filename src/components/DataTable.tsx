@@ -95,6 +95,7 @@ export default function DataTable<TData>({
               <DataTableRow
                 key={row.id}
                 row={row}
+                selected={!!table.getSelectedRowModel().rowsById[row.id]}
                 deleteRow={deleteRow}
                 editCell={editCell}
               />
@@ -187,8 +188,10 @@ const DataTableRow = genericMemo(
     row,
     deleteRow,
     editCell,
+    selected,
   }: {
     row: Row<TData>;
+    selected: boolean;
     deleteRow: (row: Row<TData>) => Promise<void>;
     editCell: (cell: Cell<TData, unknown>) => Promise<void>;
   }) => {
@@ -215,8 +218,11 @@ const DataTableRow = genericMemo(
 
     return (
       <TableRow
-        data-state={row.getIsSelected() && 'selected'}
-        className={cn(deleting && 'bg-destructive text-destructive-foreground')}
+        data-state={selected && 'selected'}
+        className={cn(
+          selected && !deleting && 'bg-accent text-accent-foreground',
+          deleting && 'bg-destructive text-destructive-foreground'
+        )}
       >
         {row.getVisibleCells().map((cell) => (
           <DataTableCell
@@ -253,7 +259,13 @@ const DataTableCell = genericMemo(
     const { column } = cell;
 
     return (
-      <ContextMenu>
+      <ContextMenu
+        onOpenChange={(open) => {
+          console.log('toggle', open);
+
+          cell.row.toggleSelected(open);
+        }}
+      >
         <ContextMenuTrigger asChild>
           <TableCell
             className={cn(

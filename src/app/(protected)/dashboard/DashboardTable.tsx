@@ -39,6 +39,7 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
   const columns = getColumns(isAdmin);
   const [sorting, setSorting] = useSortingState();
   const [columnVisibility, setColumnVisibility] = useColumnVisibility();
+  const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable<ExtrusionLog>({
     data: flatData || emptyData,
     columns,
@@ -47,9 +48,11 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
     state: {
       sorting,
       columnVisibility,
+      rowSelection,
     },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
   });
   const [editing, setEditing] = useState<EditingState<MutableFields> | null>(
     null
