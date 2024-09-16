@@ -42,6 +42,10 @@ export default function ColumnSelector<TData>({
                 className="cursor-pointer"
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                onSelect={(evt) => {
+                  // Prevent auto closing dropdown menu
+                  evt.preventDefault();
+                }}
               >
                 {columnLabels[column.id as ColumnNames]}
               </DropdownMenuCheckboxItem>
