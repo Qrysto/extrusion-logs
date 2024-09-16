@@ -20,6 +20,7 @@ import {
   DialogFooter,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Power, Check, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSuggestionData } from '@/lib/client';
@@ -90,177 +91,179 @@ export function ExtrusionLogForm({
   } = form;
 
   return (
-    <DialogContent className="flex flex-col max-h-[90%] max-w-3xl px-0">
+    <DialogContent className="flex flex-col h-[90%] max-w-3xl px-0">
       <DialogHeader className="flex-shrink-0 px-6">
         <DialogTitle>{heading}</DialogTitle>
       </DialogHeader>
 
-      <Form
-        id={formId}
-        form={form}
-        onSubmit={onSubmit}
-        className="overflow-auto px-6 py-2 space-y-6"
-      >
-        <FormItem name="employeeId" label="Employee ID">
-          <FormInput />
-        </FormItem>
-
-        <div className="flex gap-x-4">
-          <FormItem name="shift" label="Shift">
-            <FormToggleGroup type="single" items={shiftItems} />
-          </FormItem>
-
-          <FormItem name="date" label="Date">
-            <div>
-              <FormDatePicker />
-            </div>
-          </FormItem>
-
-          <FormItem name="startTime" label="Start time" className="flex-1">
-            <FormTimePicker />
-          </FormItem>
-
-          <FormItem name="endTime" label="End time" className="flex-1">
-            <FormTimePicker />
-          </FormItem>
-        </div>
-
-        <FormItem name="item" label="Item">
-          <FormAutoComplete options={data?.itemList || []} />
-        </FormItem>
-
-        <FormItem name="customer" label="Customer">
-          <FormAutoComplete options={data?.customerList || []} />
-        </FormItem>
-
-        <div className="flex gap-x-4">
-          <FormItem name="dieCode" label="Die code" className="flex-[2_2_0]">
-            <FormAutoComplete options={data?.dieCodeList || []} />
-          </FormItem>
-
-          <FormItem name="dieNumber" label="Die number" className="flex-1">
-            <FormInput />
-          </FormItem>
-        </div>
-
-        <div className="flex gap-x-4">
-          <FormItem name="cavity" label="Cavity">
+      <ScrollArea className="flex-1">
+        <Form
+          id={formId}
+          form={form}
+          onSubmit={onSubmit}
+          className="px-6 py-2 space-y-6"
+        >
+          <FormItem name="employeeId" label="Employee ID">
             <FormInput />
           </FormItem>
 
-          <FormItem name="productKgpm" label="Product Kg/m">
-            <FormInput step="any" />
-          </FormItem>
-        </div>
+          <div className="flex gap-x-4">
+            <FormItem name="shift" label="Shift">
+              <FormToggleGroup type="single" items={shiftItems} />
+            </FormItem>
 
-        <div className="flex gap-x-4">
-          <FormItem name="billetType" label="Billet type">
-            <FormAutoComplete options={data?.billetTypeList || []} />
-          </FormItem>
+            <FormItem name="date" label="Date">
+              <div>
+                <FormDatePicker />
+              </div>
+            </FormItem>
 
-          <FormItem name="lotNumberCode" label="Lot number">
-            <FormAutoComplete options={data?.lotNoList || []} />
-          </FormItem>
-        </div>
+            <FormItem name="startTime" label="Start time" className="flex-1">
+              <FormTimePicker />
+            </FormItem>
 
-        <div className="flex gap-x-4">
-          <FormItem name="ingotRatio" label="Ingot ratio (%)">
-            <FormInput max={100} />
-          </FormItem>
+            <FormItem name="endTime" label="End time" className="flex-1">
+              <FormTimePicker />
+            </FormItem>
+          </div>
 
-          <FormItem name="billetKgpm" label="Billet Kg/m">
-            <FormInput step="any" />
-          </FormItem>
-        </div>
-
-        <div className="flex gap-x-4">
-          <FormItem name="billetLength" label="Billet length (mm)">
-            <FormInput step="any" />
+          <FormItem name="item" label="Item">
+            <FormAutoComplete options={data?.itemList || []} />
           </FormItem>
 
-          <FormItem name="billetQuantity" label="Billet quantity">
+          <FormItem name="customer" label="Customer">
+            <FormAutoComplete options={data?.customerList || []} />
+          </FormItem>
+
+          <div className="flex gap-x-4">
+            <FormItem name="dieCode" label="Die code" className="flex-[2_2_0]">
+              <FormAutoComplete options={data?.dieCodeList || []} />
+            </FormItem>
+
+            <FormItem name="dieNumber" label="Die number" className="flex-1">
+              <FormInput />
+            </FormItem>
+          </div>
+
+          <div className="flex gap-x-4">
+            <FormItem name="cavity" label="Cavity">
+              <FormInput />
+            </FormItem>
+
+            <FormItem name="productKgpm" label="Product Kg/m">
+              <FormInput step="any" />
+            </FormItem>
+          </div>
+
+          <div className="flex gap-x-4">
+            <FormItem name="billetType" label="Billet type">
+              <FormAutoComplete options={data?.billetTypeList || []} />
+            </FormItem>
+
+            <FormItem name="lotNumberCode" label="Lot number">
+              <FormAutoComplete options={data?.lotNoList || []} />
+            </FormItem>
+          </div>
+
+          <div className="flex gap-x-4">
+            <FormItem name="ingotRatio" label="Ingot ratio (%)">
+              <FormInput max={100} />
+            </FormItem>
+
+            <FormItem name="billetKgpm" label="Billet Kg/m">
+              <FormInput step="any" />
+            </FormItem>
+          </div>
+
+          <div className="flex gap-x-4">
+            <FormItem name="billetLength" label="Billet length (mm)">
+              <FormInput step="any" />
+            </FormItem>
+
+            <FormItem name="billetQuantity" label="Billet quantity">
+              <FormInput />
+            </FormItem>
+
+            <FormItem name="billetWeight" label="Billet weight (g)">
+              <FormInput step="any" />
+            </FormItem>
+          </div>
+
+          <div className="flex gap-x-4">
+            <FormItem name="orderLength" label="Order length (mm)">
+              <FormInput step="any" />
+            </FormItem>
+
+            <FormItem name="ramSpeed" label="Ram speed">
+              <FormInput step="any" />
+            </FormItem>
+          </div>
+
+          <div className="flex gap-x-4">
+            <FormItem name="billetTemp" label="Billet temperature">
+              <FormInput step="any" />
+            </FormItem>
+
+            <FormItem name="outputTemp" label="Output temperature">
+              <FormInput step="any" />
+            </FormItem>
+          </div>
+
+          <div className="flex gap-x-4">
+            <FormItem name="ok" label="Result">
+              <FormOkToggleGroup type="single" items={resultItems} />
+            </FormItem>
+
+            <FormItem name="outputYield" label="Yield (%)">
+              <FormInput max={100} />
+            </FormItem>
+          </div>
+
+          <div className="flex gap-x-4">
+            <FormItem name="productionQuantity" label="Production quantity">
+              <FormInput />
+            </FormItem>
+
+            <FormItem name="productionWeight" label="Production weight (g)">
+              <FormInput step="any" />
+            </FormItem>
+
+            <FormItem name="outputRate" label="Output rate (kg/h)">
+              <FormInput step="any" />
+            </FormItem>
+          </div>
+
+          <div className="flex gap-x-4">
+            <FormItem name="ngQuantity" label="NG quantity">
+              <FormInput />
+            </FormItem>
+
+            <FormItem name="ngWeight" label="NG weight (g)">
+              <FormInput step="any" />
+            </FormItem>
+
+            <FormItem name="ngPercentage" label="NG Percentage (%)">
+              <FormInput step="any" />
+            </FormItem>
+          </div>
+
+          <FormItem name="remark" label="Remark">
             <FormInput />
           </FormItem>
 
-          <FormItem name="billetWeight" label="Billet weight (g)">
-            <FormInput step="any" />
-          </FormItem>
-        </div>
+          <div className="flex gap-x-4">
+            <FormItem name="code" label="Code">
+              <FormAutoComplete options={data?.codeList || []} />
+            </FormItem>
 
-        <div className="flex gap-x-4">
-          <FormItem name="orderLength" label="Order length (mm)">
-            <FormInput step="any" />
-          </FormItem>
+            <FormItem name="buttWeight" label="Butt weight (g)">
+              <FormInput step="any" />
+            </FormItem>
+          </div>
+        </Form>
+      </ScrollArea>
 
-          <FormItem name="ramSpeed" label="Ram speed">
-            <FormInput step="any" />
-          </FormItem>
-        </div>
-
-        <div className="flex gap-x-4">
-          <FormItem name="billetTemp" label="Billet temperature">
-            <FormInput step="any" />
-          </FormItem>
-
-          <FormItem name="outputTemp" label="Output temperature">
-            <FormInput step="any" />
-          </FormItem>
-        </div>
-
-        <div className="flex gap-x-4">
-          <FormItem name="ok" label="Result">
-            <FormOkToggleGroup type="single" items={resultItems} />
-          </FormItem>
-
-          <FormItem name="outputYield" label="Yield (%)">
-            <FormInput max={100} />
-          </FormItem>
-        </div>
-
-        <div className="flex gap-x-4">
-          <FormItem name="productionQuantity" label="Production quantity">
-            <FormInput />
-          </FormItem>
-
-          <FormItem name="productionWeight" label="Production weight (g)">
-            <FormInput step="any" />
-          </FormItem>
-
-          <FormItem name="outputRate" label="Output rate (kg/h)">
-            <FormInput step="any" />
-          </FormItem>
-        </div>
-
-        <div className="flex gap-x-4">
-          <FormItem name="ngQuantity" label="NG quantity">
-            <FormInput />
-          </FormItem>
-
-          <FormItem name="ngWeight" label="NG weight (g)">
-            <FormInput step="any" />
-          </FormItem>
-
-          <FormItem name="ngPercentage" label="NG Percentage (%)">
-            <FormInput step="any" />
-          </FormItem>
-        </div>
-
-        <FormItem name="remark" label="Remark">
-          <FormInput />
-        </FormItem>
-
-        <div className="flex gap-x-4">
-          <FormItem name="code" label="Code">
-            <FormAutoComplete options={data?.codeList || []} />
-          </FormItem>
-
-          <FormItem name="buttWeight" label="Butt weight (g)">
-            <FormInput step="any" />
-          </FormItem>
-        </div>
-      </Form>
-
-      <DialogFooter className="px-6 sm:justify-between">
+      <DialogFooter className="px-6 sm:justify-between flex-shrink-0">
         <div>
           {!!resetForm && (
             <Button variant="secondary" onClick={resetForm}>
