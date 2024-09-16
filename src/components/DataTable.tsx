@@ -80,16 +80,13 @@ export default function DataTable<TData>({
       <Table className="border-separate border-spacing-0">
         <TableHeader className="sticky top-0 rounded-t-md flex-shrink-0 bg-background shadow-[0_0_2px_1px_hsl(var(--border))]">
           {table.getHeaderGroups().map((headerGroup) => (
-            <DataTableHeaderRow
-              key={headerGroup.id}
-              headerGroup={headerGroup}
-            />
+            <HeaderRow key={headerGroup.id} headerGroup={headerGroup} />
           ))}
         </TableHeader>
         <TableBody className="flex-1">
           {rows?.length ? (
             rows.map((row) => (
-              <DataTableRow
+              <DataRow
                 key={row.id}
                 row={row}
                 selected={!!table.getSelectedRowModel().rowsById[row.id]}
@@ -123,11 +120,11 @@ export default function DataTable<TData>({
   );
 }
 
-const DataTableHeaderRow = genericMemo(
+const HeaderRow = genericMemo(
   <TData,>({ headerGroup }: { headerGroup: HeaderGroup<TData> }) => (
     <TableRow className="hover:bg-background">
       {headerGroup.headers.map((header) => (
-        <DataTableHeaderCell
+        <HeaderCell
           key={header.id}
           header={header}
           sorted={header.column.getIsSorted()}
@@ -137,7 +134,7 @@ const DataTableHeaderRow = genericMemo(
   )
 );
 
-const DataTableHeaderCell = genericMemo(
+const HeaderCell = genericMemo(
   <TData,>({
     header,
     sorted,
@@ -181,7 +178,7 @@ const DataTableHeaderCell = genericMemo(
   }
 );
 
-const DataTableRow = genericMemo(
+const DataRow = genericMemo(
   <TData,>({
     row,
     deleteRow,
@@ -223,7 +220,7 @@ const DataTableRow = genericMemo(
         )}
       >
         {row.getVisibleCells().map((cell) => (
-          <DataTableCell
+          <DataCell
             key={cell.id}
             cell={cell}
             deleteRow={del}
@@ -235,7 +232,7 @@ const DataTableRow = genericMemo(
   }
 );
 
-const DataTableCell = genericMemo(
+const DataCell = genericMemo(
   <TData,>({
     cell,
     deleteRow,
