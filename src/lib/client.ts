@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, InfiniteData } from '@tanstack/react-query';
 import {
   useQuery,
   useInfiniteQuery,
@@ -75,6 +75,19 @@ export function useExtrusionLogs() {
   const remarkSearch = searchParams.get('remarkSearch');
   const sort = searchParams.get('sort');
 
+  const select = useCallback(
+    (data: InfiniteData<ExtrusionLog[]>) => ({
+      ...data,
+      pages: data.pages.map((logs) =>
+        logs.map((log: ExtrusionLog) => ({
+          ...log,
+          date: new Date(log.date),
+        }))
+      ),
+    }),
+    []
+  );
+
   const params: Record<string, any> = {};
   if (date) {
     params.date = date;
@@ -117,6 +130,7 @@ export function useExtrusionLogs() {
     queryKey: ['extrusion-logs', params, sort],
     queryFn: ({ pageParam }) =>
       get('/api/extrusion-logs', { ...params, skip: pageParam }),
+    select,
     initialPageParam: 0,
     getNextPageParam: (lastPage, pages) =>
       lastPage?.length === fetchLimit ? flatLength(pages) : null,
