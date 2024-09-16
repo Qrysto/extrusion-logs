@@ -77,14 +77,14 @@ export const AutoComplete = ({
   return (
     <CommandPrimitive onKeyDown={handleKeyDown}>
       <div>
-        <Input
+        <CommandInput
           ref={inputRef}
           value={value}
-          onChange={(evt) => {
+          onValueChange={(value) => {
             if (!isLoading) {
-              onValueChange?.(evt.target.value);
+              onValueChange?.(value);
             }
-            onChange?.(evt);
+            // onChange?.(evt);
           }}
           onBlur={(evt) => {
             setOpen(false);
@@ -116,7 +116,7 @@ export const AutoComplete = ({
             {options.length > 0 && !isLoading ? (
               <CommandGroup>
                 {options.map((option) => {
-                  const isSelected = value === option;
+                  // const isSelected = value === option;
                   return (
                     <CommandItem
                       key={option}
@@ -127,11 +127,10 @@ export const AutoComplete = ({
                       }}
                       onSelect={() => handleSelectOption(option)}
                       className={cn(
-                        'flex w-full items-center gap-2 cursor-pointer',
-                        !isSelected ? 'pl-8' : null
+                        'flex w-full items-center gap-2 cursor-pointer'
                       )}
                     >
-                      {isSelected && <Check className="w-4" />}
+                      {/* {isSelected && <Check className="w-4" />} */}
                       {option}
                     </CommandItem>
                   );
