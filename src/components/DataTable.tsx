@@ -35,6 +35,7 @@ import {
   isMutableField,
   columnLabels,
 } from '@/app/(protected)/dashboard/columns';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { cn, genericMemo } from '@/lib/utils';
 import { confirm } from '@/lib/ui';
 
@@ -57,13 +58,9 @@ export default function DataTable<TData>({
   const scrollerRef = useRef<HTMLDivElement>(null);
   const fetchMoreOnBottomReached = useCallback(
     (containerRefElement?: HTMLDivElement | null) => {
-      if (containerRefElement) {
+      if (hasNextPage && !isFetching && containerRefElement) {
         const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-        if (
-          hasNextPage &&
-          !isFetching &&
-          scrollHeight - scrollTop - clientHeight < 200
-        ) {
+        if (scrollHeight - scrollTop - clientHeight < 200) {
           fetchNextPage();
         }
       }
@@ -75,9 +72,9 @@ export default function DataTable<TData>({
   }, [fetchMoreOnBottomReached]);
 
   return (
-    <div
-      ref={scrollerRef}
-      className="relative rounded-md border h-full overflow-auto"
+    <ScrollArea
+      viewportRef={scrollerRef}
+      className="relative rounded-md border h-full"
       onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
     >
       <Table className="border-separate border-spacing-0">
@@ -121,7 +118,8 @@ export default function DataTable<TData>({
           )}
         </TableBody>
       </Table>
-    </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 }
 
