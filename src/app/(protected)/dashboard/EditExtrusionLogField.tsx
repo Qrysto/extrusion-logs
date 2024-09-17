@@ -1,15 +1,8 @@
 'use client';
 
-import { useId, ReactNode, ComponentProps } from 'react';
-import { Form, FormField, FormLabel } from '@/components/ui/form';
+import { useId } from 'react';
+import { Form } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  FormInput,
-  FormAutoComplete,
-  FormToggleGroup,
-  FormDatePicker,
-  FormTimePicker,
-} from '@/components/ui/form-adapters';
 import {
   Dialog,
   DialogContent,
@@ -21,7 +14,7 @@ import { formSchema, FullFormValues } from '@/lib/extrusionLogForm';
 import { FortifiedDialogProps } from '@/components/DialogController';
 import { patch } from '@/lib/api';
 import { flashError, toast, confirm } from '@/lib/ui';
-import { shiftItems, resultItems } from '@/lib/extrusionLogForm';
+import ExtrusionLogField from '@/components/ExtrusionLogField';
 import {
   refreshSuggestionData,
   refreshAllExtrusionQueries,
@@ -30,7 +23,7 @@ import { Check, TriangleAlert } from 'lucide-react';
 import { useForm, DefaultValues } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { useSuggestionData } from '@/lib/client';
-import { ExtrusionLog, SuggestionData } from '@/lib/types';
+import { ExtrusionLog } from '@/lib/types';
 import { getLabel, MutableFields } from './columns';
 
 type FormValues<T extends MutableFields> = Pick<FullFormValues, T>;
@@ -112,7 +105,7 @@ export function EditExtrusionLogField<T extends MutableFields>({
           onSubmit={onSubmit}
           className="px-6 py-2 space-y-6"
         >
-          <Field field={field} data={data} />
+          <ExtrusionLogField field={field} data={data} />
         </Form>
 
         <DialogFooter className="px-6">
@@ -128,233 +121,4 @@ export function EditExtrusionLogField<T extends MutableFields>({
       </DialogContent>
     </Dialog>
   );
-}
-
-function FormItem({
-  name,
-  label,
-  children,
-  ...rest
-}: {
-  name: string;
-  label: ReactNode;
-  children: ReactNode;
-} & ComponentProps<typeof FormField>) {
-  return (
-    <FormField name={name} {...rest}>
-      <FormLabel>{label}</FormLabel>
-      {children}
-    </FormField>
-  );
-}
-
-function Field<T extends MutableFields>({
-  field,
-  data,
-}: {
-  field: T;
-  data?: SuggestionData;
-}) {
-  switch (field) {
-    case 'date':
-      return (
-        <FormItem name="date" label="Date">
-          <div>
-            <FormDatePicker />
-          </div>
-        </FormItem>
-      );
-    case 'shift':
-      return (
-        <FormItem name="shift" label="Shift">
-          <FormToggleGroup type="single" items={shiftItems} />
-        </FormItem>
-      );
-    case 'employeeId':
-      return (
-        <FormItem name="employeeId" label="Employee ID">
-          <FormInput />
-        </FormItem>
-      );
-    case 'item':
-      return (
-        <FormItem name="item" label="Item">
-          <FormAutoComplete options={data?.itemList || []} />
-        </FormItem>
-      );
-    case 'customer':
-      return (
-        <FormItem name="customer" label="Customer">
-          <FormAutoComplete options={data?.customerList || []} />
-        </FormItem>
-      );
-    case 'dieCode':
-      return (
-        <FormItem name="dieCode" label="Die code" className="flex-[2_2_0]">
-          <FormAutoComplete options={data?.dieCodeList || []} />
-        </FormItem>
-      );
-    case 'dieNumber':
-      return (
-        <FormItem name="dieNumber" label="Die number" className="flex-1">
-          <FormInput />
-        </FormItem>
-      );
-    case 'cavity':
-      return (
-        <FormItem name="cavity" label="Cavity">
-          <FormInput />
-        </FormItem>
-      );
-    case 'productKgpm':
-      return (
-        <FormItem name="productKgpm" label="Product Kg/m">
-          <FormInput step="any" />
-        </FormItem>
-      );
-    case 'billetType':
-      return (
-        <FormItem name="billetType" label="Billet type">
-          <FormAutoComplete options={data?.billetTypeList || []} />
-        </FormItem>
-      );
-    case 'billetKgpm':
-      return (
-        <FormItem name="billetKgpm" label="Billet Kg/m">
-          <FormInput step="any" />
-        </FormItem>
-      );
-    case 'billetLength':
-      return (
-        <FormItem name="billetLength" label="Billet length (mm)">
-          <FormInput step="any" />
-        </FormItem>
-      );
-    case 'billetQuantity':
-      return (
-        <FormItem name="billetQuantity" label="Billet quantity">
-          <FormInput />
-        </FormItem>
-      );
-    case 'billetWeight':
-      return (
-        <FormItem name="billetWeight" label="Billet weight (g)">
-          <FormInput step="any" />
-        </FormItem>
-      );
-    case 'ingotRatio':
-      return (
-        <FormItem name="ingotRatio" label="Ingot ratio (%)">
-          <FormInput max={100} />
-        </FormItem>
-      );
-    case 'lotNumberCode':
-      return (
-        <FormItem name="lotNumberCode" label="Lot number">
-          <FormAutoComplete options={data?.lotNoList || []} />
-        </FormItem>
-      );
-    case 'ramSpeed':
-      return (
-        <FormItem name="ramSpeed" label="Ram speed">
-          <FormInput step="any" />
-        </FormItem>
-      );
-    case 'billetTemp':
-      return (
-        <FormItem name="billetTemp" label="Billet temperature">
-          <FormInput step="any" />
-        </FormItem>
-      );
-    case 'outputTemp':
-      return (
-        <FormItem name="outputTemp" label="Output temperature">
-          <FormInput step="any" />
-        </FormItem>
-      );
-    case 'orderLength':
-      return (
-        <FormItem name="orderLength" label="Order length (mm)">
-          <FormInput step="any" />
-        </FormItem>
-      );
-    case 'outputRate':
-      return (
-        <FormItem name="outputRate" label="Output rate (kg/h)">
-          <FormInput step="any" />
-        </FormItem>
-      );
-    case 'productionQuantity':
-      return (
-        <FormItem name="productionQuantity" label="Production quantity">
-          <FormInput />
-        </FormItem>
-      );
-    case 'productionWeight':
-      return (
-        <FormItem name="productionWeight" label="Production weight (g)">
-          <FormInput step="any" />
-        </FormItem>
-      );
-    case 'result':
-      return (
-        <FormItem name="result" label="Result">
-          <FormToggleGroup type="single" items={resultItems} />
-        </FormItem>
-      );
-    case 'outputYield':
-      return (
-        <FormItem name="outputYield" label="Yield (%)">
-          <FormInput max={100} />
-        </FormItem>
-      );
-    case 'ngQuantity':
-      return (
-        <FormItem name="ngQuantity" label="NG quantity">
-          <FormInput />
-        </FormItem>
-      );
-    case 'ngWeight':
-      return (
-        <FormItem name="ngWeight" label="NG weight (g)">
-          <FormInput step="any" />
-        </FormItem>
-      );
-    case 'ngPercentage':
-      return (
-        <FormItem name="ngPercentage" label="NG Percentage (%)">
-          <FormInput step="any" />
-        </FormItem>
-      );
-    case 'remark':
-      return (
-        <FormItem name="remark" label="Remark">
-          <FormInput />
-        </FormItem>
-      );
-    case 'buttWeight':
-      return (
-        <FormItem name="buttWeight" label="Butt weight (g)">
-          <FormInput step="any" />
-        </FormItem>
-      );
-    case 'code':
-      return (
-        <FormItem name="code" label="Code">
-          <FormAutoComplete options={data?.codeList || []} />
-        </FormItem>
-      );
-    case 'startTime':
-      return (
-        <FormItem name="startTime" label="Start time" className="flex-1">
-          <FormTimePicker />
-        </FormItem>
-      );
-    case 'endTime':
-      return (
-        <FormItem name="endTime" label="End time" className="flex-1">
-          <FormTimePicker />
-        </FormItem>
-      );
-  }
 }

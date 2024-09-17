@@ -322,15 +322,15 @@ const columnLabels: Record<ColumnNames, string | [string, string]> = {
   productionWeight: ['Production Weight', 'Prod. Weight'],
 
   result: 'OK/NG',
-  outputYield: 'Yield',
+  outputYield: 'Yield %',
   ngQuantity: ['NG Quantity', 'NG Qty'],
   ngWeight: 'NG Weight',
   ngPercentage: 'NG %',
   remark: 'Remark',
   buttWeight: 'Butt Weight',
   code: 'Code',
-  startTime: 'Start',
-  endTime: 'Finish',
+  startTime: ['Start time', 'Start'],
+  endTime: ['End time', 'End'],
   workingTime: 'Duration',
 };
 

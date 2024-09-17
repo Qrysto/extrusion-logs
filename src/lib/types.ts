@@ -1,6 +1,10 @@
 import type { ReactNode } from 'react';
 import type { FullFormValues } from '@/lib/extrusionLogForm';
 import type { ExtrusionLog } from '@/app/api/extrusion-logs/route';
+import type {
+  MutableFields,
+  ColumnNames,
+} from '@/app/(protected)/dashboard/columns';
 
 export interface AuthData {
   sessionId: number;
@@ -29,13 +33,6 @@ export type SuggestionData = {
 
 export type { ExtrusionLog };
 
-export type ColumnNames = Exclude<keyof ExtrusionLog, 'id'> | 'workingTime';
-
-export type MutableFields = Exclude<
-  keyof ColumnNames,
-  'plant' | 'machine' | 'inch' | 'workingTime'
->;
-
 export type DateRange = {
   from: Date;
   to: Date;
@@ -43,7 +40,7 @@ export type DateRange = {
 
 export type SortOrder = 'asc' | 'desc';
 
-export type { FullFormValues };
+export type { FullFormValues, ColumnNames, MutableFields };
 
 export type Draft = FullFormValues & {
   id: string;

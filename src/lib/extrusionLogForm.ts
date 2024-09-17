@@ -1,15 +1,5 @@
 import { z } from 'zod';
 
-export const shiftItems = [
-  { value: 'DAY', label: 'Day' },
-  { value: 'NIGHT', label: 'Night' },
-];
-
-export const resultItems = [
-  { value: 'OK', label: 'OK' },
-  { value: 'NG', label: 'NG' },
-];
-
 export const formSchema = z.object({
   employeeId: z.string().nullable(),
   date: z.date().nullable(),

@@ -1,7 +1,15 @@
 'use client';
 
+import { useId } from 'react';
 import { useForm } from 'react-hook-form';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { FortifiedDialogProps } from '@/components/DialogController';
 import { Button } from '@/components/ui/button';
 import { TriangleAlert, Trash2, Plus, Power, Check, Save } from 'lucide-react';
@@ -15,30 +23,11 @@ import {
 } from '@/lib/client';
 import { post } from '@/lib/api';
 import { format } from 'date-fns';
-import { useId, ReactNode, ComponentProps } from 'react';
-import { Form, FormField, FormLabel } from '@/components/ui/form';
-import {
-  FormInput,
-  FormAutoComplete,
-  FormToggleGroup,
-  FormDatePicker,
-  FormTimePicker,
-} from '@/components/ui/form-adapters';
+import { Form } from '@/components/ui/form';
 import { timeFormat } from '@/lib/dateTime';
-import {
-  DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  shiftItems,
-  resultItems,
-  FullFormValues,
-  formSchema,
-} from '@/lib/extrusionLogForm';
+import { FullFormValues, formSchema } from '@/lib/extrusionLogForm';
+import ExtrusionLogField from '@/components/ExtrusionLogField';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useSuggestionData } from '@/lib/client';
 
 export default function ExtrusionLogDialog({
   employeeId = '',
@@ -52,7 +41,6 @@ export default function ExtrusionLogDialog({
 } & FortifiedDialogProps) {
   const defaultValues = draft || getDefaultValues({ employeeId });
   const formId = useId();
-  const { data } = useSuggestionData();
   const form = useForm<FullFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
@@ -132,166 +120,94 @@ export default function ExtrusionLogDialog({
             onSubmit={onSubmit}
             className="px-6 py-2 space-y-6"
           >
-            <FormItem name="employeeId" label="Employee ID">
-              <FormInput />
-            </FormItem>
+            <ExtrusionLogField field="employeeId" />
 
             <div className="flex gap-x-4">
-              <FormItem name="shift" label="Shift">
-                <FormToggleGroup type="single" items={shiftItems} />
-              </FormItem>
+              <ExtrusionLogField field="shift" />
 
-              <FormItem name="date" label="Date">
-                <div>
-                  <FormDatePicker />
-                </div>
-              </FormItem>
+              <ExtrusionLogField field="date" />
 
-              <FormItem name="startTime" label="Start time" className="flex-1">
-                <FormTimePicker />
-              </FormItem>
+              <ExtrusionLogField field="startTime" />
 
-              <FormItem name="endTime" label="End time" className="flex-1">
-                <FormTimePicker />
-              </FormItem>
+              <ExtrusionLogField field="endTime" />
             </div>
 
-            <FormItem name="item" label="Item">
-              <FormAutoComplete options={data?.itemList || []} />
-            </FormItem>
+            <ExtrusionLogField field="item" />
 
-            <FormItem name="customer" label="Customer">
-              <FormAutoComplete options={data?.customerList || []} />
-            </FormItem>
+            <ExtrusionLogField field="customer" />
 
             <div className="flex gap-x-4">
-              <FormItem
-                name="dieCode"
-                label="Die code"
-                className="flex-[2_2_0]"
-              >
-                <FormAutoComplete options={data?.dieCodeList || []} />
-              </FormItem>
+              <ExtrusionLogField field="dieCode" />
 
-              <FormItem name="dieNumber" label="Die number" className="flex-1">
-                <FormInput />
-              </FormItem>
+              <ExtrusionLogField field="dieNumber" />
             </div>
 
             <div className="flex gap-x-4">
-              <FormItem name="cavity" label="Cavity">
-                <FormInput />
-              </FormItem>
+              <ExtrusionLogField field="cavity" />
 
-              <FormItem name="productKgpm" label="Product Kg/m">
-                <FormInput step="any" />
-              </FormItem>
+              <ExtrusionLogField field="productKgpm" />
             </div>
 
             <div className="flex gap-x-4">
-              <FormItem name="billetType" label="Billet type">
-                <FormAutoComplete options={data?.billetTypeList || []} />
-              </FormItem>
+              <ExtrusionLogField field="billetType" />
 
-              <FormItem name="lotNumberCode" label="Lot number">
-                <FormAutoComplete options={data?.lotNoList || []} />
-              </FormItem>
+              <ExtrusionLogField field="lotNumberCode" />
             </div>
 
             <div className="flex gap-x-4">
-              <FormItem name="ingotRatio" label="Ingot ratio (%)">
-                <FormInput max={100} />
-              </FormItem>
+              <ExtrusionLogField field="ingotRatio" />
 
-              <FormItem name="billetKgpm" label="Billet Kg/m">
-                <FormInput step="any" />
-              </FormItem>
+              <ExtrusionLogField field="billetKgpm" />
             </div>
 
             <div className="flex gap-x-4">
-              <FormItem name="billetLength" label="Billet length (mm)">
-                <FormInput step="any" />
-              </FormItem>
+              <ExtrusionLogField field="billetLength" />
 
-              <FormItem name="billetQuantity" label="Billet quantity">
-                <FormInput />
-              </FormItem>
+              <ExtrusionLogField field="billetQuantity" />
 
-              <FormItem name="billetWeight" label="Billet weight (g)">
-                <FormInput step="any" />
-              </FormItem>
+              <ExtrusionLogField field="billetWeight" />
             </div>
 
             <div className="flex gap-x-4">
-              <FormItem name="orderLength" label="Order length (mm)">
-                <FormInput step="any" />
-              </FormItem>
+              <ExtrusionLogField field="orderLength" />
 
-              <FormItem name="ramSpeed" label="Ram speed">
-                <FormInput step="any" />
-              </FormItem>
+              <ExtrusionLogField field="ramSpeed" />
             </div>
 
             <div className="flex gap-x-4">
-              <FormItem name="billetTemp" label="Billet temperature">
-                <FormInput step="any" />
-              </FormItem>
+              <ExtrusionLogField field="billetTemp" />
 
-              <FormItem name="outputTemp" label="Output temperature">
-                <FormInput step="any" />
-              </FormItem>
+              <ExtrusionLogField field="outputTemp" />
             </div>
 
             <div className="flex gap-x-4">
-              <FormItem name="result" label="Result">
-                <FormToggleGroup type="single" items={resultItems} />
-              </FormItem>
+              <ExtrusionLogField field="result" />
 
-              <FormItem name="outputYield" label="Yield (%)">
-                <FormInput max={100} />
-              </FormItem>
+              <ExtrusionLogField field="outputYield" />
             </div>
 
             <div className="flex gap-x-4">
-              <FormItem name="productionQuantity" label="Production quantity">
-                <FormInput />
-              </FormItem>
+              <ExtrusionLogField field="productionQuantity" />
 
-              <FormItem name="productionWeight" label="Production weight (g)">
-                <FormInput step="any" />
-              </FormItem>
+              <ExtrusionLogField field="productionWeight" />
 
-              <FormItem name="outputRate" label="Output rate (kg/h)">
-                <FormInput step="any" />
-              </FormItem>
+              <ExtrusionLogField field="outputRate" />
             </div>
 
             <div className="flex gap-x-4">
-              <FormItem name="ngQuantity" label="NG quantity">
-                <FormInput />
-              </FormItem>
+              <ExtrusionLogField field="ngQuantity" />
 
-              <FormItem name="ngWeight" label="NG weight (g)">
-                <FormInput step="any" />
-              </FormItem>
+              <ExtrusionLogField field="ngWeight" />
 
-              <FormItem name="ngPercentage" label="NG Percentage (%)">
-                <FormInput step="any" />
-              </FormItem>
+              <ExtrusionLogField field="ngPercentage" />
             </div>
 
-            <FormItem name="remark" label="Remark">
-              <FormInput />
-            </FormItem>
+            <ExtrusionLogField field="remark" />
 
             <div className="flex gap-x-4">
-              <FormItem name="code" label="Code">
-                <FormAutoComplete options={data?.codeList || []} />
-              </FormItem>
+              <ExtrusionLogField field="code" />
 
-              <FormItem name="buttWeight" label="Butt weight (g)">
-                <FormInput step="any" />
-              </FormItem>
+              <ExtrusionLogField field="buttWeight" />
             </div>
           </Form>
         </ScrollArea>
@@ -366,24 +282,6 @@ export default function ExtrusionLogDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function FormItem({
-  name,
-  label,
-  children,
-  ...rest
-}: {
-  name: string;
-  label: ReactNode;
-  children: ReactNode;
-} & ComponentProps<typeof FormField>) {
-  return (
-    <FormField name={name} {...rest}>
-      <FormLabel>{label}</FormLabel>
-      {children}
-    </FormField>
   );
 }
 
