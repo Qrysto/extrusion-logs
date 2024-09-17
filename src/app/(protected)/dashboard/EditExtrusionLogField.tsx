@@ -7,7 +7,6 @@ import {
   FormInput,
   FormAutoComplete,
   FormToggleGroup,
-  FormOkToggleGroup,
   FormDatePicker,
   FormTimePicker,
 } from '@/components/ui/form-adapters';
@@ -299,10 +298,10 @@ function Field<T extends MutableFields>({
           <FormInput step="any" />
         </FormItem>
       );
-    case 'ok':
+    case 'result':
       return (
-        <FormItem name="ok" label="Result">
-          <FormOkToggleGroup type="single" items={resultItems} />
+        <FormItem name="result" label="Result">
+          <FormToggleGroup type="single" items={resultItems} />
         </FormItem>
       );
     case 'outputYield':

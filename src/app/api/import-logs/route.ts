@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       productionQuantity,
       productionWeight,
       outputYield,
-      ok,
+      result,
       remark,
       startTime,
       endTime,
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       productionQuantity: toNumber(productionQuantity),
       productionWeight: toNumber(productionWeight),
       outputYield: toNumber(outputYield),
-      ok: ok !== 'NG',
+      result: result?.toUpperCase(),
       remark,
       startTime: toTime(startTime),
       endTime: toTime(endTime),
@@ -164,7 +164,7 @@ async function addLog(log: any) {
     productionQuantity,
     productionWeight,
     outputYield,
-    ok,
+    result,
     remark,
     startTime,
     endTime,
@@ -303,7 +303,7 @@ async function addLog(log: any) {
   }
 
   try {
-    const result = await db
+    const res = await db
       .insertInto('extrusions')
       .values({
         createdBy: account.id,
@@ -329,7 +329,7 @@ async function addLog(log: any) {
         productionQuantity,
         productionWeight,
         outputYield,
-        ok,
+        result,
         remark,
         startTime,
         endTime,
@@ -342,7 +342,7 @@ async function addLog(log: any) {
       })
       .execute();
 
-    return result;
+    return res;
   } catch (err: any) {
     console.error('Error when inserting extrusion', err);
     throw err;

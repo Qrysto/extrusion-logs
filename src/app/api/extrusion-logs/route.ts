@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     dieCode,
     cavity: cavity ? parseInt(cavity) : null,
     lotNo,
-    ok: result === 'OK' ? true : result === 'NG' ? false : null,
+    result: result === 'OK' ? 'OK' : result === 'NG' ? 'NG' : null,
     remarkSearch,
     sort: sort && JSON.parse(sort),
     skip: skip ? parseInt(skip) : undefined,
@@ -56,7 +56,7 @@ async function fetchExtrusionLogs({
   dieCode,
   cavity,
   lotNo,
-  ok,
+  result,
   remarkSearch,
   sort,
   skip = 0,
@@ -71,7 +71,7 @@ async function fetchExtrusionLogs({
   dieCode: string | null;
   cavity: number | null;
   lotNo: string | null;
-  ok: boolean | null;
+  result: 'OK' | 'NG' | null;
   remarkSearch: string | null;
   sort: { id: string; desc: boolean }[] | null;
   skip?: number;
@@ -108,7 +108,7 @@ async function fetchExtrusionLogs({
       'extrusions.productionWeight',
       'extrusions.outputRate',
       'extrusions.outputYield',
-      'extrusions.ok',
+      'extrusions.result',
       'extrusions.remark',
       'extrusions.startTime',
       'extrusions.endTime',
@@ -155,8 +155,8 @@ async function fetchExtrusionLogs({
   if (lotNo) {
     query = query.where('extrusions.lotNumberCode', '=', lotNo);
   }
-  if (typeof ok === 'boolean') {
-    query = query.where('extrusions.ok', '=', ok);
+  if (result) {
+    query = query.where('extrusions.result', '=', result);
   }
   if (remarkSearch) {
     query = query.where('extrusions.remark', 'like', `%${remarkSearch}%`);
@@ -173,7 +173,6 @@ async function fetchExtrusionLogs({
     query = query.offset(skip);
   }
 
-  console.log('QUERY', query.compile());
   return await query.execute();
 }
 
@@ -206,7 +205,7 @@ export async function POST(request: NextRequest) {
     ngPercentage,
     ngQuantity,
     ngWeight,
-    ok,
+    result,
     orderLength,
     outputRate,
     outputTemp,
@@ -219,8 +218,6 @@ export async function POST(request: NextRequest) {
     startTime,
     outputYield,
   } = body || {};
-
-  console.log('body', body);
 
   const extrusionLogValues = {
     billetKgpm,
@@ -244,7 +241,7 @@ export async function POST(request: NextRequest) {
     ngPercentage,
     ngQuantity,
     ngWeight,
-    ok,
+    result,
     orderLength,
     outputRate,
     outputTemp,

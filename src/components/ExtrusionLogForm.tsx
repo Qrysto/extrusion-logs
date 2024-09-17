@@ -54,7 +54,7 @@ export const formSchema = z.object({
   billetTemp: z.coerce.number().min(0).nullable(),
   outputTemp: z.coerce.number().min(0).nullable(),
 
-  ok: z.boolean().nullable(),
+  result: z.enum(['OK', 'NG']).nullable(),
   outputYield: z.coerce.number().min(0).nullable(),
   productionQuantity: z.coerce.number().min(0).int().nullable(),
   productionWeight: z.coerce.number().min(0).nullable(),
@@ -210,8 +210,8 @@ export function ExtrusionLogForm({
           </div>
 
           <div className="flex gap-x-4">
-            <FormItem name="ok" label="Result">
-              <FormOkToggleGroup type="single" items={resultItems} />
+            <FormItem name="result" label="Result">
+              <FormToggleGroup type="single" items={resultItems} />
             </FormItem>
 
             <FormItem name="outputYield" label="Yield (%)">
@@ -344,7 +344,7 @@ export function getDefaultValues<T extends object>({
     billetTemp: null,
     outputTemp: null,
 
-    ok: null,
+    result: null,
     outputYield: null,
     productionQuantity: null,
     productionWeight: null,

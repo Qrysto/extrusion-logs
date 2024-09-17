@@ -148,10 +148,7 @@ const getColumns = memoize((isAdmin: boolean) => {
             </div>
           ),
         }),
-        ch.accessor('ok', {
-          header: headerLabel,
-          cell: ({ getValue }) => (getValue<boolean>() ? 'OK' : 'NG'),
-        }),
+        ch.accessor('result', { header: headerLabel }),
         ch.accessor('ngQuantity', {
           header: headerLabel,
           cell: renderNumberCell,
@@ -266,7 +263,7 @@ const columnNames = new Set<ColumnNames>([
   'productionQuantity',
   'productionWeight',
 
-  'ok',
+  'result',
   'outputYield',
   'ngQuantity',
   'ngWeight',
@@ -324,7 +321,7 @@ const columnLabels: Record<ColumnNames, string> = {
   productionQuantity: 'Prod. Qty',
   productionWeight: 'Prod. Weight',
 
-  ok: 'OK/NG',
+  result: 'OK/NG',
   outputYield: 'Yield',
   ngQuantity: 'NG Qty',
   ngWeight: 'NG Weight',
