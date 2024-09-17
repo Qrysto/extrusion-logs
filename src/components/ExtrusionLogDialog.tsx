@@ -4,8 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { FortifiedDialogProps } from '@/components/DialogController';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import { TriangleAlert } from 'lucide-react';
+import { TriangleAlert, Trash2, Plus, Power, Check, Save } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { confirm, flashError, toast } from '@/lib/ui';
 import { addDraft, updateDraft, removeDraft } from '@/lib/drafts';
@@ -39,7 +38,6 @@ import {
   formSchema,
 } from '@/lib/extrusionLogForm';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Power, Check, Save } from 'lucide-react';
 import { useSuggestionData } from '@/lib/client';
 
 export default function ExtrusionLogDialog({
@@ -80,19 +78,6 @@ export default function ExtrusionLogDialog({
     refreshSuggestionData();
     refreshAllExtrusionQueries();
   }
-
-  const save = () => {
-    const values = form.getValues();
-    if (draft) {
-      updateDraft(draft.id, values);
-    } else {
-      addDraft(values);
-    }
-    toast({
-      title: 'Draft saved successfully!',
-    });
-    onOpenChange(false);
-  };
 
   const resetForm = async () => {
     const confirmed = await confirm({
@@ -313,19 +298,62 @@ export default function ExtrusionLogDialog({
 
         <DialogFooter className="px-6 sm:justify-between flex-shrink-0">
           <div>
-            {!!resetForm && (
-              <Button variant="secondary" onClick={resetForm}>
-                <Power className="mr-2 h-4 w-4" />
-                Reset form
+            {!!draft && (
+              <Button
+                variant="destructive"
+                onClick={async () => {
+                  const confirmed = await confirm({
+                    title: (
+                      <span className="flex items-center space-x-2 text-destructive">
+                        <TriangleAlert className="w-4 h-4" />
+                        <span>Delete draft</span>
+                      </span>
+                    ),
+                    description: 'Are you sure you want to delete this draft?',
+                    yesLabel: 'Delete draft',
+                    variant: 'destructive',
+                    noLabel: 'Go back',
+                  });
+                  if (!confirmed) return;
+                  removeDraft(draft.id);
+                  toast({
+                    title: 'Draft deleted successfully!',
+                    variant: 'destructive',
+                  });
+                  onOpenChange(false);
+                }}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete draft
               </Button>
             )}
           </div>
 
-          <div>
-            <Button variant="outline" className="mr-4" onClick={save}>
+          <div className="space-x-4">
+            <Button variant="secondary" onClick={resetForm}>
+              <Power className="mr-2 h-4 w-4" />
+              Reset form
+            </Button>
+
+            <Button
+              variant="secondary"
+              onClick={() => {
+                const values = form.getValues();
+                if (draft) {
+                  updateDraft(draft.id, values);
+                } else {
+                  addDraft(values);
+                }
+                toast({
+                  title: 'Draft saved successfully!',
+                });
+                onOpenChange(false);
+              }}
+            >
               <Save className="mr-2 h-4 w-4" />
               Save
             </Button>
+
             <Button
               type="submit"
               form={formId}
