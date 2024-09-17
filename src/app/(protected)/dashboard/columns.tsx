@@ -193,7 +193,7 @@ const renderNumberCell: ColumnDefTemplate<
 
 const headerLabel: StringOrTemplateHeader<DashboardTableItem, unknown> = ({
   column,
-}) => columnLabels[column.id as ColumnNames];
+}) => getShortLabel(column.id);
 
 const stripSeconds = (time: string | null) =>
   time && time.length === 8 ? time.substring(0, time.lastIndexOf(':')) : time;
@@ -277,8 +277,8 @@ const columnNames = new Set<ColumnNames>([
 ]);
 
 type MutableFields = Exclude<
-  keyof ExtrusionLog,
-  'id' | 'plant' | 'machine' | 'inch' | 'workingTime'
+  ColumnNames,
+  'plant' | 'machine' | 'inch' | 'workingTime'
 >;
 
 const mutableFields = columnNames.difference(
@@ -289,7 +289,7 @@ function isMutableField(value: string): value is MutableFields {
   return mutableFields.has(value as MutableFields);
 }
 
-const columnLabels: Record<ColumnNames, string> = {
+const columnLabels: Record<ColumnNames, string | [string, string]> = {
   date: 'Date',
   shift: 'Shift',
   plant: 'Plant',
@@ -301,29 +301,29 @@ const columnLabels: Record<ColumnNames, string> = {
   customer: 'Customer',
   dieCode: 'Die Code',
 
-  dieNumber: 'Die Number',
+  dieNumber: ['Die Number', 'Die No.'],
   cavity: 'Cavity',
-  productKgpm: 'Product kg/m',
+  productKgpm: ['Product kg/m', 'kg/m'],
 
-  billetType: 'Billet Type',
-  billetKgpm: 'Billet kg/m',
-  billetLength: 'Length',
-  billetQuantity: 'Quantity',
-  billetWeight: 'Weight',
+  billetType: ['Billet Type', 'B. Type'],
+  billetKgpm: ['Billet kg/m', 'B. kg/m'],
+  billetLength: ['Billet Length', 'B. Length'],
+  billetQuantity: ['Billet Quantity', 'B. Qty'],
+  billetWeight: ['Billet Weight', 'B. Weight'],
   ingotRatio: 'Ingot Ratio',
   lotNumberCode: 'Lot No.',
 
   ramSpeed: 'Ram Speed',
-  billetTemp: 'Billet Temp.',
-  outputTemp: 'Output Temp.',
+  billetTemp: ['Billet Temperature', 'Billet'],
+  outputTemp: ['Output Temperature', 'Output'],
   orderLength: 'Order Length',
   outputRate: 'kg/h',
-  productionQuantity: 'Prod. Qty',
-  productionWeight: 'Prod. Weight',
+  productionQuantity: ['Production Quantity', 'Prod. Qty'],
+  productionWeight: ['Production Weight', 'Prod. Weight'],
 
   result: 'OK/NG',
   outputYield: 'Yield',
-  ngQuantity: 'NG Qty',
+  ngQuantity: ['NG Quantity', 'NG Qty'],
   ngWeight: 'NG Weight',
   ngPercentage: 'NG %',
   remark: 'Remark',
@@ -334,11 +334,30 @@ const columnLabels: Record<ColumnNames, string> = {
   workingTime: 'Duration',
 };
 
+function getLabel(col: string) {
+  const label = columnLabels[col as ColumnNames];
+  if (typeof label === 'string') {
+    return label;
+  } else {
+    return label[0];
+  }
+}
+
+function getShortLabel(col: string) {
+  const label = columnLabels[col as ColumnNames];
+  if (typeof label === 'string') {
+    return label;
+  } else {
+    return label[1];
+  }
+}
+
 export {
   getColumns,
   columnNames,
   isColumnName,
-  columnLabels,
+  getLabel,
+  getShortLabel,
   mutableFields,
   isMutableField,
   isDraft,

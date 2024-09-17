@@ -34,7 +34,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   isMutableField,
-  columnLabels,
+  getLabel,
   isDraft,
 } from '@/app/(protected)/dashboard/columns';
 import ExtrusionLogDialog from '@/components/ExtrusionLogDialog';
@@ -304,7 +304,7 @@ const DataCell = genericMemo(
               }}
             >
               <FilePenLine className="w-4 h-4 mr-2" />
-              Edit {columnLabels[column.id]}
+              Edit {getLabel(column.id)}
             </ContextMenuItem>
           )}
           {rowIsDraft && (

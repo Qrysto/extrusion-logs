@@ -29,6 +29,13 @@ export type SuggestionData = {
 
 export type { ExtrusionLog };
 
+export type ColumnNames = Exclude<keyof ExtrusionLog, 'id'> | 'workingTime';
+
+export type MutableFields = Exclude<
+  keyof ColumnNames,
+  'plant' | 'machine' | 'inch' | 'workingTime'
+>;
+
 export type DateRange = {
   from: Date;
   to: Date;

@@ -33,7 +33,7 @@ import { useForm, DefaultValues } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { useSuggestionData } from '@/lib/client';
 import { ExtrusionLog, SuggestionData } from '@/lib/types';
-import { columnLabels, MutableFields } from './columns';
+import { getLabel, MutableFields } from './columns';
 
 type FormValues<T extends MutableFields> = Pick<WholeFormValues, T>;
 
@@ -105,7 +105,7 @@ export function EditExtrusionLogField<T extends MutableFields>({
     >
       <DialogContent className="flex flex-col max-w-xl px-0">
         <DialogHeader className="flex-shrink-0 px-6">
-          <DialogTitle>Edit {columnLabels[field]}</DialogTitle>
+          <DialogTitle>Edit {getLabel(field)}</DialogTitle>
         </DialogHeader>
 
         <Form

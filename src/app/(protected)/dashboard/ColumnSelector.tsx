@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ListChecks } from 'lucide-react';
-import { columnLabels, ColumnNames } from './columns';
+import { getLabel } from './columns';
 
 export default function ColumnSelector<TData>({
   table,
@@ -47,7 +47,7 @@ export default function ColumnSelector<TData>({
                   evt.preventDefault();
                 }}
               >
-                {columnLabels[column.id as ColumnNames]}
+                {getLabel(column.id)}
               </DropdownMenuCheckboxItem>
             ))}
         </ScrollArea>
