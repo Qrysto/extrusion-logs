@@ -40,7 +40,7 @@ export default function ExtrusionLogDialog({
 
   async function onSubmit(values: FormValues) {
     try {
-      await post('/api/create-extrusion-log', values);
+      await post('/api/extrusion-logs', values);
     } catch (err: any) {
       flashError({ message: err?.message || String(err) });
       return;
