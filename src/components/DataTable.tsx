@@ -81,7 +81,7 @@ export default function DataTable<TData>({
       onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
     >
       <Table className="border-separate border-spacing-0">
-        <TableHeader className="sticky top-0 rounded-t-md flex-shrink-0 bg-background shadow-[0_0_2px_1px_hsl(var(--border))]">
+        <TableHeader className="sticky top-0 z-10 rounded-t-md flex-shrink-0 bg-background shadow-[0_0_2px_1px_hsl(var(--border))]">
           {table.getHeaderGroups().map((headerGroup) => (
             <HeaderRow
               key={headerGroup.id}
