@@ -1,7 +1,6 @@
 'use client';
 
-import { format } from 'date-fns';
-import { useState, useId, ReactNode, ComponentProps } from 'react';
+import { useId, ReactNode, ComponentProps } from 'react';
 import { Form, FormField, FormLabel } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -12,7 +11,6 @@ import {
   FormDatePicker,
   FormTimePicker,
 } from '@/components/ui/form-adapters';
-import { timeFormat } from '@/lib/dateTime';
 import {
   Dialog,
   DialogContent,
@@ -20,11 +18,11 @@ import {
   DialogFooter,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { columnLabels, MutableFields } from './columns';
 import {
   formSchema,
   FormValues as WholeFormValues,
 } from '@/components/ExtrusionLogForm';
+import { FortifiedDialogProps } from '@/components/DialogController';
 import { patch } from '@/lib/api';
 import { flashError, toast, confirm } from '@/lib/ui';
 import {
@@ -36,24 +34,26 @@ import { useForm, DefaultValues } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { useSuggestionData } from '@/lib/client';
 import { ExtrusionLog, SuggestionData } from '@/lib/types';
+import { columnLabels, MutableFields } from './columns';
 
 type FormValues<T extends MutableFields> = Pick<WholeFormValues, T>;
 
-export type EditingState<T extends MutableFields> = {
+interface EditExtrusionLogFieldProps<T extends MutableFields>
+  extends FortifiedDialogProps {
   extrusionLogId: number;
   field: T;
   initialValue: ExtrusionLog[T];
-  removeDialog: () => void;
-};
+}
 
-export function EditExtrusionLogForm<T extends MutableFields>({
-  removeDialog,
+export function EditExtrusionLogField<T extends MutableFields>({
   extrusionLogId,
   field,
   initialValue,
-}: EditingState<T>) {
+  open,
+  onOpenChange,
+  ...rest
+}: EditExtrusionLogFieldProps<T>) {
   const formId = useId();
-  const [open, setOpen] = useState(true);
   const { data } = useSuggestionData();
   const form = useForm<FormValues<T>>({
     resolver: zodResolver(formSchema.pick({ [field]: true } as object)),
@@ -61,10 +61,6 @@ export function EditExtrusionLogForm<T extends MutableFields>({
       [field]: initialValue,
     } as DefaultValues<FormValues<T>>,
   });
-  const closeDialog = () => {
-    setOpen(false);
-    setTimeout(removeDialog, 150);
-  };
   const {
     formState: { isDirty, isLoading, isSubmitting },
   } = form;
@@ -76,7 +72,7 @@ export function EditExtrusionLogForm<T extends MutableFields>({
       flashError({ message: err?.message || String(err) });
       return;
     }
-    closeDialog();
+    onOpenChange(false);
     toast({
       title: 'Updated successfully!',
     });
@@ -88,28 +84,25 @@ export function EditExtrusionLogForm<T extends MutableFields>({
     <Dialog
       open={open}
       onOpenChange={async (open: boolean) => {
-        if (!open) {
-          if (form.formState.isDirty) {
-            const confirmed = await confirm({
-              title: (
-                <span className="flex items-center space-x-2 text-destructive">
-                  <TriangleAlert className="w-4 h-4" />
-                  <span>Closing form</span>
-                </span>
-              ),
-              description:
-                'Are you sure you want to close and discard all unsaved changes?',
-              yesLabel: 'Close and discard form',
-              variant: 'destructive',
-              noLabel: 'Go back',
-            });
-            if (!confirmed) return;
-          }
-          closeDialog();
-        } else {
-          setOpen(true);
+        if (!open && form.formState.isDirty) {
+          const confirmed = await confirm({
+            title: (
+              <span className="flex items-center space-x-2 text-destructive">
+                <TriangleAlert className="w-4 h-4" />
+                <span>Closing form</span>
+              </span>
+            ),
+            description:
+              'Are you sure you want to close and discard all unsaved changes?',
+            yesLabel: 'Close and discard form',
+            variant: 'destructive',
+            noLabel: 'Go back',
+          });
+          if (!confirmed) return;
         }
+        onOpenChange(false);
       }}
+      {...rest}
     >
       <DialogContent className="flex flex-col max-w-xl px-0">
         <DialogHeader className="flex-shrink-0 px-6">
@@ -367,52 +360,6 @@ function Field<T extends MutableFields>({
         </FormItem>
       );
   }
-}
-
-export function getDefaultValues<T extends object>({
-  employeeId,
-}: {
-  employeeId: string;
-}) {
-  const now = new Date();
-
-  return {
-    employeeId,
-    date: now,
-    shift: now.getHours() >= 8 && now.getHours() < 20 ? 'day' : 'night',
-    startTime: '',
-    endTime: format(now, timeFormat),
-
-    item: '',
-    customer: '',
-    dieCode: '',
-    dieNumber: null,
-    cavity: null,
-    productKgpm: null,
-    billetType: '',
-    lotNumberCode: '',
-    ingotRatio: null,
-    billetKgpm: null,
-    billetLength: null,
-    billetQuantity: null,
-    billetWeight: null,
-    orderLength: null,
-    ramSpeed: null,
-    billetTemp: null,
-    outputTemp: null,
-
-    result: null,
-    outputYield: null,
-    productionQuantity: null,
-    productionWeight: null,
-    remark: '',
-    outputRate: null,
-    ngQuantity: null,
-    ngWeight: null,
-    ngPercentage: null,
-    code: '',
-    buttWeight: null,
-  } as T;
 }
 
 const shiftItems = [

@@ -37,11 +37,10 @@ import {
   columnLabels,
   isDraft,
 } from '@/app/(protected)/dashboard/columns';
-import { openDialog } from '@/components/DialogController';
 import ExtrusionLogDialog from '@/components/ExtrusionLogDialog';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { cn, genericMemo } from '@/lib/utils';
-import { confirm } from '@/lib/ui';
+import { confirm, openDialog } from '@/lib/ui';
 
 export default function DataTable<TData>({
   table,

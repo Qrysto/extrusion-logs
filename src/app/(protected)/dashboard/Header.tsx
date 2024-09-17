@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Plus, MoonStar, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { LoggedInAccount } from '@/lib/auth';
-import { openDialog } from '@/components/DialogController';
+import { openDialog } from '@/lib/ui';
 import AccountControl from './AccountControl';
 import ExtrusionLogDialog from '@/components/ExtrusionLogDialog';
 

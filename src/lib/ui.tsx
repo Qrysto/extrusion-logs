@@ -63,3 +63,5 @@ export function confirm({
     });
   });
 }
+
+export { openDialog, dismissDialog } from '@/components/DialogController';

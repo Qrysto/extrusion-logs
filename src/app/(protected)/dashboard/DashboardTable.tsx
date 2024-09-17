@@ -16,15 +16,15 @@ import { useUpdateSearchParams } from '@/lib/client';
 import { ListRestart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { colVisibilityKey } from '@/lib/const';
-import { ExtrusionLog, DashboardTableItem } from '@/lib/types';
+import { DashboardTableItem } from '@/lib/types';
 import { del } from '@/lib/api';
-import { toast, flashError } from '@/lib/ui';
+import { toast, flashError, openDialog } from '@/lib/ui';
 import { useDrafts, removeDraft } from '@/lib/drafts';
-import { getColumns, isMutableField, MutableFields, isDraft } from './columns';
+import { getColumns, isMutableField, isDraft } from './columns';
 import Filters from './Filters';
 import ColumnSelector from './ColumnSelector';
 import DataTable from '@/components/DataTable';
-import { EditExtrusionLogForm, EditingState } from './EditExtrusionLogField';
+import { EditExtrusionLogField } from './EditExtrusionLogField';
 
 export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
   const { data, isFetching, hasNextPage, fetchNextPage, refetch } =
@@ -53,9 +53,6 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
   });
-  const [editing, setEditing] = useState<EditingState<MutableFields> | null>(
-    null
-  );
 
   const deleteRow = useCallback(async (row: Row<DashboardTableItem>) => {
     try {
@@ -87,13 +84,12 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
         const obj = cell.row.original;
         if (isDraft(obj)) return;
 
-        setEditing({
+        openDialog(EditExtrusionLogField, {
           extrusionLogId: obj.id,
           field,
           initialValue: obj[field],
-          removeDialog: () => {
-            setEditing(null);
-            resolve();
+          onOpenChange: (open) => {
+            if (!open) resolve();
           },
         });
       }),
@@ -127,8 +123,6 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
           editCell={editCell}
         />
       </main>
-
-      {!!editing && <EditExtrusionLogForm {...editing} />}
     </>
   );
 }

@@ -27,6 +27,7 @@ export default function ExtrusionLogDialog({
   open,
   onOpenChange,
   draft,
+  ...rest
 }: {
   employeeId?: string;
   draft?: Draft;
@@ -100,6 +101,7 @@ export default function ExtrusionLogDialog({
         }
         onOpenChange(open);
       }}
+      {...rest}
     >
       <DialogTrigger asChild>
         <Button variant="default">
