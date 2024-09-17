@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { FormValues } from '@/components/ExtrusionLogForm';
+import type { FullFormValues } from '@/lib/extrusionLogForm';
 import type { ExtrusionLog } from '@/app/api/extrusion-logs/route';
 
 export interface AuthData {
@@ -43,9 +43,9 @@ export type DateRange = {
 
 export type SortOrder = 'asc' | 'desc';
 
-export type ExtrusionLogFormValues = FormValues;
+export type { FullFormValues };
 
-export type Draft = ExtrusionLogFormValues & {
+export type Draft = FullFormValues & {
   id: string;
   workingTime: undefined;
   isDraft: true;

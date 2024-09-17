@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { draftLogsKey } from '@/lib/const';
 import { genId } from '@/lib/utils';
-import { ExtrusionLogFormValues, Draft, DashboardTableItem } from './types';
+import { FullFormValues, Draft, DashboardTableItem } from './types';
 
 let _drafts: Draft[] = [];
 const _listeners: Listener[] = [];
@@ -29,7 +29,7 @@ function set(newDrafts: Draft[]) {
   });
 }
 
-function addDraft(values: ExtrusionLogFormValues) {
+function addDraft(values: FullFormValues) {
   const newDraft = {
     id: `draft-${genId()}`,
     isDraft: true,
@@ -38,7 +38,7 @@ function addDraft(values: ExtrusionLogFormValues) {
   set([newDraft, ..._drafts]);
 }
 
-function updateDraft(id: string, values: ExtrusionLogFormValues) {
+function updateDraft(id: string, values: FullFormValues) {
   const index = _drafts.findIndex((draft) => draft.id === id);
   if (index < 0) {
     throw new Error(`Draft with ID '${id}' not found!`);

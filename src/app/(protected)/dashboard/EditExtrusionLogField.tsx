@@ -17,13 +17,11 @@ import {
   DialogFooter,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  formSchema,
-  FormValues as WholeFormValues,
-} from '@/components/ExtrusionLogForm';
+import { formSchema, FullFormValues } from '@/lib/extrusionLogForm';
 import { FortifiedDialogProps } from '@/components/DialogController';
 import { patch } from '@/lib/api';
 import { flashError, toast, confirm } from '@/lib/ui';
+import { shiftItems, resultItems } from '@/lib/extrusionLogForm';
 import {
   refreshSuggestionData,
   refreshAllExtrusionQueries,
@@ -35,7 +33,7 @@ import { useSuggestionData } from '@/lib/client';
 import { ExtrusionLog, SuggestionData } from '@/lib/types';
 import { getLabel, MutableFields } from './columns';
 
-type FormValues<T extends MutableFields> = Pick<WholeFormValues, T>;
+type FormValues<T extends MutableFields> = Pick<FullFormValues, T>;
 
 interface EditExtrusionLogFieldProps<T extends MutableFields>
   extends FortifiedDialogProps {
@@ -360,13 +358,3 @@ function Field<T extends MutableFields>({
       );
   }
 }
-
-const shiftItems = [
-  { value: 'DAY', label: 'Day' },
-  { value: 'NIGHT', label: 'Night' },
-];
-
-const resultItems = [
-  { value: 'OK', label: 'OK' },
-  { value: 'NG', label: 'NG' },
-];

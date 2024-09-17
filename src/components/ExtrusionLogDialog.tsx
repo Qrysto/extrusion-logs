@@ -8,12 +8,6 @@ import { Plus } from 'lucide-react';
 import { TriangleAlert } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { confirm, flashError, toast } from '@/lib/ui';
-import {
-  ExtrusionLogForm,
-  getDefaultValues,
-  FormValues,
-  formSchema,
-} from '@/components/ExtrusionLogForm';
 import { addDraft, updateDraft, removeDraft } from '@/lib/drafts';
 import { Draft } from '@/lib/types';
 import {
@@ -21,6 +15,32 @@ import {
   refreshAllExtrusionQueries,
 } from '@/lib/client';
 import { post } from '@/lib/api';
+import { format } from 'date-fns';
+import { useId, ReactNode, ComponentProps } from 'react';
+import { Form, FormField, FormLabel } from '@/components/ui/form';
+import {
+  FormInput,
+  FormAutoComplete,
+  FormToggleGroup,
+  FormDatePicker,
+  FormTimePicker,
+} from '@/components/ui/form-adapters';
+import { timeFormat } from '@/lib/dateTime';
+import {
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  shiftItems,
+  resultItems,
+  FullFormValues,
+  formSchema,
+} from '@/lib/extrusionLogForm';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Power, Check, Save } from 'lucide-react';
+import { useSuggestionData } from '@/lib/client';
 
 export default function ExtrusionLogDialog({
   employeeId = '',
@@ -33,12 +53,17 @@ export default function ExtrusionLogDialog({
   draft?: Draft;
 } & FortifiedDialogProps) {
   const defaultValues = draft || getDefaultValues({ employeeId });
-  const form = useForm<FormValues>({
+  const formId = useId();
+  const { data } = useSuggestionData();
+  const form = useForm<FullFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
+  const {
+    formState: { isLoading, isSubmitting },
+  } = form;
 
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(values: FullFormValues) {
     try {
       await post('/api/extrusion-logs', values);
     } catch (err: any) {
@@ -110,13 +135,272 @@ export default function ExtrusionLogDialog({
         </Button>
       </DialogTrigger>
 
-      <ExtrusionLogForm
-        heading="New Extrusion Log"
-        form={form}
-        onSubmit={onSubmit}
-        saveForm={save}
-        resetForm={resetForm}
-      />
+      <DialogContent className="flex flex-col h-[90%] max-w-3xl px-0">
+        <DialogHeader className="flex-shrink-0 px-6">
+          <DialogTitle>Create Extrusion Log</DialogTitle>
+        </DialogHeader>
+
+        <ScrollArea className="flex-1">
+          <Form
+            id={formId}
+            form={form}
+            onSubmit={onSubmit}
+            className="px-6 py-2 space-y-6"
+          >
+            <FormItem name="employeeId" label="Employee ID">
+              <FormInput />
+            </FormItem>
+
+            <div className="flex gap-x-4">
+              <FormItem name="shift" label="Shift">
+                <FormToggleGroup type="single" items={shiftItems} />
+              </FormItem>
+
+              <FormItem name="date" label="Date">
+                <div>
+                  <FormDatePicker />
+                </div>
+              </FormItem>
+
+              <FormItem name="startTime" label="Start time" className="flex-1">
+                <FormTimePicker />
+              </FormItem>
+
+              <FormItem name="endTime" label="End time" className="flex-1">
+                <FormTimePicker />
+              </FormItem>
+            </div>
+
+            <FormItem name="item" label="Item">
+              <FormAutoComplete options={data?.itemList || []} />
+            </FormItem>
+
+            <FormItem name="customer" label="Customer">
+              <FormAutoComplete options={data?.customerList || []} />
+            </FormItem>
+
+            <div className="flex gap-x-4">
+              <FormItem
+                name="dieCode"
+                label="Die code"
+                className="flex-[2_2_0]"
+              >
+                <FormAutoComplete options={data?.dieCodeList || []} />
+              </FormItem>
+
+              <FormItem name="dieNumber" label="Die number" className="flex-1">
+                <FormInput />
+              </FormItem>
+            </div>
+
+            <div className="flex gap-x-4">
+              <FormItem name="cavity" label="Cavity">
+                <FormInput />
+              </FormItem>
+
+              <FormItem name="productKgpm" label="Product Kg/m">
+                <FormInput step="any" />
+              </FormItem>
+            </div>
+
+            <div className="flex gap-x-4">
+              <FormItem name="billetType" label="Billet type">
+                <FormAutoComplete options={data?.billetTypeList || []} />
+              </FormItem>
+
+              <FormItem name="lotNumberCode" label="Lot number">
+                <FormAutoComplete options={data?.lotNoList || []} />
+              </FormItem>
+            </div>
+
+            <div className="flex gap-x-4">
+              <FormItem name="ingotRatio" label="Ingot ratio (%)">
+                <FormInput max={100} />
+              </FormItem>
+
+              <FormItem name="billetKgpm" label="Billet Kg/m">
+                <FormInput step="any" />
+              </FormItem>
+            </div>
+
+            <div className="flex gap-x-4">
+              <FormItem name="billetLength" label="Billet length (mm)">
+                <FormInput step="any" />
+              </FormItem>
+
+              <FormItem name="billetQuantity" label="Billet quantity">
+                <FormInput />
+              </FormItem>
+
+              <FormItem name="billetWeight" label="Billet weight (g)">
+                <FormInput step="any" />
+              </FormItem>
+            </div>
+
+            <div className="flex gap-x-4">
+              <FormItem name="orderLength" label="Order length (mm)">
+                <FormInput step="any" />
+              </FormItem>
+
+              <FormItem name="ramSpeed" label="Ram speed">
+                <FormInput step="any" />
+              </FormItem>
+            </div>
+
+            <div className="flex gap-x-4">
+              <FormItem name="billetTemp" label="Billet temperature">
+                <FormInput step="any" />
+              </FormItem>
+
+              <FormItem name="outputTemp" label="Output temperature">
+                <FormInput step="any" />
+              </FormItem>
+            </div>
+
+            <div className="flex gap-x-4">
+              <FormItem name="result" label="Result">
+                <FormToggleGroup type="single" items={resultItems} />
+              </FormItem>
+
+              <FormItem name="outputYield" label="Yield (%)">
+                <FormInput max={100} />
+              </FormItem>
+            </div>
+
+            <div className="flex gap-x-4">
+              <FormItem name="productionQuantity" label="Production quantity">
+                <FormInput />
+              </FormItem>
+
+              <FormItem name="productionWeight" label="Production weight (g)">
+                <FormInput step="any" />
+              </FormItem>
+
+              <FormItem name="outputRate" label="Output rate (kg/h)">
+                <FormInput step="any" />
+              </FormItem>
+            </div>
+
+            <div className="flex gap-x-4">
+              <FormItem name="ngQuantity" label="NG quantity">
+                <FormInput />
+              </FormItem>
+
+              <FormItem name="ngWeight" label="NG weight (g)">
+                <FormInput step="any" />
+              </FormItem>
+
+              <FormItem name="ngPercentage" label="NG Percentage (%)">
+                <FormInput step="any" />
+              </FormItem>
+            </div>
+
+            <FormItem name="remark" label="Remark">
+              <FormInput />
+            </FormItem>
+
+            <div className="flex gap-x-4">
+              <FormItem name="code" label="Code">
+                <FormAutoComplete options={data?.codeList || []} />
+              </FormItem>
+
+              <FormItem name="buttWeight" label="Butt weight (g)">
+                <FormInput step="any" />
+              </FormItem>
+            </div>
+          </Form>
+        </ScrollArea>
+
+        <DialogFooter className="px-6 sm:justify-between flex-shrink-0">
+          <div>
+            {!!resetForm && (
+              <Button variant="secondary" onClick={resetForm}>
+                <Power className="mr-2 h-4 w-4" />
+                Reset form
+              </Button>
+            )}
+          </div>
+
+          <div>
+            <Button variant="outline" className="mr-4" onClick={save}>
+              <Save className="mr-2 h-4 w-4" />
+              Save
+            </Button>
+            <Button
+              type="submit"
+              form={formId}
+              disabled={isSubmitting || isLoading}
+            >
+              <Check className="mr-2 h-4 w-4" />
+              Submit
+            </Button>
+          </div>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   );
+}
+
+function FormItem({
+  name,
+  label,
+  children,
+  ...rest
+}: {
+  name: string;
+  label: ReactNode;
+  children: ReactNode;
+} & ComponentProps<typeof FormField>) {
+  return (
+    <FormField name={name} {...rest}>
+      <FormLabel>{label}</FormLabel>
+      {children}
+    </FormField>
+  );
+}
+
+function getDefaultValues<T extends object>({
+  employeeId,
+}: {
+  employeeId: string;
+}) {
+  const now = new Date();
+
+  return {
+    employeeId,
+    date: now,
+    shift: now.getHours() >= 8 && now.getHours() < 20 ? 'DAY' : 'NIGHT',
+    startTime: null,
+    endTime: format(now, timeFormat),
+
+    item: null,
+    customer: null,
+    dieCode: null,
+    dieNumber: null,
+    cavity: null,
+    productKgpm: null,
+    billetType: null,
+    lotNumberCode: null,
+    ingotRatio: null,
+    billetKgpm: null,
+    billetLength: null,
+    billetQuantity: null,
+    billetWeight: null,
+    orderLength: null,
+    ramSpeed: null,
+    billetTemp: null,
+    outputTemp: null,
+
+    result: null,
+    outputYield: null,
+    productionQuantity: null,
+    productionWeight: null,
+    remark: null,
+    outputRate: null,
+    ngQuantity: null,
+    ngWeight: null,
+    ngPercentage: null,
+    code: null,
+    buttWeight: null,
+  } as T;
 }
