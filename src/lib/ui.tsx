@@ -6,7 +6,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
-import { flashDialog } from '@/components/DialogController';
+import { flashDialog } from '@/components/FlashDialogController';
 import { toast } from '@/components/ToastController';
 
 export { toast };

@@ -6,6 +6,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const genId = (() => {
+  let count = 0;
+  return () => {
+    count = (count + 1) % Number.MAX_SAFE_INTEGER;
+    return count.toString();
+  };
+})();
+
 export const genericMemo: <T>(component: T) => T = memo;
 
 export function memoize<T, P extends Array<any>, R>(

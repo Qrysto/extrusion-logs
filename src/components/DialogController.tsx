@@ -1,180 +1,193 @@
 'use client';
 
-import { useEffect, useReducer, ReactNode } from 'react';
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { AlertDialogProps } from '@radix-ui/react-alert-dialog';
-import {
-  AlertDialogCancelElement,
-  AlertDialogActionElement,
-} from '@/components/ui/alert-dialog';
+import { ComponentType, useSyncExternalStore } from 'react';
+import { DialogProps } from '@radix-ui/react-dialog';
+import { genId } from '@/lib/utils';
 
 const DIALOG_REMOVE_DELAY = 150;
 
-// dummy initial dispatch
-let dispatch = (action: Action) => {};
-
-function DialogController() {
-  const [dialogs, tempDispatch] = useReducer(reducer, []);
-  useEffect(() => {
-    dispatch = tempDispatch;
-  }, []);
-
-  return dialogs.map(({ id, title, description, actions, ...props }) => (
-    <AlertDialog key={id} {...props}>
-      <AlertDialogContent>
-        {title && (
-          <AlertDialogHeader>
-            <AlertDialogTitle>{title}</AlertDialogTitle>
-          </AlertDialogHeader>
-        )}
-
-        {description && (
-          <AlertDialogDescription>{description}</AlertDialogDescription>
-        )}
-        {!!actions?.length && <AlertDialogFooter>{actions}</AlertDialogFooter>}
-      </AlertDialogContent>
-    </AlertDialog>
-  ));
-}
-
-type FlashDialog = AlertDialogProps & {
+type DialogDescriptor = {
   id: string;
-  title?: ReactNode;
-  description?: ReactNode;
-  actions?: Array<AlertDialogActionElement | AlertDialogCancelElement>;
+  Component: ComponentType<any>;
+  props: any;
 };
-
-const actionTypes = {
-  ADD_DIALOG: 'ADD_DIALOG',
-  UPDATE_DIALOG: 'UPDATE_DIALOG',
-  DISMISS_DIALOG: 'DISMISS_DIALOG',
-  REMOVE_DIALOG: 'REMOVE_DIALOG',
-} as const;
-
-let count = 0;
-function genId() {
-  count = (count + 1) % Number.MAX_SAFE_INTEGER;
-  return count.toString();
-}
-
-type ActionType = typeof actionTypes;
 
 type Action =
   | {
-      type: ActionType['ADD_DIALOG'];
-      dialog: FlashDialog;
+      type: 'ADD_DIALOG';
+      id: string;
+      Component: ComponentType<any>;
+      props: any;
     }
   | {
-      type: ActionType['UPDATE_DIALOG'];
-      dialog: Partial<FlashDialog>;
+      type: 'UPDATE_DIALOG';
+      id: string;
+      props: any;
     }
   | {
-      type: ActionType['DISMISS_DIALOG'];
-      dialogId?: FlashDialog['id'];
+      type: 'DISMISS_DIALOG';
+      id?: string;
     }
   | {
-      type: ActionType['REMOVE_DIALOG'];
-      dialogId?: FlashDialog['id'];
+      type: 'REMOVE_DIALOG';
+      id?: string;
     };
 
-const dialogTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
-
-const addToDialogRemoveQueue = (dialogId: string) => {
-  if (dialogTimeouts.has(dialogId)) {
-    return;
-  }
-
-  const timeout = setTimeout(() => {
-    dialogTimeouts.delete(dialogId);
-    dispatch({
-      type: 'REMOVE_DIALOG',
-      dialogId: dialogId,
-    });
-  }, DIALOG_REMOVE_DELAY);
-
-  dialogTimeouts.set(dialogId, timeout);
-};
+interface FortifiedDialogProps
+  extends Omit<DialogProps, 'open' | 'onOpenChange'>,
+    Required<Pick<DialogProps, 'open' | 'onOpenChange'>> {}
 
 export const reducer = (
-  state: FlashDialog[],
+  state: DialogDescriptor[],
   action: Action
-): FlashDialog[] => {
+): DialogDescriptor[] => {
   switch (action.type) {
-    case 'ADD_DIALOG':
-      return [...state, action.dialog];
+    case 'ADD_DIALOG': {
+      const { id, Component, props } = action;
+      return [...state, { id, Component, props }];
+    }
 
     case 'UPDATE_DIALOG':
-      return state.map((t) =>
-        t.id === action.dialog.id ? { ...t, ...action.dialog } : t
+      return state.map((dialog) =>
+        dialog.id === action.id
+          ? { ...dialog, props: { ...dialog.props, ...action.props } }
+          : dialog
       );
 
     case 'DISMISS_DIALOG': {
-      const { dialogId } = action;
-      if (dialogId) {
-        addToDialogRemoveQueue(dialogId);
-      } else {
-        state.forEach((dialog) => {
-          addToDialogRemoveQueue(dialog.id);
-        });
-      }
-
-      return state.map((t) =>
-        t.id === dialogId || dialogId === undefined
+      const { id } = action;
+      return state.map((dialog) =>
+        dialog.id === id || id === undefined
           ? {
-              ...t,
-              open: false,
+              ...dialog,
+              props: {
+                ...dialog.props,
+                open: false,
+              },
             }
-          : t
+          : dialog
       );
     }
 
     case 'REMOVE_DIALOG':
-      if (action.dialogId === undefined) {
+      if (action.id === undefined) {
         return [];
       }
-      return state.filter((t) => t.id !== action.dialogId);
+      return state.filter((dialog) => dialog.id !== action.id);
+
+    default:
+      return state;
   }
 };
 
-type DialogConfig = Omit<FlashDialog, 'id'>;
+class DialogStore {
+  private state: DialogDescriptor[] = [];
+  private listeners: Set<() => void> = new Set();
+  private dialogTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
 
-function flashDialog({ ...props }: DialogConfig) {
-  const id = genId();
+  subscribe(listener: () => void) {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
 
-  const update = (props: FlashDialog) =>
-    dispatch({
-      type: 'UPDATE_DIALOG',
-      dialog: { ...props, id },
-    });
-  const dismiss = () => dispatch({ type: 'DISMISS_DIALOG', dialogId: id });
+  private notify() {
+    this.listeners.forEach((listener) => listener());
+  }
 
-  dispatch({
-    type: 'ADD_DIALOG',
-    dialog: {
-      ...props,
+  getState() {
+    return this.state;
+  }
+
+  dispatch(action: Action) {
+    this.state = reducer(this.state, action);
+    this.notify();
+  }
+
+  private queueDialogToRemove(id: string) {
+    if (this.dialogTimeouts.has(id)) {
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      this.dialogTimeouts.delete(id);
+      this.dispatch({
+        type: 'REMOVE_DIALOG',
+        id,
+      });
+    }, DIALOG_REMOVE_DELAY);
+
+    this.dialogTimeouts.set(id, timeout);
+  }
+
+  openDialog<CProps extends FortifiedDialogProps>(
+    Component: ComponentType<CProps>,
+    props?: Omit<CProps, 'open' | 'defaultOpen' | 'onOpenChange'> &
+      Pick<DialogProps, 'onOpenChange'>
+  ) {
+    const id = genId();
+
+    const dismiss = () => this.dismissDialog(id);
+    const update = (newProps: Partial<CProps>) => {
+      this.dispatch({
+        type: 'UPDATE_DIALOG',
+        id,
+        props: newProps,
+      });
+    };
+
+    this.dispatch({
+      type: 'ADD_DIALOG',
       id,
-      open: true,
-      onOpenChange: (open) => {
-        if (!open) dismiss();
+      Component,
+      props: {
+        ...props,
+        open: true,
+        onOpenChange: (open: boolean) => {
+          if (!open) dismiss();
+          props?.onOpenChange?.(open);
+        },
       },
-    },
-  });
+    });
 
-  return {
-    id: id,
-    dismiss,
-    update,
-  };
+    return {
+      id,
+      dismiss,
+      update,
+    };
+  }
+
+  dismissDialog(id?: string) {
+    this.dispatch({ type: 'DISMISS_DIALOG', id });
+    if (id) {
+      this.queueDialogToRemove(id);
+    } else {
+      this.state.forEach((dialog) => {
+        this.queueDialogToRemove(dialog.id);
+      });
+    }
+  }
 }
 
-const dismissDialog = (dialogId?: string) =>
-  dispatch({ type: 'DISMISS_DIALOG', dialogId });
+const dialogStore = new DialogStore();
 
-export { DialogController, flashDialog, dismissDialog, type DialogConfig };
+const openDialog = dialogStore.openDialog.bind(dialogStore);
+const dismissDialog = dialogStore.dismissDialog.bind(dialogStore);
+
+function DialogController() {
+  const dialogs = useSyncExternalStore(
+    dialogStore.subscribe.bind(dialogStore),
+    dialogStore.getState.bind(dialogStore),
+    () => []
+  );
+
+  return dialogs.map(({ id, Component, props }) => (
+    <Component key={id} {...props} />
+  ));
+}
+
+export {
+  type FortifiedDialogProps,
+  DialogController,
+  openDialog,
+  dismissDialog,
+};

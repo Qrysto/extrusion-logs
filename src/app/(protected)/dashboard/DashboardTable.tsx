@@ -16,32 +16,31 @@ import { useUpdateSearchParams } from '@/lib/client';
 import { ListRestart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { colVisibilityKey } from '@/lib/const';
-import { ExtrusionLog } from '@/lib/types';
+import { ExtrusionLog, DashboardTableItem } from '@/lib/types';
 import { del } from '@/lib/api';
-import { toast } from '@/lib/ui';
-import { flashError } from '@/lib/ui';
-import { getColumns, isMutableField, MutableFields } from './columns';
+import { toast, flashError } from '@/lib/ui';
+import { useDrafts, removeDraft } from '@/lib/drafts';
+import { getColumns, isMutableField, MutableFields, isDraft } from './columns';
 import Filters from './Filters';
 import ColumnSelector from './ColumnSelector';
 import DataTable from '@/components/DataTable';
 import { EditExtrusionLogForm, EditingState } from './EditExtrusionLogField';
 
-const emptyData: ExtrusionLog[] = [];
-
 export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
   const { data, isFetching, hasNextPage, fetchNextPage, refetch } =
     useExtrusionLogs();
+  const { drafts } = useDrafts();
   const flatData = useMemo(
-    () => data?.pages?.flatMap((page) => page) ?? [],
-    [data]
+    () => [...drafts, ...(data?.pages?.flatMap((page) => page) || [])],
+    [data, drafts]
   );
 
   const columns = getColumns(isAdmin);
   const [sorting, setSorting] = useSortingState();
   const [columnVisibility, setColumnVisibility] = useColumnVisibility();
   const [rowSelection, setRowSelection] = useState({});
-  const table = useReactTable<ExtrusionLog>({
-    data: flatData || emptyData,
+  const table = useReactTable<DashboardTableItem>({
+    data: flatData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -58,13 +57,21 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
     null
   );
 
-  const deleteRow = useCallback(async (row: Row<ExtrusionLog>) => {
+  const deleteRow = useCallback(async (row: Row<DashboardTableItem>) => {
     try {
-      await del(`/api/extrusion-logs/${row.original.id}`);
-      toast({
-        title: 'Extrusion log has been deleted',
-      });
-      await refetch();
+      const orig = row.original;
+      if (isDraft(orig)) {
+        removeDraft(orig.id);
+        toast({
+          title: 'Draft has been deleted',
+        });
+      } else {
+        await del(`/api/extrusion-logs/${orig.id}`);
+        toast({
+          title: 'Extrusion log has been deleted',
+        });
+        await refetch();
+      }
     } catch (err: any) {
       flashError({
         message: err?.message || String(err),
@@ -73,14 +80,17 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
   }, []);
 
   const editCell = useCallback(
-    async (cell: Cell<ExtrusionLog, unknown>) =>
+    async (cell: Cell<DashboardTableItem, unknown>) =>
       new Promise<void>((resolve) => {
         const field = cell.column.id;
         if (!isMutableField(field)) return;
+        const obj = cell.row.original;
+        if (isDraft(obj)) return;
+
         setEditing({
-          extrusionLogId: cell.row.original.id,
+          extrusionLogId: obj.id,
           field,
-          initialValue: cell.row.original[field],
+          initialValue: obj[field],
           removeDialog: () => {
             setEditing(null);
             resolve();

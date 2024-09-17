@@ -275,12 +275,7 @@ export function ExtrusionLogForm({
 
         <div>
           {!!saveForm && (
-            <Button
-              variant="secondary"
-              className="mr-4"
-              disabled={!isDirty}
-              onClick={saveForm}
-            >
+            <Button variant="outline" className="mr-4" onClick={saveForm}>
               <Save className="mr-2 h-4 w-4" />
               Save
             </Button>
@@ -328,7 +323,7 @@ export function getDefaultValues<T extends object>({
     employeeId,
     date: now,
     shift: now.getHours() >= 8 && now.getHours() < 20 ? 'day' : 'night',
-    startTime: '',
+    startTime: null,
     endTime: format(now, timeFormat),
 
     item: null,

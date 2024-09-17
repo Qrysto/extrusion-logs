@@ -35,7 +35,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import {
   isMutableField,
   columnLabels,
+  isDraft,
 } from '@/app/(protected)/dashboard/columns';
+import { openDialog } from '@/components/DialogController';
+import ExtrusionLogDialog from '@/components/ExtrusionLogDialog';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { cn, genericMemo } from '@/lib/utils';
 import { confirm } from '@/lib/ui';
@@ -223,14 +226,22 @@ const DataRow = genericMemo(
         setDeleting(false);
       }
     }, [row]);
+    const orig = row.original;
+    const rowIsDraft = isDraft(orig);
 
     return (
       <TableRow
         data-state={selected && 'selected'}
         className={cn(
+          rowIsDraft && 'italic opacity-80 cursor-pointer',
           selected && !deleting && 'bg-accent text-accent-foreground',
           deleting && 'bg-destructive text-destructive-foreground'
         )}
+        onClick={
+          rowIsDraft
+            ? () => openDialog(ExtrusionLogDialog, { draft: orig })
+            : undefined
+        }
       >
         {row.getVisibleCells().map((cell) => (
           <DataCell
@@ -256,44 +267,59 @@ const DataCell = genericMemo(
     editCell: (cell: Cell<TData, unknown>) => Promise<void>;
   }) => {
     const [editing, setEditing] = useState<boolean>(false);
-    const edit = useCallback(async () => {
-      setEditing(true);
-      try {
-        await editCell(cell);
-      } finally {
-        setEditing(false);
-      }
-    }, [cell]);
     const { column } = cell;
+    const orig = cell.row.original;
+    const rowIsDraft = isDraft(orig);
 
     return (
       <ContextMenu
         onOpenChange={(open) => {
-          console.log('toggle', open);
-
           cell.row.toggleSelected(open);
         }}
       >
         <ContextMenuTrigger asChild>
           <TableCell
             className={cn(
-              'whitespace-nowrap hover:bg-accent hover:text-accent-foreground',
+              'whitespace-nowrap',
+              !rowIsDraft && 'hover:bg-accent hover:text-accent-foreground',
               editing && 'bg-primary'
             )}
           >
             {flexRender(column.columnDef.cell, cell.getContext())}
           </TableCell>
         </ContextMenuTrigger>
+
         <ContextMenuContent>
-          {isMutableField(column.id) && (
-            <ContextMenuItem className="cursor-pointer" onClick={edit}>
+          {isMutableField(column.id) && !rowIsDraft && (
+            <ContextMenuItem
+              className="cursor-pointer"
+              onClick={async () => {
+                setEditing(true);
+                try {
+                  await editCell(cell);
+                } finally {
+                  setEditing(false);
+                }
+              }}
+            >
               <FilePenLine className="w-4 h-4 mr-2" />
               Edit {columnLabels[column.id]}
             </ContextMenuItem>
           )}
+          {rowIsDraft && (
+            <ContextMenuItem
+              className="cursor-pointer"
+              onClick={() => {
+                openDialog(ExtrusionLogDialog, { draft: orig });
+              }}
+            >
+              <FilePenLine className="w-4 h-4 mr-2" />
+              Edit Draft
+            </ContextMenuItem>
+          )}
           <ContextMenuItem className="cursor-pointer" onClick={deleteRow}>
             <Trash2 className="w-4 h-4 mr-2" />
-            Delete Extrusion Log
+            {rowIsDraft ? 'Delete Draft' : 'Delete Extrusion Log'}
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>

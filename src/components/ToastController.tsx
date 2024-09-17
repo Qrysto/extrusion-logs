@@ -11,6 +11,7 @@ import {
   ToastActionElement,
   ToastProps,
 } from '@/components/ui/toast';
+import { genId } from '@/lib/utils';
 
 const TOAST_LIMIT = 1;
 const TOAST_REMOVE_DELAY = 1000; // 1000000;
@@ -58,12 +59,6 @@ const actionTypes = {
   DISMISS_TOAST: 'DISMISS_TOAST',
   REMOVE_TOAST: 'REMOVE_TOAST',
 } as const;
-
-let count = 0;
-function genId() {
-  count = (count + 1) % Number.MAX_SAFE_INTEGER;
-  return count.toString();
-}
 
 type ActionType = typeof actionTypes;
 

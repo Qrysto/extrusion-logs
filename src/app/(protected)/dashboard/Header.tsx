@@ -5,11 +5,12 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Check, MoonStar, Sun } from 'lucide-react';
+import { Plus, MoonStar, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { LoggedInAccount } from '@/lib/auth';
+import { openDialog } from '@/components/DialogController';
 import AccountControl from './AccountControl';
-import AddExtrusionLog from './AddExtrusionLog';
+import ExtrusionLogDialog from '@/components/ExtrusionLogDialog';
 
 export default function Header({ account }: { account: LoggedInAccount }) {
   const [employeeId, setEmployeeId] = useState('');
@@ -19,7 +20,15 @@ export default function Header({ account }: { account: LoggedInAccount }) {
   return (
     <header className="bg-background border-b py-6 flex justify-between items-start shrink-0">
       <div className="flex-1">
-        <AddExtrusionLog employeeId={employeeId} />
+        <Button
+          variant="default"
+          onClick={() => {
+            openDialog(ExtrusionLogDialog, { employeeId });
+          }}
+        >
+          <Plus className="mr-2" />
+          Create extrusion log
+        </Button>
       </div>
 
       <Link href="/dashboard" className="flex items-center" prefetch={false}>

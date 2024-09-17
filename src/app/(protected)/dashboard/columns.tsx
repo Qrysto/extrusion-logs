@@ -6,16 +6,16 @@ import {
   StringOrTemplateHeader,
   createColumnHelper,
 } from '@tanstack/react-table';
-import type { ExtrusionLog } from '@/lib/types';
+import type { DashboardTableItem, ExtrusionLog, Draft } from '@/lib/types';
 import { format as formatDate, parse } from 'date-fns';
 import { displayDateFormat } from '@/lib/dateTime';
 import { memoize } from '@/lib/utils';
 
-const ch = createColumnHelper<ExtrusionLog>();
+const ch = createColumnHelper<DashboardTableItem>();
 const formatNumber = Intl.NumberFormat('en-US').format;
 
 const getColumns = memoize((isAdmin: boolean) => {
-  const adminColumns: ColumnDef<ExtrusionLog>[] = isAdmin
+  const adminColumns: ColumnDef<DashboardTableItem>[] = isAdmin
     ? [
         { accessorKey: 'machine', header: 'Machine' },
         { accessorKey: 'plant', header: 'Plant' },
@@ -23,7 +23,7 @@ const getColumns = memoize((isAdmin: boolean) => {
       ]
     : [];
 
-  const columns: ColumnDef<ExtrusionLog>[] = [
+  const columns: ColumnDef<DashboardTableItem>[] = [
     ch.group({
       header: 'Date & time',
       columns: [
@@ -183,25 +183,25 @@ const getColumns = memoize((isAdmin: boolean) => {
         ch.accessor('employeeId', { header: 'Employee ID' }),
       ],
     }),
-  ] as ColumnDef<ExtrusionLog>[];
+  ] as ColumnDef<DashboardTableItem>[];
 
   return columns;
 });
 
 const renderNumberCell: ColumnDefTemplate<
-  CellContext<ExtrusionLog, unknown>
+  CellContext<DashboardTableItem, unknown>
 > = ({ getValue }) => (
   <div className="text-right">{formatNumber(getValue<number>())}</div>
 );
 
-const headerLabel: StringOrTemplateHeader<ExtrusionLog, unknown> = ({
+const headerLabel: StringOrTemplateHeader<DashboardTableItem, unknown> = ({
   column,
 }) => columnLabels[column.id as ColumnNames];
 
 const stripSeconds = (time: string | null) =>
   time && time.substring(0, time.lastIndexOf(':'));
 
-function workingTime({ row }: CellContext<ExtrusionLog, unknown>) {
+function workingTime({ row }: CellContext<DashboardTableItem, unknown>) {
   const startTime = row.getValue<string>('startTime');
   const endTime = row.getValue<string>('endTime');
   if (!startTime || !endTime) {
@@ -222,6 +222,10 @@ function workingTime({ row }: CellContext<ExtrusionLog, unknown>) {
       {minutes}m
     </div>
   );
+}
+
+function isDraft(object: any): object is Draft {
+  return !!(object as Draft)?.isDraft;
 }
 
 type ColumnNames = Exclude<keyof ExtrusionLog, 'id'> | 'workingTime';
@@ -340,5 +344,7 @@ export {
   columnLabels,
   mutableFields,
   isMutableField,
+  isDraft,
 };
+
 export type { ColumnNames, MutableFields };

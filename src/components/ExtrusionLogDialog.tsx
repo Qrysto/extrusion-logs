@@ -1,33 +1,37 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { FortifiedDialogProps } from '@/components/DialogController';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { TriangleAlert } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { confirm, flashError } from '@/lib/ui';
-import { toast } from '@/lib/ui';
+import { confirm, flashError, toast } from '@/lib/ui';
 import {
   ExtrusionLogForm,
   getDefaultValues,
   FormValues,
   formSchema,
 } from '@/components/ExtrusionLogForm';
+import { addDraft, updateDraft, removeDraft } from '@/lib/drafts';
+import { Draft } from '@/lib/types';
 import {
   refreshSuggestionData,
   refreshAllExtrusionQueries,
 } from '@/lib/client';
 import { post } from '@/lib/api';
 
-export default function AddExtrusionLog({
-  employeeId,
+export default function ExtrusionLogDialog({
+  employeeId = '',
+  open,
+  onOpenChange,
+  draft,
 }: {
-  employeeId: string;
-}) {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const defaultValues = getDefaultValues({ employeeId });
+  employeeId?: string;
+  draft?: Draft;
+} & FortifiedDialogProps) {
+  const defaultValues = draft || getDefaultValues({ employeeId });
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
@@ -40,18 +44,43 @@ export default function AddExtrusionLog({
       flashError({ message: err?.message || String(err) });
       return;
     }
-    form.reset(getDefaultValues({ employeeId }));
-    setDialogOpen(false);
+    onOpenChange(false);
     toast({
       title: 'Created successfully!',
     });
+    if (draft) {
+      removeDraft(draft.id);
+    }
     refreshSuggestionData();
     refreshAllExtrusionQueries();
   }
 
+  const save = () => {
+    const values = form.getValues();
+    if (draft) {
+      updateDraft(draft.id, values);
+    } else {
+      addDraft(values);
+    }
+    toast({
+      title: 'Draft saved successfully!',
+    });
+    onOpenChange(false);
+  };
+
+  const resetForm = async () => {
+    const confirmed = await confirm({
+      title: 'Reset form',
+      description: 'Are you sure you want to reset all form values?',
+    });
+    if (confirmed) {
+      form.reset(getDefaultValues({ employeeId }));
+    }
+  };
+
   return (
     <Dialog
-      open={dialogOpen}
+      open={open}
       onOpenChange={async (open) => {
         if (!open && form.formState.isDirty) {
           const confirmed = await confirm({
@@ -69,10 +98,7 @@ export default function AddExtrusionLog({
           });
           if (!confirmed) return;
         }
-        setDialogOpen(open);
-        if (open) {
-          form.reset(defaultValues);
-        }
+        onOpenChange(open);
       }}
     >
       <DialogTrigger asChild>
@@ -86,16 +112,8 @@ export default function AddExtrusionLog({
         heading="New Extrusion Log"
         form={form}
         onSubmit={onSubmit}
-        saveForm={undefined}
-        resetForm={async () => {
-          const confirmed = await confirm({
-            title: 'Reset form',
-            description: 'Are you sure you want to reset all form values?',
-          });
-          if (confirmed) {
-            form.reset(getDefaultValues({ employeeId }));
-          }
-        }}
+        saveForm={save}
+        resetForm={resetForm}
       />
     </Dialog>
   );

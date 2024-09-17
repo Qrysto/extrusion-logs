@@ -26,12 +26,12 @@ import {
   FormValues as WholeFormValues,
 } from '@/components/ExtrusionLogForm';
 import { patch } from '@/lib/api';
-import { flashError, toast } from '@/lib/ui';
+import { flashError, toast, confirm } from '@/lib/ui';
 import {
   refreshSuggestionData,
   refreshAllExtrusionQueries,
 } from '@/lib/client';
-import { Check } from 'lucide-react';
+import { Check, TriangleAlert } from 'lucide-react';
 import { useForm, DefaultValues } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { useSuggestionData } from '@/lib/client';
@@ -61,6 +61,10 @@ export function EditExtrusionLogForm<T extends MutableFields>({
       [field]: initialValue,
     } as DefaultValues<FormValues<T>>,
   });
+  const closeDialog = () => {
+    setOpen(false);
+    setTimeout(removeDialog, 150);
+  };
   const {
     formState: { isDirty, isLoading, isSubmitting },
   } = form;
@@ -72,7 +76,7 @@ export function EditExtrusionLogForm<T extends MutableFields>({
       flashError({ message: err?.message || String(err) });
       return;
     }
-    removeDialog();
+    closeDialog();
     toast({
       title: 'Updated successfully!',
     });
@@ -83,10 +87,27 @@ export function EditExtrusionLogForm<T extends MutableFields>({
   return (
     <Dialog
       open={open}
-      onOpenChange={(open: boolean) => {
-        setOpen(open);
+      onOpenChange={async (open: boolean) => {
         if (!open) {
-          setTimeout(removeDialog, 150);
+          if (form.formState.isDirty) {
+            const confirmed = await confirm({
+              title: (
+                <span className="flex items-center space-x-2 text-destructive">
+                  <TriangleAlert className="w-4 h-4" />
+                  <span>Closing form</span>
+                </span>
+              ),
+              description:
+                'Are you sure you want to close and discard all unsaved changes?',
+              yesLabel: 'Close and discard form',
+              variant: 'destructive',
+              noLabel: 'Go back',
+            });
+            if (!confirmed) return;
+          }
+          closeDialog();
+        } else {
+          setOpen(true);
         }
       }}
     >

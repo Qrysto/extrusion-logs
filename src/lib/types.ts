@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import type { FormValues } from '@/components/ExtrusionLogForm';
+import type { ExtrusionLog } from '@/app/api/extrusion-logs/route';
 
 export interface AuthData {
   sessionId: number;
@@ -25,7 +27,7 @@ export type SuggestionData = {
   codeList: string[];
 };
 
-export type { ExtrusionLog } from '@/app/api/extrusion-logs/route';
+export type { ExtrusionLog };
 
 export type DateRange = {
   from: Date;
@@ -33,3 +35,13 @@ export type DateRange = {
 };
 
 export type SortOrder = 'asc' | 'desc';
+
+export type ExtrusionLogFormValues = FormValues;
+
+export type Draft = ExtrusionLogFormValues & {
+  id: string;
+  workingTime: undefined;
+  isDraft: true;
+};
+
+export type DashboardTableItem = ExtrusionLog | Draft;
