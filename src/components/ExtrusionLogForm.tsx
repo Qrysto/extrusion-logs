@@ -28,7 +28,7 @@ import { useSuggestionData } from '@/lib/client';
 export const formSchema = z.object({
   employeeId: z.string().nullable(),
   date: z.date().nullable(),
-  shift: z.enum(['day', 'night']).nullable(),
+  shift: z.enum(['DAY', 'NIGHT']).nullable(),
   startTime: z.string().nullable(),
   endTime: z.string().nullable(),
 
@@ -322,7 +322,7 @@ export function getDefaultValues<T extends object>({
   return {
     employeeId,
     date: now,
-    shift: now.getHours() >= 8 && now.getHours() < 20 ? 'day' : 'night',
+    shift: now.getHours() >= 8 && now.getHours() < 20 ? 'DAY' : 'NIGHT',
     startTime: null,
     endTime: format(now, timeFormat),
 
@@ -359,8 +359,8 @@ export function getDefaultValues<T extends object>({
 }
 
 const shiftItems = [
-  { value: 'day', label: 'Day' },
-  { value: 'night', label: 'Night' },
+  { value: 'DAY', label: 'Day' },
+  { value: 'NIGHT', label: 'Night' },
 ];
 
 const resultItems = [

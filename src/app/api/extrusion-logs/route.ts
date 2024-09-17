@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   const res = await fetchExtrusionLogs({
     account,
     dateRange: parseDateRange(date),
-    shift: shift === 'day' ? 'day' : shift === 'night' ? 'night' : null,
+    shift: shift === 'DAY' ? 'DAY' : shift === 'NIGHT' ? 'NIGHT' : null,
     plant,
     machine,
     item,
@@ -63,7 +63,7 @@ async function fetchExtrusionLogs({
 }: {
   account: Awaited<ReturnType<typeof getAccount>>;
   dateRange: DateRange | null;
-  shift: 'day' | 'night' | null;
+  shift: 'DAY' | 'NIGHT' | null;
   plant: string | null;
   machine: string | null;
   item: string | null;

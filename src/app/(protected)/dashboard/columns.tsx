@@ -35,7 +35,7 @@ const getColumns = memoize((isAdmin: boolean) => {
         ch.accessor('shift', {
           header: headerLabel,
           cell: ({ getValue }) =>
-            getValue<string>() === 'day' ? 'Day' : 'Night',
+            getValue<string>() === 'DAY' ? 'Day' : 'Night',
         }),
         ch.accessor('startTime', {
           header: headerLabel,

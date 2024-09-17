@@ -44,7 +44,7 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
         onValueChange={(value) =>
           updateSearchParams(
             'shift',
-            ['day', 'night'].includes(value) ? value : ''
+            ['DAY', 'NIGHT'].includes(value) ? value : ''
           )
         }
       >

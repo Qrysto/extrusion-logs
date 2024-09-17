@@ -362,8 +362,8 @@ function Field<T extends MutableFields>({
 }
 
 const shiftItems = [
-  { value: 'day', label: 'Day' },
-  { value: 'night', label: 'Night' },
+  { value: 'DAY', label: 'Day' },
+  { value: 'NIGHT', label: 'Night' },
 ];
 
 const resultItems = [

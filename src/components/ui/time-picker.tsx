@@ -566,7 +566,7 @@ const TimePicker = React.forwardRef<TimePickerRef, TimePickerProps>(
 );
 TimePicker.displayName = 'TimePicker';
 
-type Granularity = 'day' | 'hour' | 'minute' | 'second';
+type Granularity = 'DAY' | 'hour' | 'minute' | 'second';
 
 export { TimePickerInput, TimePicker, timeFormat };
 export type { TimePickerType };
