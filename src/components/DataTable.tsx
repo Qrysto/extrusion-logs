@@ -238,7 +238,9 @@ const DataRow = genericMemo(
         )}
         onClick={
           rowIsDraft
-            ? () => openDialog(ExtrusionLogDialog, { draft: orig })
+            ? () => {
+                openDialog(ExtrusionLogDialog, { draft: orig });
+              }
             : undefined
         }
       >
@@ -308,7 +310,9 @@ const DataCell = genericMemo(
           {rowIsDraft && (
             <ContextMenuItem
               className="cursor-pointer"
-              onClick={() => {
+              onClick={(evt) => {
+                // Prevent opening Edit dialog twice because clicking menu item is also clicking the row
+                evt.stopPropagation();
                 openDialog(ExtrusionLogDialog, { draft: orig });
               }}
             >

@@ -199,7 +199,7 @@ const headerLabel: StringOrTemplateHeader<DashboardTableItem, unknown> = ({
 }) => columnLabels[column.id as ColumnNames];
 
 const stripSeconds = (time: string | null) =>
-  time && time.substring(0, time.lastIndexOf(':'));
+  time && time.length === 8 ? time.substring(0, time.lastIndexOf(':')) : time;
 
 function workingTime({ row }: CellContext<DashboardTableItem, unknown>) {
   const startTime = row.getValue<string>('startTime');
