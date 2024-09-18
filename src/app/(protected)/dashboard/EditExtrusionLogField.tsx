@@ -14,7 +14,7 @@ import { formSchema, FullFormValues } from '@/lib/extrusionLogForm';
 import { FortifiedDialogProps } from '@/components/DialogController';
 import { patch } from '@/lib/api';
 import { flashError, toast, confirm } from '@/lib/ui';
-import ExtrusionLogField from '@/components/ExtrusionLogField';
+import ExtrusionLogFormField from '@/components/ExtrusionLogFormField';
 import {
   refreshSuggestionData,
   refreshAllExtrusionQueries,
@@ -22,7 +22,6 @@ import {
 import { Check, TriangleAlert } from 'lucide-react';
 import { useForm, DefaultValues } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
-import { useSuggestionData } from '@/lib/client';
 import { ExtrusionLog } from '@/lib/types';
 import { getLabel, MutableFields } from './columns';
 
@@ -44,7 +43,6 @@ export function EditExtrusionLogField<T extends MutableFields>({
   ...rest
 }: EditExtrusionLogFieldProps<T>) {
   const formId = useId();
-  const { data } = useSuggestionData();
   const form = useForm<FormValues<T>>({
     resolver: zodResolver(formSchema.pick({ [field]: true } as object)),
     defaultValues: {
@@ -105,7 +103,7 @@ export function EditExtrusionLogField<T extends MutableFields>({
           onSubmit={onSubmit}
           className="px-6 py-2 space-y-6"
         >
-          <ExtrusionLogField field={field} data={data} />
+          <ExtrusionLogFormField name={field} />
         </Form>
 
         <DialogFooter className="px-6">

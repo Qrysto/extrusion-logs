@@ -26,7 +26,7 @@ import { format } from 'date-fns';
 import { Form } from '@/components/ui/form';
 import { timeFormat } from '@/lib/dateTime';
 import { FullFormValues, formSchema } from '@/lib/extrusionLogForm';
-import ExtrusionLogField from '@/components/ExtrusionLogField';
+import ExtrusionLogFormField from '@/components/ExtrusionLogFormField';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function ExtrusionLogDialog({
@@ -120,94 +120,102 @@ export default function ExtrusionLogDialog({
             onSubmit={onSubmit}
             className="px-6 py-2 space-y-6"
           >
-            <ExtrusionLogField field="employeeId" />
+            <ExtrusionLogFormField name="employeeId" />
 
             <div className="flex gap-x-4">
-              <ExtrusionLogField field="shift" />
+              <ExtrusionLogFormField name="shift" />
 
-              <ExtrusionLogField field="date" />
+              <ExtrusionLogFormField name="date" />
 
-              <ExtrusionLogField field="startTime" />
+              <div className="flex-1">
+                <ExtrusionLogFormField name="startTime" />
+              </div>
 
-              <ExtrusionLogField field="endTime" />
+              <div className="flex-1">
+                <ExtrusionLogFormField name="endTime" />
+              </div>
             </div>
 
-            <ExtrusionLogField field="item" />
+            <ExtrusionLogFormField name="item" />
 
-            <ExtrusionLogField field="customer" />
-
-            <div className="flex gap-x-4">
-              <ExtrusionLogField field="dieCode" />
-
-              <ExtrusionLogField field="dieNumber" />
-            </div>
+            <ExtrusionLogFormField name="customer" />
 
             <div className="flex gap-x-4">
-              <ExtrusionLogField field="cavity" />
+              <div className="flex-[2_2_0]">
+                <ExtrusionLogFormField name="dieCode" />
+              </div>
 
-              <ExtrusionLogField field="productKgpm" />
-            </div>
-
-            <div className="flex gap-x-4">
-              <ExtrusionLogField field="billetType" />
-
-              <ExtrusionLogField field="lotNumberCode" />
+              <div className="flex-1">
+                <ExtrusionLogFormField name="dieNumber" />
+              </div>
             </div>
 
             <div className="flex gap-x-4">
-              <ExtrusionLogField field="ingotRatio" />
+              <ExtrusionLogFormField name="cavity" />
 
-              <ExtrusionLogField field="billetKgpm" />
+              <ExtrusionLogFormField name="productKgpm" />
             </div>
 
             <div className="flex gap-x-4">
-              <ExtrusionLogField field="billetLength" />
+              <ExtrusionLogFormField name="billetType" />
 
-              <ExtrusionLogField field="billetQuantity" />
-
-              <ExtrusionLogField field="billetWeight" />
+              <ExtrusionLogFormField name="lotNumberCode" />
             </div>
 
             <div className="flex gap-x-4">
-              <ExtrusionLogField field="orderLength" />
+              <ExtrusionLogFormField name="ingotRatio" />
 
-              <ExtrusionLogField field="ramSpeed" />
+              <ExtrusionLogFormField name="billetKgpm" />
             </div>
 
             <div className="flex gap-x-4">
-              <ExtrusionLogField field="billetTemp" />
+              <ExtrusionLogFormField name="billetLength" />
 
-              <ExtrusionLogField field="outputTemp" />
+              <ExtrusionLogFormField name="billetQuantity" />
+
+              <ExtrusionLogFormField name="billetWeight" />
             </div>
 
             <div className="flex gap-x-4">
-              <ExtrusionLogField field="result" />
+              <ExtrusionLogFormField name="orderLength" />
 
-              <ExtrusionLogField field="outputYield" />
+              <ExtrusionLogFormField name="ramSpeed" />
             </div>
 
             <div className="flex gap-x-4">
-              <ExtrusionLogField field="productionQuantity" />
+              <ExtrusionLogFormField name="billetTemp" />
 
-              <ExtrusionLogField field="productionWeight" />
-
-              <ExtrusionLogField field="outputRate" />
+              <ExtrusionLogFormField name="outputTemp" />
             </div>
 
             <div className="flex gap-x-4">
-              <ExtrusionLogField field="ngQuantity" />
+              <ExtrusionLogFormField name="result" />
 
-              <ExtrusionLogField field="ngWeight" />
-
-              <ExtrusionLogField field="ngPercentage" />
+              <ExtrusionLogFormField name="outputYield" />
             </div>
 
-            <ExtrusionLogField field="remark" />
+            <div className="flex gap-x-4">
+              <ExtrusionLogFormField name="productionQuantity" />
+
+              <ExtrusionLogFormField name="productionWeight" />
+
+              <ExtrusionLogFormField name="outputRate" />
+            </div>
 
             <div className="flex gap-x-4">
-              <ExtrusionLogField field="code" />
+              <ExtrusionLogFormField name="ngQuantity" />
 
-              <ExtrusionLogField field="buttWeight" />
+              <ExtrusionLogFormField name="ngWeight" />
+
+              <ExtrusionLogFormField name="ngPercentage" />
+            </div>
+
+            <ExtrusionLogFormField name="remark" />
+
+            <div className="flex gap-x-4">
+              <ExtrusionLogFormField name="code" />
+
+              <ExtrusionLogFormField name="buttWeight" />
             </div>
           </Form>
         </ScrollArea>
