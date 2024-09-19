@@ -178,7 +178,7 @@ async function fetchExtrusionLogs({
 
 export async function POST(request: NextRequest) {
   const account = await getAccount();
-  if (!account) {
+  if (!account || account.role !== 'team') {
     return Response.json({ message: 'Unauthorized!' }, { status: 401 });
   }
 

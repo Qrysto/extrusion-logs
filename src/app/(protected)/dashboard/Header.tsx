@@ -20,15 +20,17 @@ export default function Header({ account }: { account: LoggedInAccount }) {
   return (
     <header className="bg-background border-b py-6 flex justify-between items-start shrink-0">
       <div className="flex-1">
-        <Button
-          variant="default"
-          onClick={() => {
-            openDialog(ExtrusionLogDialog, { employeeId });
-          }}
-        >
-          <Plus className="mr-2" />
-          Create extrusion log
-        </Button>
+        {account.role === 'team' && (
+          <Button
+            variant="default"
+            onClick={() => {
+              openDialog(ExtrusionLogDialog, { employeeId });
+            }}
+          >
+            <Plus className="mr-2" />
+            Create extrusion log
+          </Button>
+        )}
       </div>
 
       <Link href="/dashboard" className="flex items-center" prefetch={false}>
