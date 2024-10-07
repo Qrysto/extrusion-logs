@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
+import { getLocale } from '@/lib/intl/server';
 import DisableNumberInputScroll from '@/components/DisableNumberInputScroll';
-import './globals.css';
-import ClientWrappers from './ClientWrappers';
 import { ToastController } from '@/components/ToastController';
 import { FlashDialogController } from '@/components/FlashDialogController';
 import { DialogController } from '@/components/DialogController';
+import ClientWrappers from './ClientWrappers';
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--inter' });
 
@@ -19,6 +20,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = getLocale();
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -27,7 +29,7 @@ export default function RootLayout({
           inter.variable
         )}
       >
-        <ClientWrappers>
+        <ClientWrappers locale={locale}>
           {children}
           <FlashDialogController />
           <ToastController />

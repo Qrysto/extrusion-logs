@@ -49,3 +49,5 @@ export type Draft = FullFormValues & {
 };
 
 export type DashboardTableItem = ExtrusionLog | Draft;
+
+export type Locale = 'en' | 'vi' | 'kr';
