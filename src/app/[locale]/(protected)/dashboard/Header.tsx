@@ -35,7 +35,7 @@ export default function Header({ account }: { account: LoggedInAccount }) {
 
       <Link href="/dashboard" className="flex items-center" prefetch={false}>
         <Image
-          src="/aluko-logo.png"
+          src="/images/aluko-logo.png"
           alt="Aluko logo"
           width={230}
           height={226}

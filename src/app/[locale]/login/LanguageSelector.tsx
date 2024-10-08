@@ -5,10 +5,11 @@ import { useLocale, useSetLocale } from '@/lib/intl/client';
 import { Button } from '@/components/ui/button';
 
 export default function LanguageSelector() {
-  const locale = useLocale();
   const setLocale = useSetLocale();
-  const img =
-    locale === 'vi' ? '/vn.svg' : locale === 'kr' ? '/kr.svg' : '/gb.svg';
+  const locale = useLocale();
+  const img = `/images/${
+    locale === 'vi' ? 'vn' : locale === 'kr' ? 'kr' : 'gb'
+  }.svg`;
   return (
     <Button
       variant="ghost"

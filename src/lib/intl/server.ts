@@ -1,20 +1,9 @@
-import { cookies } from 'next/headers';
 import { translateEn, translateVi, translateKr } from './translate';
 
-export function getLocale() {
-  const locale = cookies().get('locale')?.value;
-  switch (locale) {
-    case 'vi':
-      return 'vi';
-    case 'kr':
-      return 'kr';
-    default:
-      return 'en';
-  }
-}
+export const locales = ['en', 'vi', 'kr'];
+export const defaultLocale = 'en';
 
-export function getTranslate() {
-  const locale = getLocale();
+export function getTranslate(locale: string) {
   const translate =
     locale === 'vi' ? translateVi : locale === 'kr' ? translateKr : translateEn;
   return translate;

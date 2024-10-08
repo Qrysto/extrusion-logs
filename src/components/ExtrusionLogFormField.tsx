@@ -7,7 +7,7 @@ import {
   FormDatePicker,
   FormTimePicker,
 } from '@/components/ui/form-adapters';
-import { getLabel } from '@/app/(protected)/dashboard/columns';
+import { getLabel } from '@/app/[locale]/(protected)/dashboard/columns';
 import { MutableFields } from '@/lib/types';
 import { useSuggestionData } from '@/lib/client';
 

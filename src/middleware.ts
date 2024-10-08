@@ -1,23 +1,26 @@
+import { locales, defaultLocale } from '@/lib/intl/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { match } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
-
-import { NextResponse, NextRequest } from 'next/server';
-
-const locales = ['en', 'vi', 'kr'];
-const defaultLocale = 'en';
 
 // Get the preferred locale, similar to the above or using a library
 function getLocale(request: NextRequest) {
   const headers = request.headers
     .entries()
     .reduce((headers, [key, value]) => ({ ...headers, [key]: value }), {});
+  console.log('headers', headers);
+
   const languages = new Negotiator({ headers }).languages();
-  match(languages, locales, defaultLocale);
+  const locale = match(languages, locales, defaultLocale);
+  console.log(locale);
+
+  return locale;
 }
 
 export function middleware(request: NextRequest) {
-  // Check if there is any supported locale in the pathname
+  // Check if there is any supported locale in the pathname'
   const { pathname } = request.nextUrl;
+
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
@@ -33,6 +36,6 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // Skip all internal paths (_next)
-    '/((?!_next).*)',
+    '/((?!_next|images).*)',
   ],
 };

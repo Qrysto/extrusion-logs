@@ -60,10 +60,10 @@ export async function getAccount() {
   return account;
 }
 
-export async function protectPage() {
+export async function protectPage(locale: string) {
   const account = await getAccount();
   if (!account) {
-    redirect('/login');
+    redirect(`/${locale}/login`);
   }
   return account;
 }

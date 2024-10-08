@@ -3,14 +3,18 @@ import { getTranslate } from '@/lib/intl/server';
 import LoginForm from './LoginForm';
 import LanguageSelector from './LanguageSelector';
 
-export default function Login() {
-  const __ = getTranslate();
+export default function Login({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
+  const __ = getTranslate(locale);
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
       <LanguageSelector />
       <div className="w-full max-w-md space-y-8">
         <Image
-          src="/aluko-logo.png"
+          src="/images/aluko-logo.png"
           alt="Aluko logo"
           width={1137}
           height={226}

@@ -36,7 +36,7 @@ import {
   isMutableField,
   getLabel,
   isDraft,
-} from '@/app/(protected)/dashboard/columns';
+} from '@/app/[locale]/(protected)/dashboard/columns';
 import ExtrusionLogDialog from '@/components/ExtrusionLogDialog';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { cn, genericMemo } from '@/lib/utils';
