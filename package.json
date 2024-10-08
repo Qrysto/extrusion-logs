@@ -10,6 +10,7 @@
     "codegen": "env-cmd -f ./.env.local kysely-codegen --camel-case"
   },
   "dependencies": {
+    "@formatjs/intl-localematcher": "^0.5.4",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-context-menu": "^2.2.1",
@@ -37,6 +38,7 @@
     "js-cookie": "^3.0.5",
     "kysely": "^0.27.4",
     "lucide-react": "^0.408.0",
+    "negotiator": "^0.6.3",
     "next": "14.2.5",
     "next-themes": "^0.3.0",
     "react": "^18",
@@ -50,6 +52,7 @@
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.52.0",
     "@types/js-cookie": "^3.0.6",
+    "@types/negotiator": "^0.6.3",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
