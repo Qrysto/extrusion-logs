@@ -8,3 +8,5 @@ export function getTranslate(locale: string) {
     locale === 'vi' ? translateVi : locale === 'kr' ? translateKr : translateEn;
   return translate;
 }
+
+export const dummyTranslate = (text: any) => text;
