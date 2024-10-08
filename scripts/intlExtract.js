@@ -132,7 +132,7 @@ function extractFromCode(code, fileName) {
         const foundKeys = getKeys(node.arguments[0]);
 
         foundKeys.forEach((key) => {
-          if (key) {
+          if (key && key !== '*') {
             keys.push({
               key,
               context,
