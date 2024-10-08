@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { translateEn, translateVi, translateKr } from './translate';
 
 export function getLocale() {
-  const locale = cookies().get('local')?.value;
+  const locale = cookies().get('locale')?.value;
   switch (locale) {
     case 'vi':
       return 'vi';

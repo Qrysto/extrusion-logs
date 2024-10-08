@@ -5,7 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ThemeProvider } from 'next-themes';
 import { Locale } from '@/lib/types';
-import { IntlContext } from '@/lib/intl/client';
+import { useLoadLocale } from '@/lib/intl/client';
 import { queryClient } from '@/lib/client';
 
 export default function ClientWrappers({
@@ -15,13 +15,12 @@ export default function ClientWrappers({
   children: ReactNode;
   locale: Locale;
 }) {
+  useLoadLocale(locale);
   return (
-    <IntlContext.Provider value={locale}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider attribute="class" defaultTheme="light">
-          <TooltipProvider>{children}</TooltipProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </IntlContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider attribute="class" defaultTheme="light">
+        <TooltipProvider>{children}</TooltipProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
