@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { useTranslate } from '@/lib/intl/client';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -28,6 +29,7 @@ export default function AccountControl({
 }: {
   account: LoggedInAccount;
 }) {
+  const __ = useTranslate();
   const [open, setOpen] = useState(false);
   const router = useRouter();
   async function logOut() {
@@ -54,7 +56,7 @@ export default function AccountControl({
               setOpen(true);
             }}
           >
-            Log out
+            {__('Log out')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -68,12 +70,14 @@ export default function AccountControl({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Are you sure you want to log out?
+              {__('Are you sure you want to log out?')}
             </AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Back</AlertDialogCancel>
-            <AlertDialogAction onClick={logOut}>Log out</AlertDialogAction>
+            <AlertDialogCancel>{__('Back')}</AlertDialogCancel>
+            <AlertDialogAction onClick={logOut}>
+              {__('Log out')}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

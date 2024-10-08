@@ -7,6 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
 } from '@/components/ui/dropdown-menu';
+import { useTranslate } from '@/lib/intl/client';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ListChecks } from 'lucide-react';
@@ -17,13 +18,14 @@ export default function ColumnSelector<TData>({
 }: {
   table: Table<TData>;
 }) {
+  const __ = useTranslate();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="h-10 gap-1">
           <ListChecks className="h-4 w-4" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Columns
+            {__('Show/hide columns')}
           </span>
         </Button>
       </DropdownMenuTrigger>

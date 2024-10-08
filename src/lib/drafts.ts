@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { draftLogsKey } from '@/lib/const';
 import { genId } from '@/lib/utils';
-import { FullFormValues, Draft, DashboardTableItem } from './types';
+import { FullFormValues, Draft } from './types';
 
 let _drafts: Draft[] = [];
 const _listeners: Listener[] = [];

@@ -1,6 +1,7 @@
 import { type NextRequest } from 'next/server';
 import db from '@/lib/db';
 import { getAccount } from '@/lib/auth';
+import { dummyTranslate as __ } from '@/lib/intl/server';
 
 export async function DELETE(
   request: NextRequest,
@@ -8,7 +9,7 @@ export async function DELETE(
 ) {
   const account = await getAccount();
   if (!account) {
-    return Response.json({ message: 'Unauthorized!' }, { status: 401 });
+    return Response.json({ message: __('Unauthorized!') }, { status: 401 });
   }
 
   const id = parseInt(idStr);
@@ -19,12 +20,12 @@ export async function DELETE(
     .executeTakeFirst();
   if (!log) {
     return Response.json(
-      { message: 'Extrusion log not found!' },
+      { message: __('Extrusion log not found!') },
       { status: 404 }
     );
   }
   if (account.role !== 'admin' && log.createdBy !== account.id) {
-    return Response.json({ message: 'Unauthorized!' }, { status: 401 });
+    return Response.json({ message: __('Unauthorized!') }, { status: 401 });
   }
 
   const result = await db
@@ -32,7 +33,7 @@ export async function DELETE(
     .where('id', '=', log.id)
     .executeTakeFirst();
   if (!result.numDeletedRows) {
-    return Response.json({ message: 'Delete failed!' }, { status: 500 });
+    return Response.json({ message: __('Delete failed!') }, { status: 500 });
   }
 
   return Response.json({ ok: true });
@@ -44,7 +45,7 @@ export async function PATCH(
 ) {
   const account = await getAccount();
   if (!account) {
-    return Response.json({ message: 'Unauthorized!' }, { status: 401 });
+    return Response.json({ message: __('Unauthorized!') }, { status: 401 });
   }
 
   const id = parseInt(idStr);
@@ -55,12 +56,12 @@ export async function PATCH(
     .executeTakeFirst();
   if (!log) {
     return Response.json(
-      { message: 'Extrusion log not found!' },
+      { message: __('Extrusion log not found!') },
       { status: 404 }
     );
   }
   if (account.role !== 'admin' && log.createdBy !== account.id) {
-    return Response.json({ message: 'Unauthorized!' }, { status: 401 });
+    return Response.json({ message: __('Unauthorized!') }, { status: 401 });
   }
 
   const body = await request.json();

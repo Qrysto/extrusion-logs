@@ -1,10 +1,11 @@
 import db from '@/lib/db';
 import { getAccount } from '@/lib/auth';
+import { dummyTranslate as __ } from '@/lib/intl/server';
 
 export async function GET() {
   const account = await getAccount();
   if (!account) {
-    return Response.json({ message: 'Unauthorized!' }, { status: 401 });
+    return Response.json({ message: __('Unauthorized!') }, { status: 401 });
   }
 
   const data = await loadSuggestionData(account.role === 'admin');

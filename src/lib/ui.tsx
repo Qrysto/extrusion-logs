@@ -16,6 +16,7 @@ export function flashError({ message }: { message: ReactNode }) {
     title: (
       <div className="flex items-center space-x-2 text-destructive">
         <OctagonX className="w-4 h-4" />
+        {/* TODO: translate */}
         <span>Error occurred!</span>
       </div>
     ),

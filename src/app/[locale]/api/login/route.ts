@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import db from '@/lib/db';
 import { SignJWT } from 'jose';
 import type { AuthData } from '@/lib/types';
+import { dummyTranslate as __ } from '@/lib/intl/server';
 
 const jwtSecret = new TextEncoder().encode(process.env.JWT_SECRET || 'secret');
 
@@ -12,10 +13,16 @@ export async function POST(request: NextRequest) {
   const password = body?.password;
 
   if (!username) {
-    return Response.json({ message: 'Username is required!' }, { status: 400 });
+    return Response.json(
+      { message: __('Username is required!') },
+      { status: 400 }
+    );
   }
   if (!password) {
-    return Response.json({ message: 'Password is required!' }, { status: 400 });
+    return Response.json(
+      { message: __('Password is required!') },
+      { status: 400 }
+    );
   }
 
   try {
@@ -27,7 +34,7 @@ export async function POST(request: NextRequest) {
       .executeTakeFirst();
     if (!account) {
       return Response.json(
-        { message: 'Incorrect username or password!' },
+        { message: __('Incorrect username or password!') },
         { status: 400 }
       );
     }
@@ -45,7 +52,7 @@ export async function POST(request: NextRequest) {
       .executeTakeFirst();
     if (!result) {
       return Response.json(
-        { message: 'Could not create session!' },
+        { message: __('Could not create session!') },
         { status: 500 }
       );
     }
@@ -60,7 +67,7 @@ export async function POST(request: NextRequest) {
       .sign(jwtSecret);
     if (!token) {
       return Response.json(
-        { message: 'Failed to generate the authentication token' },
+        { message: __('Failed to generate the authentication token') },
         { status: 500 }
       );
     }

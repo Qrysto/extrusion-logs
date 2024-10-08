@@ -21,6 +21,7 @@ import {
   refreshSuggestionData,
   refreshAllExtrusionQueries,
 } from '@/lib/client';
+import { useTranslate } from '@/lib/intl/client';
 import { post } from '@/lib/api';
 import { format } from 'date-fns';
 import { Form } from '@/components/ui/form';
@@ -39,6 +40,7 @@ export default function ExtrusionLogDialog({
   employeeId?: string;
   draft?: Draft;
 } & FortifiedDialogProps) {
+  const __ = useTranslate();
   const defaultValues = draft || getDefaultValues({ employeeId });
   const formId = useId();
   const form = useForm<FullFormValues>({
@@ -53,12 +55,12 @@ export default function ExtrusionLogDialog({
     try {
       await post('/api/extrusion-logs', values);
     } catch (err: any) {
-      flashError({ message: err?.message || String(err) });
+      flashError({ message: err?.message ? __(err.message) : String(err) });
       return;
     }
     onOpenChange(false);
     toast({
-      title: 'Created successfully!',
+      title: __('Created successfully!'),
     });
     if (draft) {
       removeDraft(draft.id);
@@ -69,8 +71,8 @@ export default function ExtrusionLogDialog({
 
   const resetForm = async () => {
     const confirmed = await confirm({
-      title: 'Reset form',
-      description: 'Are you sure you want to reset all form values?',
+      title: __('Reset form'),
+      description: __('Are you sure you want to reset all form values?'),
     });
     if (confirmed) {
       form.reset(getDefaultValues({ employeeId }));
@@ -89,11 +91,12 @@ export default function ExtrusionLogDialog({
                 <span>Closing form</span>
               </span>
             ),
-            description:
-              'Are you sure you want to close and discard all unsaved changes?',
-            yesLabel: 'Close and discard form',
+            description: __(
+              'Are you sure you want to close and discard all unsaved changes?'
+            ),
+            yesLabel: __('Close and discard form'),
             variant: 'destructive',
-            noLabel: 'Go back',
+            noLabel: __('Go back'),
           });
           if (!confirmed) return;
         }
@@ -104,13 +107,13 @@ export default function ExtrusionLogDialog({
       <DialogTrigger asChild>
         <Button variant="default">
           <Plus className="mr-2" />
-          Create extrusion log
+          {__('Create Extrusion Log')}
         </Button>
       </DialogTrigger>
 
       <DialogContent className="flex flex-col h-[90%] max-w-3xl px-0">
         <DialogHeader className="flex-shrink-0 px-6">
-          <DialogTitle>Create Extrusion Log</DialogTitle>
+          <DialogTitle>{__('Create Extrusion Log')}</DialogTitle>
         </DialogHeader>
 
         <ScrollArea className="flex-1">
@@ -230,25 +233,27 @@ export default function ExtrusionLogDialog({
                     title: (
                       <span className="flex items-center space-x-2 text-destructive">
                         <TriangleAlert className="w-4 h-4" />
-                        <span>Delete draft</span>
+                        <span>{__('Delete draft')}</span>
                       </span>
                     ),
-                    description: 'Are you sure you want to delete this draft?',
-                    yesLabel: 'Delete draft',
+                    description: __(
+                      'Are you sure you want to delete this draft?'
+                    ),
+                    yesLabel: __('Delete draft'),
                     variant: 'destructive',
-                    noLabel: 'Go back',
+                    noLabel: __('Go back'),
                   });
                   if (!confirmed) return;
                   removeDraft(draft.id);
                   toast({
-                    title: 'Draft deleted successfully!',
+                    title: __('Draft deleted successfully!'),
                     variant: 'destructive',
                   });
                   onOpenChange(false);
                 }}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete draft
+                {__('Delete draft')}
               </Button>
             )}
           </div>
@@ -256,7 +261,7 @@ export default function ExtrusionLogDialog({
           <div className="space-x-4">
             <Button variant="secondary" onClick={resetForm}>
               <Power className="mr-2 h-4 w-4" />
-              Reset form
+              {__('Reset form')}
             </Button>
 
             <Button
@@ -269,13 +274,13 @@ export default function ExtrusionLogDialog({
                   addDraft(values);
                 }
                 toast({
-                  title: 'Draft saved successfully!',
+                  title: __('Draft saved successfully!'),
                 });
                 onOpenChange(false);
               }}
             >
               <Save className="mr-2 h-4 w-4" />
-              Save
+              {__('Save draft')}
             </Button>
 
             <Button
@@ -284,7 +289,7 @@ export default function ExtrusionLogDialog({
               disabled={isSubmitting || isLoading}
             >
               <Check className="mr-2 h-4 w-4" />
-              Submit
+              {__('Submit')}
             </Button>
           </div>
         </DialogFooter>

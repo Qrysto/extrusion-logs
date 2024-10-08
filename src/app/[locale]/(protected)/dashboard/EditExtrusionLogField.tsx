@@ -14,6 +14,7 @@ import { formSchema, FullFormValues } from '@/lib/extrusionLogForm';
 import { FortifiedDialogProps } from '@/components/DialogController';
 import { patch } from '@/lib/api';
 import { flashError, toast, confirm } from '@/lib/ui';
+import { useTranslate } from '@/lib/intl/client';
 import ExtrusionLogFormField from '@/components/ExtrusionLogFormField';
 import {
   refreshSuggestionData,
@@ -42,6 +43,7 @@ export function EditExtrusionLogField<T extends MutableFields>({
   onOpenChange,
   ...rest
 }: EditExtrusionLogFieldProps<T>) {
+  const __ = useTranslate();
   const formId = useId();
   const form = useForm<FormValues<T>>({
     resolver: zodResolver(formSchema.pick({ [field]: true } as object)),
@@ -57,12 +59,12 @@ export function EditExtrusionLogField<T extends MutableFields>({
     try {
       await patch(`/api/extrusion-logs/${extrusionLogId}`, values);
     } catch (err: any) {
-      flashError({ message: err?.message || String(err) });
+      flashError({ message: err?.message ? __(err.message) : String(err) });
       return;
     }
     onOpenChange(false);
     toast({
-      title: 'Updated successfully!',
+      title: __('Updated successfully!'),
     });
     refreshSuggestionData();
     refreshAllExtrusionQueries();
@@ -77,14 +79,15 @@ export function EditExtrusionLogField<T extends MutableFields>({
             title: (
               <span className="flex items-center space-x-2 text-destructive">
                 <TriangleAlert className="w-4 h-4" />
-                <span>Closing form</span>
+                <span>{__('Closing form')}</span>
               </span>
             ),
-            description:
-              'Are you sure you want to close and discard all unsaved changes?',
-            yesLabel: 'Close and discard form',
+            description: __(
+              'Are you sure you want to close and discard all unsaved changes?'
+            ),
+            yesLabel: __('Close and discard form'),
             variant: 'destructive',
-            noLabel: 'Go back',
+            noLabel: __('Go back'),
           });
           if (!confirmed) return;
         }
@@ -94,7 +97,10 @@ export function EditExtrusionLogField<T extends MutableFields>({
     >
       <DialogContent className="flex flex-col max-w-xl px-0">
         <DialogHeader className="flex-shrink-0 px-6">
-          <DialogTitle>Edit {getLabel(field)}</DialogTitle>
+          {/* TODO: Edit... */}
+          <DialogTitle>
+            {__('Edit')} {getLabel(field)}
+          </DialogTitle>
         </DialogHeader>
 
         <Form
@@ -113,7 +119,7 @@ export function EditExtrusionLogField<T extends MutableFields>({
             disabled={!isDirty || isSubmitting || isLoading}
           >
             <Check className="mr-2 h-4 w-4" />
-            Submit
+            {__('Submit')}
           </Button>
         </DialogFooter>
       </DialogContent>

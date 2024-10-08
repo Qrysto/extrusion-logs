@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Plus, MoonStar, Sun } from 'lucide-react';
+import { useTranslate } from '@/lib/intl/client';
 import { useTheme } from 'next-themes';
 import { LoggedInAccount } from '@/lib/auth';
 import { openDialog } from '@/lib/ui';
@@ -13,6 +13,7 @@ import AccountControl from './AccountControl';
 import ExtrusionLogDialog from '@/components/ExtrusionLogDialog';
 
 export default function Header({ account }: { account: LoggedInAccount }) {
+  const __ = useTranslate();
   const [employeeId, setEmployeeId] = useState('');
   const [editing, setEditing] = useState(false);
   const { setTheme, theme } = useTheme();
@@ -28,7 +29,7 @@ export default function Header({ account }: { account: LoggedInAccount }) {
             }}
           >
             <Plus className="mr-2" />
-            Create extrusion log
+            {__('Create extrusion log')}
           </Button>
         )}
       </div>
@@ -42,11 +43,10 @@ export default function Header({ account }: { account: LoggedInAccount }) {
           className="mx-auto h-12 w-auto"
           priority
         />
-        <span className="sr-only">Acme Inc</span>
       </Link>
 
       <div className="flex justify-end items-center flex-1 space-x-4">
-        <div className="flex items-center">
+        {/* <div className="flex items-center">
           {!editing && !!employeeId && (
             <label
               onClick={() => {
@@ -86,7 +86,7 @@ export default function Header({ account }: { account: LoggedInAccount }) {
               }}
             />
           </form>
-        )}
+        )} */}
         {theme === 'light' ? (
           <Button variant="ghost" onClick={() => setTheme('dark')}>
             <Sun className="h-4 w-4" />

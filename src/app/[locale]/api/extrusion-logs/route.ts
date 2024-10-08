@@ -4,11 +4,12 @@ import { getAccount } from '@/lib/auth';
 import { parseDateRange } from '@/lib/dateTime';
 import { DateRange } from '@/lib/types';
 import { fetchLimit } from '@/lib/const';
+import { dummyTranslate as __ } from '@/lib/intl/server';
 
 export async function GET(request: NextRequest) {
   const account = await getAccount();
   if (!account) {
-    return Response.json({ message: 'Unauthorized!' }, { status: 401 });
+    return Response.json({ message: __('Unauthorized!') }, { status: 401 });
   }
 
   const searchParams = request.nextUrl.searchParams;
@@ -179,7 +180,7 @@ async function fetchExtrusionLogs({
 export async function POST(request: NextRequest) {
   const account = await getAccount();
   if (!account || account.role !== 'team') {
-    return Response.json({ message: 'Unauthorized!' }, { status: 401 });
+    return Response.json({ message: __('Unauthorized!') }, { status: 401 });
   }
 
   const body = await request.json();

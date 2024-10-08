@@ -31,6 +31,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
+import { useTranslate } from '@/lib/intl/client';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   isMutableField,
@@ -57,6 +58,7 @@ export default function DataTable<TData>({
   deleteRow: (row: Row<TData>) => Promise<void>;
   editCell: (cell: Cell<TData, unknown>) => Promise<void>;
 }) {
+  const __ = useTranslate();
   const { rows } = table.getRowModel();
   const scrollerRef = useRef<HTMLDivElement>(null);
   const fetchMoreOnBottomReached = useCallback(
@@ -109,7 +111,7 @@ export default function DataTable<TData>({
                 colSpan={table.getVisibleLeafColumns().length}
                 className="h-24 text-center"
               >
-                No results.
+                {__('No results.')}
               </TableCell>
             </TableRow>
           )}
@@ -205,18 +207,23 @@ const DataRow = genericMemo(
     deleteRow: (row: Row<TData>) => Promise<void>;
     editCell: (cell: Cell<TData, unknown>) => Promise<void>;
   }) => {
+    const __ = useTranslate();
     const [deleting, setDeleting] = useState<boolean>(false);
     const del = useCallback(async () => {
       setDeleting(true);
       try {
         const confirmed = await confirm({
           title: (
-            <span className="text-destructive">Delete Extrusion Log?</span>
+            <span className="text-destructive">
+              {__('Delete Extrusion Log?')}
+            </span>
           ),
-          description: 'Are you sure you want to delete this extrusion log?',
+          description: __(
+            'Are you sure you want to delete this extrusion log?'
+          ),
           variant: 'destructive',
-          yesLabel: 'Delete',
-          noLabel: 'Go back',
+          yesLabel: __('Delete'),
+          noLabel: __('Go back'),
         });
         if (confirmed) {
           await deleteRow(row);
@@ -267,6 +274,7 @@ const DataCell = genericMemo(
     deleteRow: () => Promise<void>;
     editCell: (cell: Cell<TData, unknown>) => Promise<void>;
   }) => {
+    const __ = useTranslate();
     const [editing, setEditing] = useState<boolean>(false);
     const { column } = cell;
     const orig = cell.row.original;
@@ -304,7 +312,8 @@ const DataCell = genericMemo(
               }}
             >
               <FilePenLine className="w-4 h-4 mr-2" />
-              Edit {getLabel(column.id)}
+              {/* TODO: Edit... */}
+              {__('Edit')} {getLabel(column.id)}
             </ContextMenuItem>
           )}
           {rowIsDraft && (
@@ -317,12 +326,12 @@ const DataCell = genericMemo(
               }}
             >
               <FilePenLine className="w-4 h-4 mr-2" />
-              Edit Draft
+              {__('Edit Draft')}
             </ContextMenuItem>
           )}
           <ContextMenuItem className="cursor-pointer" onClick={deleteRow}>
             <Trash2 className="w-4 h-4 mr-2" />
-            {rowIsDraft ? 'Delete Draft' : 'Delete Extrusion Log'}
+            {rowIsDraft ? __('Delete Draft') : __('Delete Extrusion Log')}
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>

@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import {
   ColumnDef,
   ColumnDefTemplate,
@@ -14,18 +13,18 @@ import { memoize } from '@/lib/utils';
 const ch = createColumnHelper<DashboardTableItem>();
 const formatNumber = Intl.NumberFormat('en-US').format;
 
-const getColumns = memoize((isAdmin: boolean) => {
+const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
   const adminColumns: ColumnDef<DashboardTableItem>[] = isAdmin
     ? [
-        { accessorKey: 'machine', header: 'Machine' },
-        { accessorKey: 'plant', header: 'Plant' },
-        { accessorKey: 'inch', header: 'Inch' },
+        { accessorKey: 'machine', header: __('Machine') },
+        { accessorKey: 'plant', header: __('Plant') },
+        { accessorKey: 'inch', header: __('Inch') },
       ]
     : [];
 
   const columns: ColumnDef<DashboardTableItem>[] = [
     ch.group({
-      header: 'Date & time',
+      header: __('Date & time'),
       columns: [
         ch.accessor('date', {
           header: headerLabel,
@@ -53,14 +52,14 @@ const getColumns = memoize((isAdmin: boolean) => {
       ],
     }),
     ch.group({
-      header: 'General',
+      header: __('General'),
       columns: [
         ch.accessor('item', { header: headerLabel }),
         ch.accessor('customer', { header: headerLabel }),
       ],
     }),
     ch.group({
-      header: 'Billet',
+      header: __('Billet'),
       columns: [
         ch.accessor('billetType', { header: headerLabel }),
         ch.accessor('lotNumberCode', { header: headerLabel }),
@@ -83,7 +82,7 @@ const getColumns = memoize((isAdmin: boolean) => {
       ],
     }),
     ch.group({
-      header: 'Input',
+      header: __('Input'),
       columns: [
         ch.accessor('ramSpeed', {
           header: headerLabel,
@@ -113,7 +112,7 @@ const getColumns = memoize((isAdmin: boolean) => {
       ],
     }),
     ch.group({
-      header: 'Temperature',
+      header: __('Temperature'),
       columns: [
         ch.accessor('billetTemp', {
           header: headerLabel,
@@ -126,7 +125,7 @@ const getColumns = memoize((isAdmin: boolean) => {
       ],
     }),
     ch.group({
-      header: 'Output',
+      header: __('Output'),
       columns: [
         ch.accessor('productionQuantity', {
           header: headerLabel,
@@ -174,7 +173,7 @@ const getColumns = memoize((isAdmin: boolean) => {
       ],
     }),
     ch.group({
-      header: 'Administration',
+      header: __('Administration'),
       columns: [
         ...adminColumns,
         ch.accessor('employeeId', { header: 'Employee ID' }),

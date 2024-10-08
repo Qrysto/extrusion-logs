@@ -12,6 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { useTranslate } from '@/lib/intl/client';
 import { displayDateFormat } from '@/lib/dateTime';
 
 export function DatePicker({
@@ -23,6 +24,7 @@ export function DatePicker({
   date: Date | null;
   onDateChange: (date: Date | null) => void;
 } & ComponentProps<typeof Button>) {
+  const __ = useTranslate();
   const [open, setOpen] = useState(false);
 
   return (
@@ -41,7 +43,7 @@ export function DatePicker({
           {date ? (
             formatDate(date)
           ) : (
-            <span className="opacity-50">Pick a date</span>
+            <span className="opacity-50">{__('Pick a date')}</span>
           )}
         </Button>
       </PopoverTrigger>

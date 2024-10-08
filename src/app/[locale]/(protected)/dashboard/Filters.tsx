@@ -10,11 +10,13 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
+import { useTranslate } from '@/lib/intl/client';
 import { Combobox } from '@/components/ui/combobox';
 import { useSuggestionData } from '@/lib/client';
 import { formatDateRange, parseDateRange } from '@/lib/dateTime';
 
 export default function Filters({ isAdmin }: { isAdmin: boolean }) {
+  const __ = useTranslate();
   const [searchParams, updateSearchParams] = useUpdateSearchParams();
   const { data } = useSuggestionData();
   const {
@@ -50,27 +52,27 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
       >
         <SelectTrigger className="w-24">
           <SelectValue
-            placeholder={<span className="opacity-50">Shift</span>}
+            placeholder={<span className="opacity-50">{__('Shift')}</span>}
           />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="day">Day</SelectItem>
-          <SelectItem value="night">Night</SelectItem>
-          <SelectItem value="both">Both</SelectItem>
+          <SelectItem value="day">{__('Day')}</SelectItem>
+          <SelectItem value="night">{__('Night')}</SelectItem>
+          <SelectItem value="both">{__('Both')}</SelectItem>
         </SelectContent>
       </Select>
 
       {isAdmin && (
         <>
           <Combobox
-            placeholder="Select plant..."
+            placeholder={__('Select plant...')}
             value={searchParams.get('plant')}
             onValueChange={(value) => updateSearchParams('plant', value)}
             list={plantList}
           />
 
           <Combobox
-            placeholder="Select machine..."
+            placeholder={__('Select machine...')}
             value={searchParams.get('machine')}
             onValueChange={(value) => updateSearchParams('machine', value)}
             list={machineList}
@@ -79,21 +81,21 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
       )}
 
       <Combobox
-        placeholder="Select item..."
+        placeholder={__('Select item...')}
         value={searchParams.get('item')}
         onValueChange={(value) => updateSearchParams('item', value)}
         list={itemList}
       />
 
       <Combobox
-        placeholder="Select customer..."
+        placeholder={__('Select customer...')}
         value={searchParams.get('customer')}
         onValueChange={(value) => updateSearchParams('customer', value)}
         list={customerList}
       />
 
       <Combobox
-        placeholder="Select die code..."
+        placeholder={__('Select die code...')}
         value={searchParams.get('dieCode')}
         onValueChange={(value) => updateSearchParams('dieCode', value)}
         list={dieCodeList}
@@ -104,7 +106,7 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
         name="cavity"
         min={0}
         step={1}
-        placeholder="Cavity"
+        placeholder={__('Cavity')}
         value={searchParams.get('cavity') || ''}
         onChange={(evt) =>
           updateSearchParams('cavity', evt.target.value || undefined)
@@ -113,7 +115,7 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
       />
 
       <Combobox
-        placeholder="Select lot number..."
+        placeholder={__('Select lot number...')}
         value={searchParams.get('lotNo')}
         onValueChange={(value) => updateSearchParams('lotNo', value)}
         list={lotNoList}
@@ -130,18 +132,18 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
       >
         <SelectTrigger className="w-24">
           <SelectValue
-            placeholder={<span className="opacity-50">Result</span>}
+            placeholder={<span className="opacity-50">OK/NG</span>}
           />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="OK">OK</SelectItem>
           <SelectItem value="NG">NG</SelectItem>
-          <SelectItem value="both">Both</SelectItem>
+          <SelectItem value="both">{__('Both')}</SelectItem>
         </SelectContent>
       </Select>
 
       <Input
-        placeholder="Search remark"
+        placeholder={__('Search remark')}
         name="remark"
         value={searchParams.get('remarkSearch') || ''}
         onChange={(evt) =>

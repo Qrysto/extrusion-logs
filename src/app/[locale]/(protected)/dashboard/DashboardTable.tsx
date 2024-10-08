@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { colVisibilityKey } from '@/lib/const';
 import { DashboardTableItem } from '@/lib/types';
 import { del } from '@/lib/api';
+import { useTranslate } from '@/lib/intl/client';
 import { toast, flashError, openDialog } from '@/lib/ui';
 import { useDrafts, removeDraft } from '@/lib/drafts';
 import { getColumns, isMutableField, isDraft } from './columns';
@@ -27,6 +28,7 @@ import DataTable from '@/components/DataTable';
 import { EditExtrusionLogField } from './EditExtrusionLogField';
 
 export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
+  const __ = useTranslate();
   const { data, isFetching, hasNextPage, fetchNextPage, refetch } =
     useExtrusionLogs();
   const { drafts } = useDrafts();
@@ -35,7 +37,7 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
     [data, drafts]
   );
 
-  const columns = getColumns(isAdmin);
+  const columns = getColumns(isAdmin, __);
   const [sorting, setSorting] = useSortingState();
   const [columnVisibility, setColumnVisibility] = useColumnVisibility();
   const [rowSelection, setRowSelection] = useState({});
@@ -60,18 +62,18 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
       if (isDraft(orig)) {
         removeDraft(orig.id);
         toast({
-          title: 'Draft has been deleted',
+          title: __('Draft has been deleted'),
         });
       } else {
         await del(`/api/extrusion-logs/${orig.id}`);
         toast({
-          title: 'Extrusion log has been deleted',
+          title: __('Extrusion log has been deleted'),
         });
         await refetch();
       }
     } catch (err: any) {
       flashError({
-        message: err?.message || String(err),
+        message: err?.message ? __(err.message) : String(err),
       });
     }
   }, []);
@@ -109,7 +111,7 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
           }}
         >
           <ListRestart className="mr-2 h-4 w-4" />
-          Reset sorting
+          {__('Reset sorting')}
         </Button>
       </div>
 

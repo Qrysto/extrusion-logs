@@ -10,6 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { useTranslate } from '@/lib/intl/client';
 import { type DateRange } from '@/lib/types';
 import {
   formatDateRange,
@@ -25,6 +26,7 @@ export function DateRangePicker({
   dateRange: DateRange | null;
   onDateRangeChange: (dateRange: DateRange | null) => void;
 }) {
+  const __ = useTranslate();
   const dateRangeStr = formatDateRange(dateRange, displayDateFormat);
 
   return (
@@ -44,7 +46,7 @@ export function DateRangePicker({
                 className={cn('mr-2 h-4 w-4', { 'opacity-50': !dateRange })}
               />
               {dateRangeStr || (
-                <span className="opacity-50">Pick a date range</span>
+                <span className="opacity-50">{__('Pick a date range')}</span>
               )}
             </span>
             {!!dateRange && (
