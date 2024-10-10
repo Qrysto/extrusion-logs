@@ -54,8 +54,8 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
     ch.group({
       header: __('General'),
       columns: [
-        ch.accessor('item', { header: headerLabel }),
-        ch.accessor('customer', { header: headerLabel }),
+        // ch.accessor('item', { header: headerLabel }),
+        // ch.accessor('customer', { header: headerLabel }),
       ],
     }),
     ch.group({

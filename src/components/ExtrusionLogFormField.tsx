@@ -47,32 +47,34 @@ function Field<T extends MutableFields>({ name }: { name: T }) {
     case 'startTime':
     case 'endTime':
       return <FormTimePicker />;
-    case 'shift':
-      return <FormToggleGroup type="single" items={shiftItems} />;
+    // case 'shift':
+    //   return <FormToggleGroup type="single" items={shiftItems} />;
     case 'result':
       return <FormToggleGroup type="single" items={resultItems} />;
-    case 'item':
-      return <FormAutoComplete options={data?.itemList || []} />;
-    case 'customer':
-      return <FormAutoComplete options={data?.customerList || []} />;
+    // case 'item':
+    //   return <FormAutoComplete options={data?.itemList || []} />;
+    // case 'customer':
+    //   return <FormAutoComplete options={data?.customerList || []} />;
     case 'dieCode':
       return <FormAutoComplete options={data?.dieCodeList || []} />;
     case 'billetType':
       return <FormAutoComplete options={data?.billetTypeList || []} />;
     case 'lotNumberCode':
       return <FormAutoComplete options={data?.lotNoList || []} />;
-    case 'code':
-      return <FormAutoComplete options={data?.codeList || []} />;
+    case 'coolingMethod':
+      return <FormAutoComplete options={data?.coolingMethodList || []} />;
+    // case 'code':
+    //   return <FormAutoComplete options={data?.codeList || []} />;
     case 'ingotRatio':
-    case 'outputYield':
-    case 'ngPercentage':
-      return <FormInput max={100} />;
+    // case 'outputYield':
+    // case 'ngPercentage':
+    //   return <FormInput max={100} />;
     case 'ngQuantity':
-    case 'employeeId':
-    case 'dieNumber':
-    case 'cavity':
-    case 'productKgpm':
-    case 'billetKgpm':
+    // case 'employeeId':
+    case 'subNumber':
+    // case 'cavity':
+    // case 'productKgpm':
+    // case 'billetKgpm':
     case 'billetLength':
     case 'billetQuantity':
     case 'billetWeight':
@@ -80,12 +82,24 @@ function Field<T extends MutableFields>({ name }: { name: T }) {
     case 'billetTemp':
     case 'outputTemp':
     case 'orderLength':
-    case 'outputRate':
+    // case 'outputRate':
     case 'productionQuantity':
-    case 'productionWeight':
-    case 'ngWeight':
+    // case 'productionWeight':
+    // case 'ngWeight':
     case 'remark':
-    case 'buttWeight':
+    case 'buttLength':
+    case 'dieTemp':
+    case 'containerTemp':
+    case 'pressure':
+    case 'pullerMode':
+    case 'pullerSpeed':
+    case 'pullerForce':
+    case 'extrusionCycle':
+    case 'extrusionLength':
+    case 'segments':
+    case 'coolingMode':
+    case 'startButt':
+    case 'endButt':
       return <FormInput />;
   }
 }

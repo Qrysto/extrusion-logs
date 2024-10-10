@@ -50,8 +50,10 @@ async function loadSuggestionData(admin: boolean) {
         plantSet.add(plant);
       }
     });
-  const plantList = accounts && Array.from(plantSet);
-  const machineList = accounts && accounts.map(({ username }) => username);
+  const plantList = accounts ? Array.from(plantSet) : undefined;
+  const machineList = accounts
+    ? accounts.map(({ username }) => username)
+    : undefined;
   // const itemList = items.map(({ item }) => item);
   // const customerList = customers.map(({ name }) => name);
   const dieCodeList = dies.map(({ code }) => code);
@@ -60,7 +62,7 @@ async function loadSuggestionData(admin: boolean) {
   // const codeList = codes.map(({ code }) => code);
   const coolingMethodList = coolingMethods.map(({ code }) => code);
 
-  const data: any = {
+  const data = {
     // itemList,
     // customerList,
     dieCodeList,
@@ -68,12 +70,15 @@ async function loadSuggestionData(admin: boolean) {
     billetTypeList,
     // codeList,
     coolingMethodList,
+    ...(admin
+      ? {
+          plantList,
+          machineList,
+        }
+      : {}),
   };
-
-  if (admin) {
-    data.plantList = plantList;
-    data.machineList = machineList;
-  }
 
   return data;
 }
+
+export type SuggestionData = Awaited<ReturnType<typeof loadSuggestionData>>;

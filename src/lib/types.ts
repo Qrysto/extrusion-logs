@@ -20,16 +20,7 @@ export type AlertDescriptor = {
   description?: ReactNode;
 };
 
-export type SuggestionData = {
-  plantList?: string[];
-  machineList?: string[];
-  itemList: string[];
-  customerList: string[];
-  dieCodeList: string[];
-  lotNoList: string[];
-  billetTypeList: string[];
-  codeList: string[];
-};
+export type { SuggestionData } from '@/app/api/suggestion-data/route';
 
 export type { ExtrusionLog };
 
