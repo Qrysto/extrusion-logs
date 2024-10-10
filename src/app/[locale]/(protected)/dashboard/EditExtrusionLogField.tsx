@@ -97,9 +97,8 @@ export function EditExtrusionLogField<T extends MutableFields>({
     >
       <DialogContent className="flex flex-col max-w-xl px-0">
         <DialogHeader className="flex-shrink-0 px-6">
-          {/* TODO: Edit... */}
           <DialogTitle>
-            {__('Edit')} {getLabel(field, __)}
+            {__('Edit %columnName%', { columnName: getLabel(field, __) })}
           </DialogTitle>
         </DialogHeader>
 

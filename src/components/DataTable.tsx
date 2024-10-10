@@ -308,8 +308,7 @@ const DataCell = genericMemo(
               }}
             >
               <FilePenLine className="w-4 h-4 mr-2" />
-              {/* TODO: Edit... */}
-              {__('Edit')} {getLabel(column.id, __)}
+              {__('Edit %columnName%', { columnName: getLabel(column.id, __) })}
             </ContextMenuItem>
           )}
           {rowIsDraft && (
