@@ -7,14 +7,15 @@ import {
   FormDatePicker,
   FormTimePicker,
 } from '@/components/ui/form-adapters';
-import { getLabel } from '@/app/[locale]/(protected)/dashboard/columns';
+import { getLabel } from '@/lib/columns';
 import { MutableFields } from '@/lib/types';
 import { useSuggestionData } from '@/lib/client';
+import { useTranslate } from '@/lib/intl/client';
 
-const shiftItems = [
-  { value: 'DAY', label: 'Day' },
-  { value: 'NIGHT', label: 'Night' },
-];
+// const shiftItems = [
+//   { value: 'DAY', label: 'Day' },
+//   { value: 'NIGHT', label: 'Night' },
+// ];
 
 const resultItems = [
   { value: 'OK', label: 'OK' },
@@ -27,9 +28,10 @@ export default function ExtrusionLogFormField<T extends MutableFields>({
 }: {
   name: T;
 } & ComponentProps<typeof FormField>) {
+  const __ = useTranslate();
   return (
     <FormField name={name} {...rest}>
-      <FormLabel>{getLabel(name)}</FormLabel>
+      <FormLabel>{getLabel(name, __)}</FormLabel>
       <Field name={name} />
     </FormField>
   );
@@ -46,11 +48,17 @@ function Field<T extends MutableFields>({ name }: { name: T }) {
       );
     case 'startTime':
     case 'endTime':
-      return <FormTimePicker />;
+      return <FormTimePicker className="justify-start" />;
     // case 'shift':
     //   return <FormToggleGroup type="single" items={shiftItems} />;
     case 'result':
-      return <FormToggleGroup type="single" items={resultItems} />;
+      return (
+        <FormToggleGroup
+          type="single"
+          items={resultItems}
+          className="justify-start"
+        />
+      );
     // case 'item':
     //   return <FormAutoComplete options={data?.itemList || []} />;
     // case 'customer':

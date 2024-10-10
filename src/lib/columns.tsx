@@ -21,6 +21,9 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
         { accessorKey: 'inch', header: __('Inch') },
       ]
     : [];
+  const headerLabel: StringOrTemplateHeader<DashboardTableItem, unknown> = ({
+    column,
+  }) => getShortLabel(column.id, __);
 
   const columns: ColumnDef<DashboardTableItem>[] = [
     ch.group({
@@ -51,13 +54,13 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
         }),
       ],
     }),
-    ch.group({
-      header: __('General'),
-      columns: [
-        // ch.accessor('item', { header: headerLabel }),
-        // ch.accessor('customer', { header: headerLabel }),
-      ],
-    }),
+    // ch.group({
+    //   header: __('General'),
+    //   columns: [
+    //     // ch.accessor('item', { header: headerLabel }),
+    //     // ch.accessor('customer', { header: headerLabel }),
+    //   ],
+    // }),
     ch.group({
       header: __('Billet'),
       columns: [
@@ -172,13 +175,13 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
         ch.accessor('remark', { header: headerLabel }),
       ],
     }),
-    ch.group({
-      header: __('Administration'),
-      columns: [
-        ...adminColumns,
-        // ch.accessor('employeeId', { header: 'Employee ID' }),
-      ],
-    }),
+    // ch.group({
+    //   header: __('Administration'),
+    //   columns: [
+    //     ...adminColumns,
+    //     // ch.accessor('employeeId', { header: 'Employee ID' }),
+    //   ],
+    // }),
   ] as ColumnDef<DashboardTableItem>[];
 
   return columns;
@@ -189,10 +192,6 @@ const renderNumberCell: ColumnDefTemplate<
 > = ({ getValue }) => (
   <div className="text-right">{formatNumber(getValue<number>())}</div>
 );
-
-const headerLabel: StringOrTemplateHeader<DashboardTableItem, unknown> = ({
-  column,
-}) => getShortLabel(column.id);
 
 const stripSeconds = (time: string | null) =>
   time && time.length === 8 ? time.substring(0, time.lastIndexOf(':')) : time;
@@ -282,66 +281,108 @@ function isMutableField(value: string): value is MutableFields {
   return mutableFields.has(value as MutableFields);
 }
 
-const columnLabels: Record<ColumnNames, string | [string, string]> = {
-  date: 'Date',
-  // shift: 'Shift',
-  plant: 'Plant',
-  machine: 'Machine',
-  inch: 'Inch',
-  // employeeId: 'Employee ID',
+function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
+  switch (id) {
+    case 'date':
+      return __('Date');
+    // shift': return  'Shift'
+    case 'plant':
+      return __('Plant');
+    case 'machine':
+      return __('Machine');
+    case 'inch':
+      return __('Inch');
+    // employeeId': return  'Employee ID'
 
-  // item: 'Item',
-  // customer: 'Customer',
-  dieCode: 'Die Code',
+    // item': return  'Item'
+    // customer': return  'Customer'
+    case 'dieCode':
+      return __('Die Code');
 
-  subNumber: ['Sub Number', 'Sub No.'],
-  // cavity: 'Cavity',
-  // productKgpm: ['Product kg/m', 'kg/m'],
+    case 'subNumber':
+      return [__('Sub Number'), __('Sub No.')];
+    // cavity': return  'Cavity'
+    // productKgpm': return  ['Product kg/m', 'kg/m']
 
-  billetType: ['Billet Type', 'B. Type'],
-  // billetKgpm: ['Billet kg/m', 'B. kg/m'],
-  billetLength: ['Billet Length', 'B. Length'],
-  billetQuantity: ['Billet Quantity', 'B. Qty'],
-  billetWeight: ['Billet Weight', 'B. Weight'],
-  ingotRatio: 'Ingot Ratio',
-  lotNumberCode: 'Lot No.',
+    case 'billetType':
+      return [__('Billet Type'), __('Type')];
+    // billetKgpm': return  ['Billet kg/m', 'kg/m']
+    case 'billetLength':
+      return [__('Billet Length'), __('Length')];
+    case 'billetQuantity':
+      return [__('Billet Quantity'), __('Qantity')];
+    case 'billetWeight':
+      return [__('Billet Weight'), __('Weight')];
+    case 'ingotRatio':
+      return __('Ingot Ratio');
+    case 'lotNumberCode':
+      return __('Lot No.');
 
-  ramSpeed: 'Ram Speed',
-  billetTemp: ['Billet Temperature', 'Billet'],
-  outputTemp: ['Output Temperature', 'Output'],
-  orderLength: 'Order Length',
-  // outputRate: 'kg/h',
-  productionQuantity: ['Production Quantity', 'Prod. Qty'],
-  // productionWeight: ['Production Weight', 'Prod. Weight'],
+    case 'ramSpeed':
+      return __('Ram Speed');
+    case 'billetTemp':
+      return [__('Billet Temperature'), __('Billet')];
+    case 'outputTemp':
+      return [__('Output Temperature'), __('Output')];
+    case 'orderLength':
+      return __('Order Length');
+    // outputRate': return  'kg/h'
+    case 'productionQuantity':
+      return [__('Production Quantity'), __('Prod. Qty')];
+    // productionWeight': return  ['Production Weight', 'Prod. Weight']
 
-  result: 'OK/NG',
-  // outputYield: 'Yield %',
-  ngQuantity: ['NG Quantity', 'NG Qty'],
-  // ngWeight: 'NG Weight',
-  // ngPercentage: 'NG %',
-  remark: 'Remark',
-  buttLength: 'Butt Length',
-  // code: 'Code',
-  startTime: ['Start time', 'Start'],
-  endTime: ['End time', 'End'],
-  workingTime: 'Duration',
-  dieTemp: ['Die Temperature', 'Die'],
-  containerTemp: ['Container Temperature', 'Container'],
-  pressure: 'Pressure',
-  pullerMode: ['Puller Mode', 'Mode'],
-  pullerSpeed: ['Puller Speed', 'Speed'],
-  pullerForce: ['Puller Force', 'Force'],
-  extrusionCycle: 'Extrusion Cycle',
-  extrusionLength: 'Extrusion Length',
-  segments: 'Segments',
-  coolingMethod: 'Cooling Method',
-  coolingMode: 'Cooling Mode',
-  startButt: 'Start Butt',
-  endButt: 'End Butt',
-};
+    case 'result':
+      return __('Result');
+    // outputYield': return  'Yield %'
+    case 'ngQuantity':
+      return [__('NG Quantity'), __('NG Qty')];
+    // ngWeight': return  'NG Weight'
+    // ngPercentage': return  'NG %'
+    case 'remark':
+      return __('Remark');
+    case 'buttLength':
+      return __('Butt Length');
+    // code': return  'Code'
+    case 'startTime':
+      return [__('Start time'), __('Start')];
+    case 'endTime':
+      return [__('End time'), __('End')];
+    case 'workingTime':
+      return __('Duration');
+    case 'dieTemp':
+      return [__('Die Temperature'), __('Die')];
+    case 'containerTemp':
+      return [__('Container Temperature'), __('Container')];
+    case 'pressure':
+      return __('Pressure');
+    case 'pullerMode':
+      return [__('Puller Mode'), __('Mode')];
+    case 'pullerSpeed':
+      return [__('Puller Speed'), __('Speed')];
+    case 'pullerForce':
+      return [__('Puller Force'), __('Force')];
+    case 'extrusionCycle':
+      return __('Extrusion Cycle');
+    case 'extrusionLength':
+      return __('Extrusion Length');
+    case 'segments':
+      return __('Segments');
+    case 'coolingMethod':
+      return __('Cooling Method');
+    case 'coolingMode':
+      return __('Cooling Mode');
+    case 'startButt':
+      return __('Start Butt');
+    case 'endButt':
+      return __('End Butt');
+  }
+}
 
-function getLabel(col: string) {
-  const label = columnLabels[col as ColumnNames];
+function getLabel(col: string, __: (text: string) => string) {
+  const label = getColumnLabel(col as ColumnNames, __);
+  if (!label) {
+    console.log(col, label);
+  }
   if (typeof label === 'string') {
     return label;
   } else {
@@ -349,8 +390,8 @@ function getLabel(col: string) {
   }
 }
 
-function getShortLabel(col: string) {
-  const label = columnLabels[col as ColumnNames];
+function getShortLabel(col: string, __: (text: string) => string) {
+  const label = getColumnLabel(col as ColumnNames, __);
   if (typeof label === 'string') {
     return label;
   } else {

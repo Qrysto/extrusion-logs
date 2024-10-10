@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+// import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, MoonStar, Sun } from 'lucide-react';
 import { useTranslate } from '@/lib/intl/client';
@@ -14,8 +14,8 @@ import ExtrusionLogDialog from '@/components/ExtrusionLogDialog';
 
 export default function Header({ account }: { account: LoggedInAccount }) {
   const __ = useTranslate();
-  const [employeeId, setEmployeeId] = useState('');
-  const [editing, setEditing] = useState(false);
+  // const [employeeId, setEmployeeId] = useState('');
+  // const [editing, setEditing] = useState(false);
   const { setTheme, theme } = useTheme();
 
   return (
@@ -25,7 +25,7 @@ export default function Header({ account }: { account: LoggedInAccount }) {
           <Button
             variant="default"
             onClick={() => {
-              openDialog(ExtrusionLogDialog, { employeeId });
+              openDialog(ExtrusionLogDialog);
             }}
           >
             <Plus className="mr-2" />

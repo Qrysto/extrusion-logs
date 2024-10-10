@@ -1,10 +1,7 @@
 import type { ReactNode } from 'react';
 import type { FullFormValues } from '@/lib/extrusionLogForm';
 import type { ExtrusionLog } from '@/app/api/extrusion-logs/route';
-import type {
-  MutableFields,
-  ColumnNames,
-} from '@/app/[locale]/(protected)/dashboard/columns';
+import type { MutableFields, ColumnNames } from '@/lib/columns';
 
 export interface AuthData {
   sessionId: number;

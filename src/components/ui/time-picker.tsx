@@ -1,3 +1,4 @@
+import { ComponentPropsWithoutRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { format, parse } from 'date-fns';
@@ -462,7 +463,7 @@ const TimePickerInput = React.forwardRef<
 
 TimePickerInput.displayName = 'TimePickerInput';
 
-interface TimePickerProps {
+type TimePickerProps = ComponentPropsWithoutRef<'div'> & {
   date?: Date | null;
   value: string | null;
   onChange: (time: string) => void;
@@ -472,7 +473,7 @@ interface TimePickerProps {
    * Default is 'second'.
    * */
   granularity?: Granularity;
-}
+};
 
 interface TimePickerRef {
   minuteRef: HTMLInputElement | null;
@@ -481,7 +482,10 @@ interface TimePickerRef {
 }
 
 const TimePicker = React.forwardRef<TimePickerRef, TimePickerProps>(
-  ({ value, onChange, hourCycle = 24, granularity = 'minute' }, ref) => {
+  (
+    { value, onChange, hourCycle = 24, granularity = 'minute', className },
+    ref
+  ) => {
     const minuteRef = React.useRef<HTMLInputElement>(null);
     const hourRef = React.useRef<HTMLInputElement>(null);
     const secondRef = React.useRef<HTMLInputElement>(null);
@@ -502,7 +506,7 @@ const TimePicker = React.forwardRef<TimePickerRef, TimePickerProps>(
     );
 
     return (
-      <div className="flex items-center justify-center gap-2">
+      <div className={cn('flex items-center justify-center gap-2', className)}>
         {/* <label htmlFor="datetime-picker-hour-input" className="cursor-pointer">
           <Clock className="mr-2 h-4 w-4" />
         </label> */}

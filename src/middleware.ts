@@ -8,11 +8,8 @@ function getLocale(request: NextRequest) {
   const headers = request.headers
     .entries()
     .reduce((headers, [key, value]) => ({ ...headers, [key]: value }), {});
-  console.log('headers', headers);
-
   const languages = new Negotiator({ headers }).languages();
   const locale = match(languages, locales, defaultLocale);
-  console.log(locale);
 
   return locale;
 }

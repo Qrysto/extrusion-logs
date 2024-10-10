@@ -21,7 +21,7 @@ import { del } from '@/lib/api';
 import { useTranslate } from '@/lib/intl/client';
 import { toast, flashError, openDialog } from '@/lib/ui';
 import { useDrafts, removeDraft } from '@/lib/drafts';
-import { getColumns, isMutableField, isDraft } from './columns';
+import { getColumns, isMutableField, isDraft } from '@/lib/columns';
 import Filters from './Filters';
 import ColumnSelector from './ColumnSelector';
 import DataTable from '@/components/DataTable';

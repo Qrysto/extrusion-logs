@@ -33,11 +33,7 @@ import {
 } from '@/components/ui/context-menu';
 import { useTranslate } from '@/lib/intl/client';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  isMutableField,
-  getLabel,
-  isDraft,
-} from '@/app/[locale]/(protected)/dashboard/columns';
+import { isMutableField, getLabel, isDraft } from '@/lib/columns';
 import ExtrusionLogDialog from '@/components/ExtrusionLogDialog';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { cn, genericMemo } from '@/lib/utils';
@@ -313,7 +309,7 @@ const DataCell = genericMemo(
             >
               <FilePenLine className="w-4 h-4 mr-2" />
               {/* TODO: Edit... */}
-              {__('Edit')} {getLabel(column.id)}
+              {__('Edit')} {getLabel(column.id, __)}
             </ContextMenuItem>
           )}
           {rowIsDraft && (

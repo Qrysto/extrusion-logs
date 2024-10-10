@@ -24,7 +24,7 @@ import { Check, TriangleAlert } from 'lucide-react';
 import { useForm, DefaultValues } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { ExtrusionLog } from '@/lib/types';
-import { getLabel, MutableFields } from './columns';
+import { getLabel, MutableFields } from '@/lib/columns';
 
 type FormValues<T extends MutableFields> = Pick<FullFormValues, T>;
 
@@ -99,7 +99,7 @@ export function EditExtrusionLogField<T extends MutableFields>({
         <DialogHeader className="flex-shrink-0 px-6">
           {/* TODO: Edit... */}
           <DialogTitle>
-            {__('Edit')} {getLabel(field)}
+            {__('Edit')} {getLabel(field, __)}
           </DialogTitle>
         </DialogHeader>
 
