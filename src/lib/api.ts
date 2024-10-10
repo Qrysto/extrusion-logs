@@ -1,3 +1,5 @@
+'use client';
+
 import { RequestInit } from 'next/dist/server/web/spec-extension/request';
 
 export function get(

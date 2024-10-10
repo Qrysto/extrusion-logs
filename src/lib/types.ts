@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { FullFormValues } from '@/lib/extrusionLogForm';
-import type { ExtrusionLog } from '@/app/[locale]/api/extrusion-logs/route';
+import type { ExtrusionLog } from '@/app/api/extrusion-logs/route';
 import type {
   MutableFields,
   ColumnNames,
