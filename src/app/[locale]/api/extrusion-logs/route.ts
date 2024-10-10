@@ -14,13 +14,13 @@ export async function GET(request: NextRequest) {
 
   const searchParams = request.nextUrl.searchParams;
   const date = searchParams.get('date');
-  const shift = searchParams.get('shift');
+  // const shift = searchParams.get('shift');
   const plant = searchParams.get('plant');
   const machine = searchParams.get('machine');
-  const item = searchParams.get('item');
-  const customer = searchParams.get('customer');
+  // const item = searchParams.get('item');
+  // const customer = searchParams.get('customer');
   const dieCode = searchParams.get('dieCode');
-  const cavity = searchParams.get('cavity');
+  // const cavity = searchParams.get('cavity');
   const lotNo = searchParams.get('lotNo');
   const result = searchParams.get('result');
   const remarkSearch = searchParams.get('remarkSearch');
@@ -30,13 +30,13 @@ export async function GET(request: NextRequest) {
   const res = await fetchExtrusionLogs({
     account,
     dateRange: parseDateRange(date),
-    shift: shift === 'DAY' ? 'DAY' : shift === 'NIGHT' ? 'NIGHT' : null,
+    // shift: shift === 'DAY' ? 'DAY' : shift === 'NIGHT' ? 'NIGHT' : null,
     plant,
     machine,
-    item,
-    customer,
+    // item,
+    // customer,
     dieCode,
-    cavity: cavity ? parseInt(cavity) : null,
+    // cavity: cavity ? parseInt(cavity) : null,
     lotNo,
     result: result === 'OK' ? 'OK' : result === 'NG' ? 'NG' : null,
     remarkSearch,
@@ -49,13 +49,13 @@ export async function GET(request: NextRequest) {
 async function fetchExtrusionLogs({
   account,
   dateRange,
-  shift,
+  // shift,
   plant,
   machine,
-  item,
-  customer,
+  // item,
+  // customer,
   dieCode,
-  cavity,
+  // cavity,
   lotNo,
   result,
   remarkSearch,
@@ -64,13 +64,13 @@ async function fetchExtrusionLogs({
 }: {
   account: Awaited<ReturnType<typeof getAccount>>;
   dateRange: DateRange | null;
-  shift: 'DAY' | 'NIGHT' | null;
+  // shift: 'DAY' | 'NIGHT' | null;
   plant: string | null;
   machine: string | null;
-  item: string | null;
-  customer: string | null;
+  // item: string | null;
+  // customer: string | null;
   dieCode: string | null;
-  cavity: number | null;
+  // cavity: number | null;
   lotNo: string | null;
   result: 'OK' | 'NG' | null;
   remarkSearch: string | null;
@@ -85,39 +85,52 @@ async function fetchExtrusionLogs({
       'accounts.username as machine',
       'accounts.plant as plant',
       'accounts.inch as inch',
-      'extrusions.employeeId',
+      // 'extrusions.employeeId',
       'extrusions.date',
-      'extrusions.shift',
-      'extrusions.item',
-      'extrusions.customer',
+      // 'extrusions.shift',
+      // 'extrusions.item',
+      // 'extrusions.customer',
       'extrusions.billetType',
       'extrusions.lotNumberCode',
       'extrusions.billetLength',
       'extrusions.billetQuantity',
-      'extrusions.billetKgpm',
+      // 'extrusions.billetKgpm',
       'extrusions.billetWeight',
       'extrusions.ramSpeed',
       'extrusions.dieCode',
-      'extrusions.dieNumber',
-      'extrusions.cavity',
-      'extrusions.productKgpm',
+      'extrusions.subNumber',
+      // 'extrusions.cavity',
+      // 'extrusions.productKgpm',
       'extrusions.ingotRatio',
       'extrusions.orderLength',
       'extrusions.billetTemp',
       'extrusions.outputTemp',
       'extrusions.productionQuantity',
-      'extrusions.productionWeight',
-      'extrusions.outputRate',
-      'extrusions.outputYield',
+      // 'extrusions.productionWeight',
+      // 'extrusions.outputRate',
+      // 'extrusions.outputYield',
       'extrusions.result',
       'extrusions.remark',
       'extrusions.startTime',
       'extrusions.endTime',
       'extrusions.ngQuantity',
-      'extrusions.ngWeight',
-      'extrusions.ngPercentage',
-      'extrusions.code',
-      'extrusions.buttWeight',
+      // 'extrusions.ngWeight',
+      // 'extrusions.ngPercentage',
+      // 'extrusions.code',
+      'extrusions.buttLength',
+      'extrusions.dieTemp',
+      'extrusions.containerTemp',
+      'extrusions.pressure',
+      'extrusions.pullerMode',
+      'extrusions.pullerSpeed',
+      'extrusions.pullerForce',
+      'extrusions.extrusionCycle',
+      'extrusions.extrusionLength',
+      'extrusions.segments',
+      'extrusions.coolingMethod',
+      'extrusions.coolingMode',
+      'extrusions.startButt',
+      'extrusions.endButt',
     ])
     .limit(fetchLimit);
   if (account?.role === 'team') {
@@ -132,27 +145,27 @@ async function fetchExtrusionLogs({
         .where('date', '<=', dateRange.to);
     }
   }
-  if (shift) {
-    query = query.where('extrusions.shift', '=', shift);
-  }
+  // if (shift) {
+  //   query = query.where('extrusions.shift', '=', shift);
+  // }
   if (plant) {
     query = query.where('accounts.plant', '=', plant);
   }
   if (machine) {
     query = query.where('accounts.username', '=', machine);
   }
-  if (item) {
-    query = query.where('extrusions.item', '=', item);
-  }
-  if (customer) {
-    query = query.where('extrusions.customer', '=', customer);
-  }
+  // if (item) {
+  //   query = query.where('extrusions.item', '=', item);
+  // }
+  // if (customer) {
+  //   query = query.where('extrusions.customer', '=', customer);
+  // }
   if (dieCode) {
     query = query.where('extrusions.dieCode', '=', dieCode);
   }
-  if (cavity) {
-    query = query.where('extrusions.cavity', '=', cavity);
-  }
+  // if (cavity) {
+  //   query = query.where('extrusions.cavity', '=', cavity);
+  // }
   if (lotNo) {
     query = query.where('extrusions.lotNumberCode', '=', lotNo);
   }
@@ -185,93 +198,120 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json();
   const {
-    billetKgpm,
+    // billetKgpm,
     billetLength,
     billetQuantity,
     billetTemp,
     billetType,
     billetWeight,
-    buttWeight,
-    cavity,
-    code,
-    customer,
+    buttLength,
+    // cavity,
+    // code,
+    // customer,
     date,
     dieCode,
-    dieNumber,
-    employeeId,
+    subNumber,
+    // employeeId,
     endTime,
     ingotRatio,
-    item,
+    // item,
     lotNumberCode,
-    ngPercentage,
+    // ngPercentage,
     ngQuantity,
-    ngWeight,
+    // ngWeight,
     result,
     orderLength,
-    outputRate,
+    // outputRate,
     outputTemp,
     productionQuantity,
-    productionWeight,
-    productKgpm,
+    // productionWeight,
+    // productKgpm,
     ramSpeed,
     remark,
-    shift,
+    // shift,
     startTime,
-    outputYield,
+    // outputYield,
+    dieTemp,
+    containerTemp,
+    pressure,
+    pullerMode,
+    pullerSpeed,
+    pullerForce,
+    extrusionCycle,
+    extrusionLength,
+    segments,
+    coolingMethod,
+    coolingMode,
+    startButt,
+    endButt,
   } = body || {};
 
   const extrusionLogValues = {
-    billetKgpm,
+    // billetKgpm,
     billetLength,
     billetQuantity,
     billetTemp,
     billetType,
     billetWeight,
-    buttWeight,
-    cavity,
-    code,
-    customer,
+    buttLength,
+    // cavity,
+    // code,
+    // customer,
     date,
     dieCode,
-    dieNumber,
-    employeeId,
+    subNumber,
+    // employeeId,
     endTime,
     ingotRatio,
-    item,
+    // item,
     lotNumberCode,
-    ngPercentage,
+    // ngPercentage,
     ngQuantity,
-    ngWeight,
+    // ngWeight,
     result,
     orderLength,
-    outputRate,
+    // outputRate,
     outputTemp,
     productionQuantity,
-    productionWeight,
-    productKgpm,
+    // productionWeight,
+    // productKgpm,
     ramSpeed,
     remark,
-    shift,
+    // shift,
     startTime,
-    outputYield,
+    // outputYield,
     createdBy: account.id,
+    dieTemp,
+    containerTemp,
+    pressure,
+    pullerMode,
+    pullerSpeed,
+    pullerForce,
+    extrusionCycle,
+    extrusionLength,
+    segments,
+    coolingMethod,
+    coolingMode,
+    startButt,
+    endButt,
   };
 
   const [
-    existingCustomer,
+    // existingCustomer,
     existingDie,
-    existingItem,
+    // existingItem,
     existingLotNo,
     existingBilletType,
-    existingCode,
+    // existingCode,
+    existingCoolingMethod,
   ] = await Promise.all([
-    customer
-      ? db
-          .selectFrom('customers')
-          .selectAll()
-          .where('name', '=', customer)
-          .executeTakeFirst()
-      : Promise.resolve(),
+    // customer
+    //   ? db
+    //       .selectFrom('customers')
+    //       .selectAll()
+    //       .where('name', '=', customer)
+    //       .executeTakeFirst()
+    //   : Promise.resolve(),
     dieCode
       ? db
           .selectFrom('dies')
@@ -279,13 +319,13 @@ export async function POST(request: NextRequest) {
           .where('code', '=', dieCode)
           .executeTakeFirst()
       : Promise.resolve(),
-    item
-      ? db
-          .selectFrom('items')
-          .selectAll()
-          .where('item', '=', item)
-          .executeTakeFirst()
-      : Promise.resolve(),
+    // item
+    //   ? db
+    //       .selectFrom('items')
+    //       .selectAll()
+    //       .where('item', '=', item)
+    //       .executeTakeFirst()
+    //   : Promise.resolve(),
     lotNumberCode
       ? db
           .selectFrom('lotNumbers')
@@ -300,35 +340,42 @@ export async function POST(request: NextRequest) {
           .where('name', '=', billetType)
           .executeTakeFirst()
       : Promise.resolve(),
-    code
+    // code
+    //   ? db
+    //       .selectFrom('codes')
+    //       .selectAll()
+    //       .where('code', '=', code)
+    //       .executeTakeFirst()
+    //   : Promise.resolve(),
+    coolingMethod
       ? db
-          .selectFrom('codes')
+          .selectFrom('coolingMethods')
           .selectAll()
-          .where('code', '=', code)
+          .where('code', '=', coolingMethod)
           .executeTakeFirst()
       : Promise.resolve(),
   ]);
 
   try {
     await Promise.all([
-      customer && !existingCustomer
-        ? db
-            .insertInto('customers')
-            .values({ name: customer })
-            .executeTakeFirstOrThrow()
-        : Promise.resolve(),
+      // customer && !existingCustomer
+      //   ? db
+      //       .insertInto('customers')
+      //       .values({ name: customer })
+      //       .executeTakeFirstOrThrow()
+      //   : Promise.resolve(),
       dieCode && !existingDie
         ? db
             .insertInto('dies')
             .values({ code: dieCode })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
-      item && !existingItem
-        ? db
-            .insertInto('items')
-            .values({ item: item })
-            .executeTakeFirstOrThrow()
-        : Promise.resolve(),
+      // item && !existingItem
+      //   ? db
+      //       .insertInto('items')
+      //       .values({ item: item })
+      //       .executeTakeFirstOrThrow()
+      //   : Promise.resolve(),
       lotNumberCode && !existingLotNo
         ? db
             .insertInto('lotNumbers')
@@ -341,10 +388,16 @@ export async function POST(request: NextRequest) {
             .values({ name: billetType })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
-      code && !existingCode
+      // code && !existingCode
+      //   ? db
+      //       .insertInto('codes')
+      //       .values({ code: code })
+      //       .executeTakeFirstOrThrow()
+      //   : Promise.resolve(),
+      coolingMethod && !existingCoolingMethod
         ? db
-            .insertInto('codes')
-            .values({ code: code })
+            .insertInto('coolingMethods')
+            .values({ code: coolingMethod })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
     ]);

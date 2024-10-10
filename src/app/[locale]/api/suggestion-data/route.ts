@@ -20,22 +20,27 @@ async function loadSuggestionData(admin: boolean) {
       .select(['username', 'plant'])
       .where('role', '=', 'team')
       .execute();
-  const itemQuery = db.selectFrom('items').selectAll().execute();
-  const customerQuery = db.selectFrom('customers').selectAll().execute();
+  // const itemQuery = db.selectFrom('items').selectAll().execute();
+  // const customerQuery = db.selectFrom('customers').selectAll().execute();
   const dieQuery = db.selectFrom('dies').selectAll().execute();
   const lotNoQuery = db.selectFrom('lotNumbers').selectAll().execute();
   const billetTypeQuery = db.selectFrom('billetTypes').selectAll().execute();
-  const codeQuery = db.selectFrom('codes').selectAll().execute();
+  // const codeQuery = db.selectFrom('codes').selectAll().execute();
+  const coolingMethodQuery = db
+    .selectFrom('coolingMethods')
+    .selectAll()
+    .execute();
 
-  const [accounts, items, customers, dies, lotNumbers, billetTypes, codes] =
+  const [accounts, dies, lotNumbers, billetTypes, coolingMethods] =
     await Promise.all([
       accountQuery || Promise.resolve(),
-      itemQuery,
-      customerQuery,
+      // itemQuery,
+      // customerQuery,
       dieQuery,
       lotNoQuery,
       billetTypeQuery,
-      codeQuery,
+      // codeQuery,
+      coolingMethodQuery,
     ]);
 
   const plantSet = new Set<string>();
@@ -47,20 +52,22 @@ async function loadSuggestionData(admin: boolean) {
     });
   const plantList = accounts && Array.from(plantSet);
   const machineList = accounts && accounts.map(({ username }) => username);
-  const itemList = items.map(({ item }) => item);
-  const customerList = customers.map(({ name }) => name);
+  // const itemList = items.map(({ item }) => item);
+  // const customerList = customers.map(({ name }) => name);
   const dieCodeList = dies.map(({ code }) => code);
   const lotNoList = lotNumbers.map(({ code }) => code);
   const billetTypeList = billetTypes.map(({ name }) => name);
-  const codeList = codes.map(({ code }) => code);
+  // const codeList = codes.map(({ code }) => code);
+  const coolingMethodList = coolingMethods.map(({ code }) => code);
 
   const data: any = {
-    itemList,
-    customerList,
+    // itemList,
+    // customerList,
     dieCodeList,
     lotNoList,
     billetTypeList,
-    codeList,
+    // codeList,
+    coolingMethodList,
   };
 
   if (admin) {

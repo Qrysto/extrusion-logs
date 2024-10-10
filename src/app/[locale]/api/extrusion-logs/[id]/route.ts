@@ -65,24 +65,32 @@ export async function PATCH(
   }
 
   const body = await request.json();
-  const { customer, dieCode, item, lotNumberCode, billetType, code } =
-    body || {};
+  const {
+    customer,
+    dieCode,
+    item,
+    lotNumberCode,
+    billetType,
+    code,
+    coolingMethod,
+  } = body || {};
 
   const [
-    existingCustomer,
+    // existingCustomer,
     existingDie,
-    existingItem,
+    // existingItem,
     existingLotNo,
     existingBilletType,
-    existingCode,
+    // existingCode,
+    existingCoolingMethod,
   ] = await Promise.all([
-    customer
-      ? db
-          .selectFrom('customers')
-          .selectAll()
-          .where('name', '=', customer)
-          .executeTakeFirst()
-      : Promise.resolve(),
+    // customer
+    //   ? db
+    //       .selectFrom('customers')
+    //       .selectAll()
+    //       .where('name', '=', customer)
+    //       .executeTakeFirst()
+    //   : Promise.resolve(),
     dieCode
       ? db
           .selectFrom('dies')
@@ -90,13 +98,13 @@ export async function PATCH(
           .where('code', '=', dieCode)
           .executeTakeFirst()
       : Promise.resolve(),
-    item
-      ? db
-          .selectFrom('items')
-          .selectAll()
-          .where('item', '=', item)
-          .executeTakeFirst()
-      : Promise.resolve(),
+    // item
+    //   ? db
+    //       .selectFrom('items')
+    //       .selectAll()
+    //       .where('item', '=', item)
+    //       .executeTakeFirst()
+    //   : Promise.resolve(),
     lotNumberCode
       ? db
           .selectFrom('lotNumbers')
@@ -111,35 +119,42 @@ export async function PATCH(
           .where('name', '=', billetType)
           .executeTakeFirst()
       : Promise.resolve(),
-    code
+    // code
+    //   ? db
+    //       .selectFrom('codes')
+    //       .selectAll()
+    //       .where('code', '=', code)
+    //       .executeTakeFirst()
+    //   : Promise.resolve(),
+    coolingMethod
       ? db
-          .selectFrom('codes')
+          .selectFrom('coolingMethods')
           .selectAll()
-          .where('code', '=', code)
+          .where('code', '=', coolingMethod)
           .executeTakeFirst()
       : Promise.resolve(),
   ]);
 
   try {
     await Promise.all([
-      customer && !existingCustomer
-        ? db
-            .insertInto('customers')
-            .values({ name: customer })
-            .executeTakeFirstOrThrow()
-        : Promise.resolve(),
+      // customer && !existingCustomer
+      //   ? db
+      //       .insertInto('customers')
+      //       .values({ name: customer })
+      //       .executeTakeFirstOrThrow()
+      //   : Promise.resolve(),
       dieCode && !existingDie
         ? db
             .insertInto('dies')
             .values({ code: dieCode })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
-      item && !existingItem
-        ? db
-            .insertInto('items')
-            .values({ item: item })
-            .executeTakeFirstOrThrow()
-        : Promise.resolve(),
+      // item && !existingItem
+      //   ? db
+      //       .insertInto('items')
+      //       .values({ item: item })
+      //       .executeTakeFirstOrThrow()
+      //   : Promise.resolve(),
       lotNumberCode && !existingLotNo
         ? db
             .insertInto('lotNumbers')
@@ -152,10 +167,16 @@ export async function PATCH(
             .values({ name: billetType })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
-      code && !existingCode
+      // code && !existingCode
+      //   ? db
+      //       .insertInto('codes')
+      //       .values({ code: code })
+      //       .executeTakeFirstOrThrow()
+      //   : Promise.resolve(),
+      coolingMethod && !existingCoolingMethod
         ? db
-            .insertInto('codes')
-            .values({ code: code })
+            .insertInto('coolingMethods')
+            .values({ code: coolingMethod })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
     ]);

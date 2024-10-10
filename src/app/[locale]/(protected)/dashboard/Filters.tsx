@@ -22,8 +22,8 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
   const {
     plantList,
     machineList,
-    itemList,
-    customerList,
+    // itemList,
+    // customerList,
     dieCodeList,
     lotNoList,
   } = data || {};
@@ -41,7 +41,7 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
         }
       />
 
-      <Select
+      {/* <Select
         value={searchParams.get('shift') || ''}
         onValueChange={(value) =>
           updateSearchParams(
@@ -60,7 +60,7 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
           <SelectItem value="night">{__('Night')}</SelectItem>
           <SelectItem value="both">{__('Both')}</SelectItem>
         </SelectContent>
-      </Select>
+      </Select> */}
 
       {isAdmin && (
         <>
@@ -80,7 +80,7 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
         </>
       )}
 
-      <Combobox
+      {/* <Combobox
         placeholder={__('Select item...')}
         value={searchParams.get('item')}
         onValueChange={(value) => updateSearchParams('item', value)}
@@ -92,7 +92,7 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
         value={searchParams.get('customer')}
         onValueChange={(value) => updateSearchParams('customer', value)}
         list={customerList}
-      />
+      /> */}
 
       <Combobox
         placeholder={__('Select die code...')}
@@ -101,7 +101,7 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
         list={dieCodeList}
       />
 
-      <Input
+      {/* <Input
         type="number"
         name="cavity"
         min={0}
@@ -112,7 +112,7 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
           updateSearchParams('cavity', evt.target.value || undefined)
         }
         className="w-24"
-      />
+      /> */}
 
       <Combobox
         placeholder={__('Select lot number...')}

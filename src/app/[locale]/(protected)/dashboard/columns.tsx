@@ -31,11 +31,11 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
           cell: ({ getValue }) =>
             formatDate(getValue<Date>(), displayDateFormat),
         }),
-        ch.accessor('shift', {
-          header: headerLabel,
-          cell: ({ getValue }) =>
-            getValue<string>() === 'DAY' ? 'Day' : 'Night',
-        }),
+        // ch.accessor('shift', {
+        //   header: headerLabel,
+        //   cell: ({ getValue }) =>
+        //     getValue<string>() === 'DAY' ? 'Day' : 'Night',
+        // }),
         ch.accessor('startTime', {
           header: headerLabel,
           cell: ({ getValue }) => stripSeconds(getValue<string>()),
@@ -71,10 +71,10 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
           header: headerLabel,
           cell: renderNumberCell,
         }),
-        ch.accessor('billetKgpm', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
+        // ch.accessor('billetKgpm', {
+        //   header: headerLabel,
+        //   cell: renderNumberCell,
+        // }),
         ch.accessor('billetWeight', {
           header: headerLabel,
           cell: renderNumberCell,
@@ -89,18 +89,18 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
           cell: renderNumberCell,
         }),
         ch.accessor('dieCode', { header: headerLabel }),
-        ch.accessor('dieNumber', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('cavity', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('productKgpm', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
+        // ch.accessor('subNumber', {
+        //   header: headerLabel,
+        //   cell: renderNumberCell,
+        // }),
+        // ch.accessor('cavity', {
+        //   header: headerLabel,
+        //   cell: renderNumberCell,
+        // }),
+        // ch.accessor('productKgpm', {
+        //   header: headerLabel,
+        //   cell: renderNumberCell,
+        // }),
         ch.accessor('ingotRatio', {
           header: headerLabel,
           cell: renderNumberCell,
@@ -131,41 +131,41 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
           header: headerLabel,
           cell: renderNumberCell,
         }),
-        ch.accessor('productionWeight', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('outputRate', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('outputYield', {
-          header: headerLabel,
-          cell: ({ getValue }) => (
-            <div className="text-right">
-              {formatNumber(getValue<number>()) + '%'}
-            </div>
-          ),
-        }),
+        // ch.accessor('productionWeight', {
+        //   header: headerLabel,
+        //   cell: renderNumberCell,
+        // }),
+        // ch.accessor('outputRate', {
+        //   header: headerLabel,
+        //   cell: renderNumberCell,
+        // }),
+        // ch.accessor('outputYield', {
+        //   header: headerLabel,
+        //   cell: ({ getValue }) => (
+        //     <div className="text-right">
+        //       {formatNumber(getValue<number>()) + '%'}
+        //     </div>
+        //   ),
+        // }),
         ch.accessor('result', { header: headerLabel }),
         ch.accessor('ngQuantity', {
           header: headerLabel,
           cell: renderNumberCell,
         }),
-        ch.accessor('ngWeight', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('ngPercentage', {
-          header: headerLabel,
-          cell: ({ getValue }) => (
-            <div className="text-right">
-              {formatNumber(getValue<number>()) + '%'}
-            </div>
-          ),
-        }),
-        ch.accessor('code', { header: headerLabel }),
-        ch.accessor('buttWeight', {
+        // ch.accessor('ngWeight', {
+        //   header: headerLabel,
+        //   cell: renderNumberCell,
+        // }),
+        // ch.accessor('ngPercentage', {
+        //   header: headerLabel,
+        //   cell: ({ getValue }) => (
+        //     <div className="text-right">
+        //       {formatNumber(getValue<number>()) + '%'}
+        //     </div>
+        //   ),
+        // }),
+        // ch.accessor('code', { header: headerLabel }),
+        ch.accessor('buttLength', {
           header: headerLabel,
           cell: renderNumberCell,
         }),
@@ -176,7 +176,7 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
       header: __('Administration'),
       columns: [
         ...adminColumns,
-        ch.accessor('employeeId', { header: 'Employee ID' }),
+        // ch.accessor('employeeId', { header: 'Employee ID' }),
       ],
     }),
   ] as ColumnDef<DashboardTableItem>[];
@@ -231,48 +231,42 @@ function isColumnName(value: string): value is ColumnNames {
 }
 
 const columnNames = new Set<ColumnNames>([
-  'date',
-  'shift',
-  'plant',
   'machine',
+  'plant',
   'inch',
-  'employeeId',
-
-  'item',
-  'customer',
-  'dieCode',
-
-  'dieNumber',
-  'cavity',
-  'productKgpm',
-
+  'date',
   'billetType',
-  'billetKgpm',
+  'lotNumberCode',
   'billetLength',
   'billetQuantity',
   'billetWeight',
-  'ingotRatio',
-  'lotNumberCode',
-
   'ramSpeed',
+  'dieCode',
+  'subNumber',
+  'ingotRatio',
+  'orderLength',
   'billetTemp',
   'outputTemp',
-  'orderLength',
-  'outputRate',
   'productionQuantity',
-  'productionWeight',
-
   'result',
-  'outputYield',
-  'ngQuantity',
-  'ngWeight',
-  'ngPercentage',
   'remark',
-  'buttWeight',
-  'code',
   'startTime',
   'endTime',
-  'workingTime',
+  'ngQuantity',
+  'buttLength',
+  'dieTemp',
+  'containerTemp',
+  'pressure',
+  'pullerMode',
+  'pullerSpeed',
+  'pullerForce',
+  'extrusionCycle',
+  'extrusionLength',
+  'segments',
+  'coolingMethod',
+  'coolingMode',
+  'startButt',
+  'endButt',
 ]);
 
 type MutableFields = Exclude<
@@ -290,22 +284,22 @@ function isMutableField(value: string): value is MutableFields {
 
 const columnLabels: Record<ColumnNames, string | [string, string]> = {
   date: 'Date',
-  shift: 'Shift',
+  // shift: 'Shift',
   plant: 'Plant',
   machine: 'Machine',
   inch: 'Inch',
-  employeeId: 'Employee ID',
+  // employeeId: 'Employee ID',
 
-  item: 'Item',
-  customer: 'Customer',
+  // item: 'Item',
+  // customer: 'Customer',
   dieCode: 'Die Code',
 
-  dieNumber: ['Die Number', 'Die No.'],
-  cavity: 'Cavity',
-  productKgpm: ['Product kg/m', 'kg/m'],
+  subNumber: ['Sub Number', 'Sub No.'],
+  // cavity: 'Cavity',
+  // productKgpm: ['Product kg/m', 'kg/m'],
 
   billetType: ['Billet Type', 'B. Type'],
-  billetKgpm: ['Billet kg/m', 'B. kg/m'],
+  // billetKgpm: ['Billet kg/m', 'B. kg/m'],
   billetLength: ['Billet Length', 'B. Length'],
   billetQuantity: ['Billet Quantity', 'B. Qty'],
   billetWeight: ['Billet Weight', 'B. Weight'],
@@ -316,21 +310,34 @@ const columnLabels: Record<ColumnNames, string | [string, string]> = {
   billetTemp: ['Billet Temperature', 'Billet'],
   outputTemp: ['Output Temperature', 'Output'],
   orderLength: 'Order Length',
-  outputRate: 'kg/h',
+  // outputRate: 'kg/h',
   productionQuantity: ['Production Quantity', 'Prod. Qty'],
-  productionWeight: ['Production Weight', 'Prod. Weight'],
+  // productionWeight: ['Production Weight', 'Prod. Weight'],
 
   result: 'OK/NG',
-  outputYield: 'Yield %',
+  // outputYield: 'Yield %',
   ngQuantity: ['NG Quantity', 'NG Qty'],
-  ngWeight: 'NG Weight',
-  ngPercentage: 'NG %',
+  // ngWeight: 'NG Weight',
+  // ngPercentage: 'NG %',
   remark: 'Remark',
-  buttWeight: 'Butt Weight',
-  code: 'Code',
+  buttLength: 'Butt Length',
+  // code: 'Code',
   startTime: ['Start time', 'Start'],
   endTime: ['End time', 'End'],
   workingTime: 'Duration',
+  dieTemp: ['Die Temperature', 'Die'],
+  containerTemp: ['Container Temperature', 'Container'],
+  pressure: 'Pressure',
+  pullerMode: ['Puller Mode', 'Mode'],
+  pullerSpeed: ['Puller Speed', 'Speed'],
+  pullerForce: ['Puller Force', 'Force'],
+  extrusionCycle: 'Extrusion Cycle',
+  extrusionLength: 'Extrusion Length',
+  segments: 'Segments',
+  coolingMethod: 'Cooling Method',
+  coolingMode: 'Cooling Mode',
+  startButt: 'Start Butt',
+  endButt: 'End Butt',
 };
 
 function getLabel(col: string) {

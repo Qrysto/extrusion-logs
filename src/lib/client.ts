@@ -63,13 +63,13 @@ export async function refreshSuggestionData() {
 export function useExtrusionLogs() {
   const searchParams = useSearchParams();
   const date = searchParams.get('date');
-  const shift = searchParams.get('shift');
+  // const shift = searchParams.get('shift');
   const plant = searchParams.get('plant');
   const machine = searchParams.get('machine');
-  const item = searchParams.get('item');
-  const customer = searchParams.get('customer');
+  // const item = searchParams.get('item');
+  // const customer = searchParams.get('customer');
   const dieCode = searchParams.get('dieCode');
-  const cavity = searchParams.get('cavity');
+  // const cavity = searchParams.get('cavity');
   const lotNo = searchParams.get('lotNo');
   const result = searchParams.get('result');
   const remarkSearch = searchParams.get('remarkSearch');
@@ -92,27 +92,27 @@ export function useExtrusionLogs() {
   if (date) {
     params.date = date;
   }
-  if (shift) {
-    params.shift = shift;
-  }
+  // if (shift) {
+  //   params.shift = shift;
+  // }
   if (plant) {
     params.plant = plant;
   }
   if (machine) {
     params.machine = machine;
   }
-  if (item) {
-    params.item = item;
-  }
-  if (customer) {
-    params.customer = customer;
-  }
+  // if (item) {
+  //   params.item = item;
+  // }
+  // if (customer) {
+  //   params.customer = customer;
+  // }
   if (dieCode) {
     params.dieCode = dieCode;
   }
-  if (cavity) {
-    params.cavity = cavity;
-  }
+  // if (cavity) {
+  //   params.cavity = cavity;
+  // }
   if (lotNo) {
     params.lotNo = lotNo;
   }
