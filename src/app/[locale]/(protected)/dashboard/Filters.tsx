@@ -143,7 +143,7 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
       </Select>
 
       <Input
-        placeholder={__('Search remark')}
+        placeholder={__('Remark')}
         name="remark"
         value={searchParams.get('remarkSearch') || ''}
         onChange={(evt) =>

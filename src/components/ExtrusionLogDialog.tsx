@@ -133,6 +133,8 @@ export default function ExtrusionLogDialog({
             <div className="flex gap-x-4">
               <ExtrusionLogFormField name="billetType" className="flex-1" />
 
+              <ExtrusionLogFormField name="ingotRatio" className="flex-1" />
+
               <ExtrusionLogFormField name="lotNumberCode" className="flex-1" />
             </div>
 
@@ -158,20 +160,14 @@ export default function ExtrusionLogDialog({
               <ExtrusionLogFormField name="pullerSpeed" className="flex-1" />
 
               <ExtrusionLogFormField name="pullerForce" className="flex-1" />
-            </div>
 
-            <div className="flex gap-x-4">
               <ExtrusionLogFormField name="extrusionCycle" className="flex-1" />
-
-              <ExtrusionLogFormField name="ingotRatio" className="flex-1" />
             </div>
 
             <div className="flex gap-x-4">
               <ExtrusionLogFormField name="billetLength" className="flex-1" />
 
               <ExtrusionLogFormField name="billetQuantity" className="flex-1" />
-
-              <ExtrusionLogFormField name="billetWeight" className="flex-1" />
             </div>
 
             <div className="flex gap-x-4">

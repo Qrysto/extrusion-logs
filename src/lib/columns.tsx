@@ -308,11 +308,11 @@ function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
       return [__('Billet Type'), __('Type')];
     // billetKgpm': return  ['Billet kg/m', 'kg/m']
     case 'billetLength':
-      return [__('Billet Length'), __('Length')];
+      return [__('Short Billet Length'), __('Length')];
     case 'billetQuantity':
-      return [__('Billet Quantity'), __('Qantity')];
+      return [__('Short Billet Quantity'), __('Qantity')];
     case 'billetWeight':
-      return [__('Billet Weight'), __('Weight')];
+      return [__('Short Billet Weight'), __('Weight')];
     case 'ingotRatio':
       return __('Ingot Ratio');
     case 'lotNumberCode':
@@ -354,7 +354,7 @@ function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
     case 'containerTemp':
       return [__('Container Temperature'), __('Container')];
     case 'pressure':
-      return __('Pressure');
+      return __('Extrusion Pressure');
     case 'pullerMode':
       return [__('Puller Mode'), __('Mode')];
     case 'pullerSpeed':
