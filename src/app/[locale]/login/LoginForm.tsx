@@ -43,7 +43,7 @@ export default function LoginForm() {
     <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
       <div>
         <Label htmlFor="email" className="sr-only">
-          __('Extrusion team')
+          {__('Extrusion team')}
         </Label>
         <Input
           id="extrusion-team"
@@ -56,7 +56,7 @@ export default function LoginForm() {
       </div>
       <div>
         <Label htmlFor="password" className="sr-only">
-          __('Password')
+          {__('Password')}
         </Label>
         <Input
           id="password"
