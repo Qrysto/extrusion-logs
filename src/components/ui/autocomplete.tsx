@@ -17,6 +17,7 @@ type AutoCompleteProps = ComponentProps<typeof Input> & {
   emptyMessage?: string;
   value?: string;
   onValueChange?: (value: string) => void;
+  onOptionSelected?: (value: string) => void;
   isLoading?: boolean;
 };
 
@@ -25,6 +26,7 @@ export const AutoComplete = ({
   emptyMessage = 'No results found',
   value,
   onValueChange,
+  onOptionSelected,
   isLoading = false,
   onChange,
   onFocus,
@@ -68,17 +70,18 @@ export const AutoComplete = ({
       // This is a hack to prevent the input from being focused after the user selects an option
       // We can call this hack: "The next tick"
       setTimeout(() => {
-        inputRef?.current?.blur();
+        inputRef?.current?.focus();
       }, 0);
     },
     [onValueChange]
   );
 
   return (
-    <CommandPrimitive onKeyDown={handleKeyDown}>
+    <CommandPrimitive onKeyDown={handleKeyDown} tabIndex={undefined}>
       <div>
         <CommandInput
           ref={inputRef}
+          tabIndex={0}
           value={value}
           onValueChange={(value) => {
             if (!isLoading) {
@@ -124,7 +127,10 @@ export const AutoComplete = ({
                         event.preventDefault();
                         event.stopPropagation();
                       }}
-                      onSelect={() => handleSelectOption(option)}
+                      onSelect={() => {
+                        handleSelectOption(option);
+                        onOptionSelected?.(option);
+                      }}
                       className={cn(
                         'flex w-full items-center gap-2 cursor-pointer'
                       )}

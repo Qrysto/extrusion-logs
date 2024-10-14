@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       inch,
       customer,
       dieCode,
-      dieNumber,
+      subNumber,
       cavity,
       productKgpm,
       billetType,
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       ngWeight,
       ngPercentage,
       code,
-      buttWeight,
+      buttLength,
     }) => ({
       item,
       shift: shift?.toLowerCase(),
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       inch,
       customer: customer || null,
       dieCode: dieCode || null,
-      dieNumber: toNumber(dieNumber),
+      subNumber: toNumber(subNumber),
       cavity: toNumber(cavity),
       productKgpm: toNumber(productKgpm),
       billetType: billetType || null,
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       ngWeight: toNumber(ngWeight),
       ngPercentage: toNumber(ngPercentage),
       code: code || null,
-      buttWeight: toNumber(buttWeight),
+      buttLength: toNumber(buttLength),
     })
   );
 
@@ -147,7 +147,7 @@ async function addLog(log: any) {
     inch,
     customer,
     dieCode,
-    dieNumber,
+    subNumber,
     cavity,
     productKgpm,
     billetType,
@@ -173,31 +173,31 @@ async function addLog(log: any) {
     ngWeight,
     ngPercentage,
     code,
-    buttWeight,
+    buttLength,
   } = log;
   console.log('log', log);
 
   const [
     existingAccount,
-    existingCustomer,
+    // existingCustomer,
     existingDie,
-    existingItem,
+    // existingItem,
     existingLotNo,
     existingBilletType,
-    existingCode,
+    // existingCode,
   ] = await Promise.all([
     db
       .selectFrom('accounts')
       .selectAll()
       .where('username', '=', machine)
       .executeTakeFirst(),
-    customer
-      ? db
-          .selectFrom('customers')
-          .selectAll()
-          .where('name', '=', customer)
-          .executeTakeFirst()
-      : Promise.resolve(),
+    // customer
+    //   ? db
+    //       .selectFrom('customers')
+    //       .selectAll()
+    //       .where('name', '=', customer)
+    //       .executeTakeFirst()
+    //   : Promise.resolve(),
     dieCode
       ? db
           .selectFrom('dies')
@@ -205,13 +205,13 @@ async function addLog(log: any) {
           .where('code', '=', dieCode)
           .executeTakeFirst()
       : Promise.resolve(),
-    item
-      ? db
-          .selectFrom('items')
-          .selectAll()
-          .where('item', '=', item)
-          .executeTakeFirst()
-      : Promise.resolve(),
+    // item
+    //   ? db
+    //       .selectFrom('items')
+    //       .selectAll()
+    //       .where('item', '=', item)
+    //       .executeTakeFirst()
+    //   : Promise.resolve(),
     lotNumberCode
       ? db
           .selectFrom('lotNumbers')
@@ -226,13 +226,13 @@ async function addLog(log: any) {
           .where('name', '=', billetType)
           .executeTakeFirst()
       : Promise.resolve(),
-    code
-      ? db
-          .selectFrom('codes')
-          .selectAll()
-          .where('code', '=', code)
-          .executeTakeFirst()
-      : Promise.resolve(),
+    // code
+    //   ? db
+    //       .selectFrom('codes')
+    //       .selectAll()
+    //       .where('code', '=', code)
+    //       .executeTakeFirst()
+    //   : Promise.resolve(),
   ]);
 
   try {
@@ -249,24 +249,24 @@ async function addLog(log: any) {
             })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
-      customer && !existingCustomer
-        ? db
-            .insertInto('customers')
-            .values({ name: customer })
-            .executeTakeFirstOrThrow()
-        : Promise.resolve(),
+      // customer && !existingCustomer
+      //   ? db
+      //       .insertInto('customers')
+      //       .values({ name: customer })
+      //       .executeTakeFirstOrThrow()
+      //   : Promise.resolve(),
       dieCode && !existingDie
         ? db
             .insertInto('dies')
             .values({ code: dieCode })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
-      item && !existingItem
-        ? db
-            .insertInto('items')
-            .values({ item: item })
-            .executeTakeFirstOrThrow()
-        : Promise.resolve(),
+      // item && !existingItem
+      //   ? db
+      //       .insertInto('items')
+      //       .values({ item: item })
+      //       .executeTakeFirstOrThrow()
+      //   : Promise.resolve(),
       lotNumberCode && !existingLotNo
         ? db
             .insertInto('lotNumbers')
@@ -279,12 +279,12 @@ async function addLog(log: any) {
             .values({ name: billetType })
             .executeTakeFirstOrThrow()
         : Promise.resolve(),
-      code && !existingCode
-        ? db
-            .insertInto('codes')
-            .values({ code: code })
-            .executeTakeFirstOrThrow()
-        : Promise.resolve(),
+      // code && !existingCode
+      //   ? db
+      //       .insertInto('codes')
+      //       .values({ code: code })
+      //       .executeTakeFirstOrThrow()
+      //   : Promise.resolve(),
     ]);
 
     var account =
@@ -307,18 +307,18 @@ async function addLog(log: any) {
       .insertInto('extrusions')
       .values({
         createdBy: account.id,
-        item,
-        shift,
+        // item,
+        // shift,
         date,
-        customer,
+        // customer,
         dieCode,
-        dieNumber,
-        cavity,
-        productKgpm,
+        subNumber,
+        // cavity,
+        // productKgpm,
         billetType,
         lotNumberCode,
         ingotRatio,
-        billetKgpm,
+        // billetKgpm,
         billetLength,
         billetQuantity,
         billetWeight,
@@ -327,18 +327,18 @@ async function addLog(log: any) {
         billetTemp,
         outputTemp,
         productionQuantity,
-        productionWeight,
-        outputYield,
+        // productionWeight,
+        // outputYield,
         result,
         remark,
         startTime,
         endTime,
-        outputRate,
+        // outputRate,
         ngQuantity,
-        ngWeight,
-        ngPercentage,
-        code,
-        buttWeight,
+        // ngWeight,
+        // ngPercentage,
+        // code,
+        buttLength,
       })
       .execute();
 

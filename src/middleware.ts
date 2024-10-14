@@ -5,9 +5,10 @@ import Negotiator from 'negotiator';
 
 // Get the preferred locale, similar to the above or using a library
 function getLocale(request: NextRequest) {
-  const headers = request.headers
-    .entries()
-    .reduce((headers, [key, value]) => ({ ...headers, [key]: value }), {});
+  const headers = Array.from(request.headers.entries()).reduce(
+    (headers, [key, value]) => ({ ...headers, [key]: value }),
+    {}
+  );
   const languages = new Negotiator({ headers }).languages();
   const locale = match(languages, locales, defaultLocale);
 
