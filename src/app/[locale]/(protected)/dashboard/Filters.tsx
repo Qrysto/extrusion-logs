@@ -65,14 +65,14 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
       {isAdmin && (
         <>
           <Combobox
-            placeholder={__('Select plant...')}
+            placeholder={__('Select plant')}
             value={searchParams.get('plant')}
             onValueChange={(value) => updateSearchParams('plant', value)}
             list={plantList}
           />
 
           <Combobox
-            placeholder={__('Select machine...')}
+            placeholder={__('Select machine')}
             value={searchParams.get('machine')}
             onValueChange={(value) => updateSearchParams('machine', value)}
             list={machineList}
@@ -81,21 +81,21 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
       )}
 
       {/* <Combobox
-        placeholder={__('Select item...')}
+        placeholder={__('Select item')}
         value={searchParams.get('item')}
         onValueChange={(value) => updateSearchParams('item', value)}
         list={itemList}
       />
 
       <Combobox
-        placeholder={__('Select customer...')}
+        placeholder={__('Select customer')}
         value={searchParams.get('customer')}
         onValueChange={(value) => updateSearchParams('customer', value)}
         list={customerList}
       /> */}
 
       <Combobox
-        placeholder={__('Select die code...')}
+        placeholder={__('Select die code')}
         value={searchParams.get('dieCode')}
         onValueChange={(value) => updateSearchParams('dieCode', value)}
         list={dieCodeList}
@@ -115,7 +115,7 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
       /> */}
 
       <Combobox
-        placeholder={__('Select lot number...')}
+        placeholder={__('Select lot number')}
         value={searchParams.get('lotNo')}
         onValueChange={(value) => updateSearchParams('lotNo', value)}
         list={lotNoList}
