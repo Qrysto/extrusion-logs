@@ -413,9 +413,11 @@ function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
     case 'ramSpeed':
       return __('Ram Speed');
     case 'billetTemp':
-      return [__('Billet Temperature'), __('Billet')];
+      return __('Billet Temperature');
+      __('Billet');
     case 'outputTemp':
-      return [__('Output Temperature'), __('Output')];
+      return __('Output Temperature');
+      __('Output');
     case 'orderLength':
       return __('Order Length');
     case 'productionQuantity':
@@ -442,17 +444,22 @@ function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
     case 'duration':
       return __('Duration');
     case 'dieTemp':
-      return [__('Die Temperature'), __('Die')];
+      return __('Die Temperature');
+      __('Die');
     case 'containerTemp':
-      return [__('Container Temperature'), __('Container')];
+      return __('Container Temperature');
+      __('Container');
     case 'pressure':
       return __('Extrusion Pressure');
     case 'pullerMode':
-      return [__('Puller Mode'), __('Mode')];
+      return __('Puller Mode');
+      __('Mode');
     case 'pullerSpeed':
-      return [__('Puller Speed'), __('Speed')];
+      return __('Puller Speed');
+      __('Speed');
     case 'pullerForce':
-      return [__('Puller Force'), __('Force')];
+      return __('Puller Force');
+      __('Force');
     case 'extrusionCycle':
       return __('Extrusion Cycle');
     case 'extrusionLength':
