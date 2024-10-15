@@ -16,8 +16,8 @@ const formatNumber = Intl.NumberFormat('en-US').format;
 const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
   const adminColumns: ColumnDef<DashboardTableItem>[] = isAdmin
     ? [
-        { accessorKey: 'machine', header: __('Machine') },
         { accessorKey: 'plant', header: __('Plant') },
+        { accessorKey: 'machine', header: __('Machine') },
         { accessorKey: 'inch', header: __('Inch') },
       ]
     : [];
@@ -27,18 +27,176 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
 
   const columns: ColumnDef<DashboardTableItem>[] = [
     ch.group({
-      header: __('Date & time'),
+      header: __('Machine Info'),
       columns: [
         ch.accessor('date', {
           header: headerLabel,
           cell: ({ getValue }) =>
             formatDate(getValue<Date>(), displayDateFormat),
         }),
-        // ch.accessor('shift', {
-        //   header: headerLabel,
-        //   cell: ({ getValue }) =>
-        //     getValue<string>() === 'DAY' ? 'Day' : 'Night',
-        // }),
+        ch.display({
+          id: 'shift',
+          header: headerLabel,
+          cell: ({ row }) =>
+            isDayShift(row.original.startTime) ? __('Day') : __('Night'),
+        }),
+        ...adminColumns,
+      ],
+    }),
+    ch.group({
+      header: __('Die Info'),
+      columns: [
+        ch.display({
+          id: 'item',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.display({
+          id: 'customer',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.display({
+          id: 'productGroup',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.accessor('dieCode', { header: headerLabel }),
+        ch.accessor('subNumber', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.display({
+          id: 'cavity',
+          header: headerLabel,
+          cell: () => '',
+        }),
+      ],
+    }),
+    ch.group({
+      header: __('Long Billet'),
+      columns: [
+        ch.accessor('billetType', { header: headerLabel }),
+        ch.accessor('ingotRatio', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.display({
+          id: 'billetKgpm',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.accessor('lotNumberCode', { header: headerLabel }),
+      ],
+    }),
+    ch.group({
+      header: __('Short Billet'),
+      columns: [
+        ch.accessor('billetLength', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('billetQuantity', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.display({
+          id: 'billetWeight',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.accessor('buttLength', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+      ],
+    }),
+    ch.group({
+      header: __('Extrusion Details'),
+      columns: [
+        ch.accessor('dieTemp', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('billetTemp', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('containerTemp', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('outputTemp', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('ramSpeed', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('pressure', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('pullerMode', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('pullerSpeed', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('pullerForce', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('extrusionCycle', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+      ],
+    }),
+    ch.group({
+      header: __('Product'),
+      columns: [
+        ch.display({
+          id: 'productKgpm',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.accessor('extrusionLength', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('orderLength', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('segments', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('coolingMethod', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('coolingMode', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('startButt', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('endButt', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+      ],
+    }),
+    ch.group({
+      header: __('Output'),
+      columns: [
         ch.accessor('startTime', {
           header: headerLabel,
           cell: ({ getValue }) => stripSeconds(getValue<string>()),
@@ -48,140 +206,37 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
           cell: ({ getValue }) => stripSeconds(getValue<string>()),
         }),
         ch.display({
-          id: 'workingTime',
+          id: 'duration',
           header: headerLabel,
-          cell: workingTime,
+          cell: duration,
         }),
-      ],
-    }),
-    // ch.group({
-    //   header: __('General'),
-    //   columns: [
-    //     // ch.accessor('item', { header: headerLabel }),
-    //     // ch.accessor('customer', { header: headerLabel }),
-    //   ],
-    // }),
-    ch.group({
-      header: __('Billet'),
-      columns: [
-        ch.accessor('billetType', { header: headerLabel }),
-        ch.accessor('lotNumberCode', { header: headerLabel }),
-        ch.accessor('billetLength', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('billetQuantity', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        // ch.accessor('billetKgpm', {
-        //   header: headerLabel,
-        //   cell: renderNumberCell,
-        // }),
-        ch.accessor('billetWeight', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-      ],
-    }),
-    ch.group({
-      header: __('Input'),
-      columns: [
-        ch.accessor('ramSpeed', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('dieCode', { header: headerLabel }),
-        // ch.accessor('subNumber', {
-        //   header: headerLabel,
-        //   cell: renderNumberCell,
-        // }),
-        // ch.accessor('cavity', {
-        //   header: headerLabel,
-        //   cell: renderNumberCell,
-        // }),
-        // ch.accessor('productKgpm', {
-        //   header: headerLabel,
-        //   cell: renderNumberCell,
-        // }),
-        ch.accessor('ingotRatio', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('orderLength', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-      ],
-    }),
-    ch.group({
-      header: __('Temperature'),
-      columns: [
-        ch.accessor('billetTemp', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('outputTemp', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-      ],
-    }),
-    ch.group({
-      header: __('Output'),
-      columns: [
         ch.accessor('productionQuantity', {
           header: headerLabel,
           cell: renderNumberCell,
         }),
-        // ch.accessor('productionWeight', {
-        //   header: headerLabel,
-        //   cell: renderNumberCell,
-        // }),
-        // ch.accessor('outputRate', {
-        //   header: headerLabel,
-        //   cell: renderNumberCell,
-        // }),
-        // ch.accessor('outputYield', {
-        //   header: headerLabel,
-        //   cell: ({ getValue }) => (
-        //     <div className="text-right">
-        //       {formatNumber(getValue<number>()) + '%'}
-        //     </div>
-        //   ),
-        // }),
+        ch.display({
+          id: 'productionWeight',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.display({
+          id: 'yield',
+          header: headerLabel,
+          cell: () => '',
+        }),
         ch.accessor('result', { header: headerLabel }),
+        ch.accessor('remark', { header: headerLabel }),
         ch.accessor('ngQuantity', {
           header: headerLabel,
           cell: renderNumberCell,
         }),
-        // ch.accessor('ngWeight', {
-        //   header: headerLabel,
-        //   cell: renderNumberCell,
-        // }),
-        // ch.accessor('ngPercentage', {
-        //   header: headerLabel,
-        //   cell: ({ getValue }) => (
-        //     <div className="text-right">
-        //       {formatNumber(getValue<number>()) + '%'}
-        //     </div>
-        //   ),
-        // }),
-        // ch.accessor('code', { header: headerLabel }),
-        ch.accessor('buttLength', {
+        ch.display({
+          id: 'ngWeight',
           header: headerLabel,
-          cell: renderNumberCell,
+          cell: () => '',
         }),
-        ch.accessor('remark', { header: headerLabel }),
       ],
     }),
-    // ch.group({
-    //   header: __('Administration'),
-    //   columns: [
-    //     ...adminColumns,
-    //     // ch.accessor('employeeId', { header: 'Employee ID' }),
-    //   ],
-    // }),
   ] as ColumnDef<DashboardTableItem>[];
 
   return columns;
@@ -196,7 +251,7 @@ const renderNumberCell: ColumnDefTemplate<
 const stripSeconds = (time: string | null) =>
   time && time.length === 8 ? time.substring(0, time.lastIndexOf(':')) : time;
 
-function workingTime({ row }: CellContext<DashboardTableItem, unknown>) {
+function duration({ row }: CellContext<DashboardTableItem, unknown>) {
   const startTime = row.getValue<string>('startTime');
   const endTime = row.getValue<string>('endTime');
   if (!startTime || !endTime) {
@@ -223,90 +278,125 @@ function isDraft(object: any): object is Draft {
   return !!(object as Draft)?.isDraft;
 }
 
-type ColumnNames = Exclude<keyof ExtrusionLog, 'id'> | 'workingTime';
-
-function isColumnName(value: string): value is ColumnNames {
-  return columnNames.has(value as ColumnNames);
-}
-
-const columnNames = new Set<ColumnNames>([
-  'machine',
-  'plant',
-  'inch',
-  'date',
-  'billetType',
-  'lotNumberCode',
-  'billetLength',
-  'billetQuantity',
-  'billetWeight',
-  'ramSpeed',
-  'dieCode',
-  'subNumber',
-  'ingotRatio',
-  'orderLength',
-  'billetTemp',
-  'outputTemp',
-  'productionQuantity',
-  'result',
-  'remark',
-  'startTime',
-  'endTime',
-  'ngQuantity',
-  'buttLength',
-  'dieTemp',
-  'containerTemp',
-  'pressure',
-  'pullerMode',
-  'pullerSpeed',
-  'pullerForce',
-  'extrusionCycle',
-  'extrusionLength',
-  'segments',
-  'coolingMethod',
-  'coolingMode',
-  'startButt',
-  'endButt',
-]);
-
 type MutableFields = Exclude<
-  ColumnNames,
-  'plant' | 'machine' | 'inch' | 'workingTime'
+  keyof ExtrusionLog,
+  'id' | 'machine' | 'plant' | 'inch'
 >;
 
-const mutableFields = columnNames.difference(
-  new Set(['id', 'plant', 'machine', 'inch', 'workingTime'])
-);
+type ColumnNames =
+  | MutableFields
+  | 'shift'
+  | 'item'
+  | 'customer'
+  | 'productGroup'
+  | 'cavity'
+  | 'billetKgpm'
+  | 'billetWeight'
+  | 'productKgpm'
+  | 'duration'
+  | 'productionWeight'
+  | 'yield'
+  | 'ngWeight'
+  | 'machine'
+  | 'plant'
+  | 'inch';
+
+const mutableFields = new Set<MutableFields>([
+  'billetLength',
+  'billetQuantity',
+  'billetTemp',
+  'billetType',
+  'buttLength',
+  'containerTemp',
+  'coolingMethod',
+  'coolingMode',
+  'date',
+  'dieCode',
+  'dieTemp',
+  'endButt',
+  'endTime',
+  'extrusionCycle',
+  'extrusionLength',
+  'ingotRatio',
+  'lotNumberCode',
+  'ngQuantity',
+  'orderLength',
+  'outputTemp',
+  'pressure',
+  'productionQuantity',
+  'pullerForce',
+  'pullerMode',
+  'pullerSpeed',
+  'ramSpeed',
+  'remark',
+  'result',
+  'segments',
+  'startButt',
+  'startTime',
+  'subNumber',
+]);
+
+const columnNames = mutableFields.union(
+  new Set([
+    'shift',
+    'item',
+    'customer',
+    'productGroup',
+    'cavity',
+    'billetKgpm',
+    'billetWeight',
+    'productKgpm',
+    'duration',
+    'productionWeight',
+    'yield',
+    'ngWeight',
+    'machine',
+    'plant',
+    'inch',
+  ])
+) as Set<ColumnNames>;
 
 function isMutableField(value: string): value is MutableFields {
   return mutableFields.has(value as MutableFields);
+}
+
+function isColumnName(value: string): value is ColumnNames {
+  return columnNames.has(value as ColumnNames);
 }
 
 function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
   switch (id) {
     case 'date':
       return __('Date');
-    // shift': return  'Shift'
+    case 'shift':
+      return __('Shift');
     case 'plant':
       return __('Plant');
     case 'machine':
       return __('Machine');
     case 'inch':
       return __('Inch');
-    // employeeId': return  'Employee ID'
 
-    // item': return  'Item'
-    // customer': return  'Customer'
+    case 'item':
+      return __('Item');
+    case 'customer':
+      return __('Customer');
+    case 'productGroup':
+      return __('Product Group');
     case 'dieCode':
       return __('Die Code');
 
     case 'subNumber':
       return [__('Sub Number'), __('Sub No.')];
-    // cavity': return  'Cavity'
-    // productKgpm': return  ['Product kg/m', 'kg/m']
+    case 'cavity':
+      return __('Cavity');
+    case 'productKgpm':
+      return ['Product kg/m', 'kg/m'];
 
     case 'billetType':
       return [__('Billet Type'), __('Type')];
-    // billetKgpm': return  ['Billet kg/m', 'kg/m']
+    case 'billetKgpm':
+      return ['Billet kg/m', 'kg/m'];
     case 'billetLength':
       return [__('Short Billet Length'), __('Length')];
     case 'billetQuantity':
@@ -318,6 +408,8 @@ function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
     case 'lotNumberCode':
       return __('Lot No.');
 
+    case 'productKgpm':
+      return __('Product kg/m');
     case 'ramSpeed':
       return __('Ram Speed');
     case 'billetTemp':
@@ -326,28 +418,28 @@ function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
       return [__('Output Temperature'), __('Output')];
     case 'orderLength':
       return __('Order Length');
-    // outputRate': return  'kg/h'
     case 'productionQuantity':
       return [__('Production Quantity'), __('Prod. Qty')];
-    // productionWeight': return  ['Production Weight', 'Prod. Weight']
+    case 'productionWeight':
+      return ['Production Weight', 'Prod. Weight'];
 
     case 'result':
       return __('Result');
-    // outputYield': return  'Yield %'
+    case 'yield':
+      return __('Yield');
     case 'ngQuantity':
       return [__('NG Quantity'), __('NG Qty')];
-    // ngWeight': return  'NG Weight'
-    // ngPercentage': return  'NG %'
+    case 'ngWeight':
+      return __('NG Weight');
     case 'remark':
       return __('Remark');
     case 'buttLength':
       return __('Butt Length');
-    // code': return  'Code'
     case 'startTime':
       return [__('Start time'), __('Start')];
     case 'endTime':
       return [__('End time'), __('End')];
-    case 'workingTime':
+    case 'duration':
       return __('Duration');
     case 'dieTemp':
       return [__('Die Temperature'), __('Die')];
@@ -375,6 +467,8 @@ function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
       return __('Start Butt');
     case 'endButt':
       return __('End Butt');
+    default:
+      return '';
   }
 }
 
@@ -397,6 +491,14 @@ function getShortLabel(col: string, __: (text: string) => string) {
   } else {
     return label[1];
   }
+}
+
+function isDayShift(startTime: string | null) {
+  if (!startTime) return null;
+  const hour = parseInt(startTime.substring(0, 2));
+  if (Number.isNaN(hour)) return null;
+  const dayShift = hour >= 7 && hour < 19;
+  return dayShift;
 }
 
 export {

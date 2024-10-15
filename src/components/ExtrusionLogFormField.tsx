@@ -85,7 +85,7 @@ function Field<T extends MutableFields>({ name }: { name: T }) {
     // case 'billetKgpm':
     case 'billetLength':
     case 'billetQuantity':
-    case 'billetWeight':
+    // case 'billetWeight':
     case 'ramSpeed':
     case 'billetTemp':
     case 'outputTemp':

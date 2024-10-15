@@ -23,7 +23,7 @@ export const formSchema = z.object({
   // billetKgpm: z.coerce.number().min(0).nullable(),
   billetLength: z.coerce.number().min(0).nullable(),
   billetQuantity: z.coerce.number().int().min(0).nullable(),
-  billetWeight: z.coerce.number().min(0).nullable(),
+  // billetWeight: z.coerce.number().min(0).nullable(),
   orderLength: z.coerce.number().min(0).nullable(),
   ramSpeed: z.coerce.number().min(0).nullable(),
   billetTemp: z.coerce.number().min(0).nullable(),

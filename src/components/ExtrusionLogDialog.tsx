@@ -15,6 +15,7 @@ import { TriangleAlert, Trash2, Plus, Power, Check, Save } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { confirm, flashError, toast } from '@/lib/ui';
 import { addDraft, updateDraft, removeDraft } from '@/lib/drafts';
+import { mutableFields } from '@/lib/columns';
 import { Draft } from '@/lib/types';
 import {
   refreshSuggestionData,
@@ -298,38 +299,7 @@ export default function ExtrusionLogDialog({
 function getDefaultValues() {
   const now = new Date();
   return {
+    ...Array.from(mutableFields).map((field) => ({ [field]: null })),
     date: now,
-    dieCode: null,
-    subNumber: null,
-    billetType: null,
-    lotNumberCode: null,
-    dieTemp: null,
-    billetTemp: null,
-    containerTemp: null,
-    outputTemp: null,
-    ramSpeed: null,
-    pressure: null,
-    pullerMode: null,
-    pullerSpeed: null,
-    pullerForce: null,
-    extrusionCycle: null,
-    ingotRatio: null,
-    billetLength: null,
-    billetQuantity: null,
-    billetWeight: null,
-    orderLength: null,
-    extrusionLength: null,
-    segments: null,
-    productionQuantity: null,
-    ngQuantity: null,
-    buttLength: null,
-    coolingMethod: null,
-    coolingMode: null,
-    startButt: null,
-    endButt: null,
-    startTime: null,
-    endTime: null,
-    result: null,
-    remark: null,
   };
 }
