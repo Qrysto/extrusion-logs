@@ -178,7 +178,6 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
         }),
         ch.accessor('coolingMethod', {
           header: headerLabel,
-          cell: renderNumberCell,
         }),
         ch.accessor('coolingMode', {
           header: headerLabel,
