@@ -414,6 +414,15 @@ const TimePickerInput = React.forwardRef<
       return !flag ? `0${key}` : value.slice(1, 2) + key;
     };
 
+    const processNumKey = (numKey: string) => {
+      if (picker === '12hours') setPrevIntKey(numKey);
+
+      const newValue = calculateNewValue(numKey);
+      if (flag) onRightFocus?.();
+      setFlag((prev) => !prev);
+      onTimeChange(setTimeValue(time, newValue, picker, period));
+    };
+
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Tab') return;
       e.preventDefault();
@@ -426,12 +435,10 @@ const TimePickerInput = React.forwardRef<
         onTimeChange(setTimeValue(time, newValue, picker, period));
       }
       if (e.key >= '0' && e.key <= '9') {
-        if (picker === '12hours') setPrevIntKey(e.key);
-
-        const newValue = calculateNewValue(e.key);
-        if (flag) onRightFocus?.();
-        setFlag((prev) => !prev);
-        onTimeChange(setTimeValue(time, newValue, picker, period));
+        processNumKey(e.key);
+      }
+      if (e.key === 'Process' && e.code.startsWith('Digit')) {
+        processNumKey(e.code.substring(5));
       }
     };
 
