@@ -5,6 +5,7 @@ import DisableNumberInputScroll from '@/components/DisableNumberInputScroll';
 import { ToastController } from '@/components/ToastController';
 import { FlashDialogController } from '@/components/FlashDialogController';
 import { DialogController } from '@/components/DialogController';
+import { Analytics } from '@vercel/analytics/react';
 import ClientWrappers from './ClientWrappers';
 import './globals.css';
 
@@ -35,6 +36,7 @@ export default function RootLayout({
         </ClientWrappers>
         <DisableNumberInputScroll />
       </body>
+      <Analytics />
     </html>
   );
 }
