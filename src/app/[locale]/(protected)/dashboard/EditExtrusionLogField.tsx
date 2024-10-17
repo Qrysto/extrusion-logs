@@ -1,6 +1,6 @@
 'use client';
 
-import { useId } from 'react';
+import { useId, useMemo } from 'react';
 import { Form } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -10,7 +10,7 @@ import {
   DialogFooter,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { formSchema, FullFormValues } from '@/lib/extrusionLogForm';
+import { formBaseSchema, FullFormValues } from '@/lib/extrusionLogForm';
 import { FortifiedDialogProps } from '@/components/DialogController';
 import { patch } from '@/lib/api';
 import { flashError, toast, confirm } from '@/lib/ui';
@@ -23,6 +23,7 @@ import {
 import { Check, TriangleAlert } from 'lucide-react';
 import { useForm, DefaultValues } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
+import { toMinutes } from '@/lib/utils';
 import { ExtrusionLog } from '@/lib/types';
 import { getLabel, MutableFields } from '@/lib/columns';
 
@@ -30,25 +31,27 @@ type FormValues<T extends MutableFields> = Pick<FullFormValues, T>;
 
 interface EditExtrusionLogFieldProps<T extends MutableFields>
   extends FortifiedDialogProps {
-  extrusionLogId: number;
+  extrusionLog: ExtrusionLog;
   field: T;
-  initialValue: ExtrusionLog[T];
 }
 
 export function EditExtrusionLogField<T extends MutableFields>({
-  extrusionLogId,
+  extrusionLog,
   field,
-  initialValue,
   open,
   onOpenChange,
   ...rest
 }: EditExtrusionLogFieldProps<T>) {
   const __ = useTranslate();
   const formId = useId();
+  const formSchema = useMemo(
+    () => getFormSchema(extrusionLog, field, __),
+    [extrusionLog, field, __]
+  );
   const form = useForm<FormValues<T>>({
-    resolver: zodResolver(formSchema.pick({ [field]: true } as object)),
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      [field]: initialValue,
+      [field]: extrusionLog[field],
     } as DefaultValues<FormValues<T>>,
   });
   const {
@@ -57,7 +60,7 @@ export function EditExtrusionLogField<T extends MutableFields>({
 
   async function onSubmit(values: FormValues<T>) {
     try {
-      await patch(`/api/extrusion-logs/${extrusionLogId}`, values);
+      await patch(`/api/extrusion-logs/${extrusionLog.id}`, values);
     } catch (err: any) {
       flashError({ message: err?.message ? __(err.message) : String(err) });
       return;
@@ -124,4 +127,29 @@ export function EditExtrusionLogField<T extends MutableFields>({
       </DialogContent>
     </Dialog>
   );
+}
+
+function getFormSchema<T extends MutableFields>(
+  extrusionLog: ExtrusionLog,
+  field: T,
+  __: (text: string) => string
+) {
+  if (field !== 'endTime') {
+    return formBaseSchema.pick({ [field]: true } as object);
+  } else {
+    const { startTime } = extrusionLog;
+    return formBaseSchema.pick({ endTime: true }).refine(
+      ({ endTime }) => {
+        if (!startTime || !endTime) return true;
+        const startMinutes = toMinutes(startTime);
+        const endMinutes = toMinutes(endTime);
+        if (endMinutes > startMinutes) return true;
+        return endMinutes < 420; // 420 minutes == 7:00 am
+      },
+      {
+        message: __('End time must not exceed 7:00 am of the following day'),
+        path: ['endTime'],
+      }
+    );
+  }
 }

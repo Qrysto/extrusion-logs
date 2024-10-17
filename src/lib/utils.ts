@@ -62,3 +62,9 @@ function areInputsEqual<P extends Array<any>>(
   }
   return true;
 }
+
+export function toMinutes(time: string) {
+  const hours = parseInt(time.substring(0, 2)) || 0;
+  const minutes = parseInt(time.substring(3)) || 0;
+  return hours * 60 + minutes;
+}

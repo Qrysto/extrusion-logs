@@ -87,9 +87,8 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
         if (isDraft(obj)) return;
 
         openDialog(EditExtrusionLogField, {
-          extrusionLogId: obj.id,
+          extrusionLog: obj,
           field,
-          initialValue: obj[field],
           onOpenChange: (open) => {
             if (!open) resolve();
           },
