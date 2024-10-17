@@ -366,7 +366,7 @@ function isColumnName(value: string): value is ColumnNames {
 function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
   switch (id) {
     case 'date':
-      return __('Date');
+      return [__('Production Date'), __('Prod. Date')];
     case 'shift':
       return __('Shift');
     case 'plant':
