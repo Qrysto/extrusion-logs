@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react';
+import { ComponentPropsWithoutRef, Ref } from 'react';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { format, parse } from 'date-fns';
@@ -468,6 +468,7 @@ type TimePickerProps = ComponentPropsWithoutRef<'div'> & {
   value: string | null;
   onChange: (time: string) => void;
   hourCycle?: 12 | 24;
+  timePickerRef?: Ref<TimePickerRef>;
   /**
    * Determines the smallest unit that is displayed in the datetime picker.
    * Default is 'second'.
@@ -475,15 +476,22 @@ type TimePickerProps = ComponentPropsWithoutRef<'div'> & {
   granularity?: Granularity;
 };
 
-interface TimePickerRef {
+export interface TimePickerRef {
   minuteRef: HTMLInputElement | null;
   hourRef: HTMLInputElement | null;
   secondRef: HTMLInputElement | null;
 }
 
-const TimePicker = React.forwardRef<TimePickerRef, TimePickerProps>(
+const TimePicker = React.forwardRef<HTMLDivElement, TimePickerProps>(
   (
-    { value, onChange, hourCycle = 24, granularity = 'minute', className },
+    {
+      value,
+      onChange,
+      hourCycle = 24,
+      granularity = 'minute',
+      className,
+      timePickerRef,
+    },
     ref
   ) => {
     const minuteRef = React.useRef<HTMLInputElement>(null);
@@ -495,18 +503,21 @@ const TimePicker = React.forwardRef<TimePickerRef, TimePickerProps>(
     // );
 
     useImperativeHandle(
-      ref,
+      timePickerRef,
       () => ({
         minuteRef: minuteRef.current,
         hourRef: hourRef.current,
         secondRef: secondRef.current,
-        periodRef: periodRef.current,
       }),
       [minuteRef, hourRef, secondRef]
     );
 
     return (
-      <div className={cn('flex items-center justify-center gap-2', className)}>
+      <div
+        className={cn('flex items-center justify-center gap-2', className)}
+        tabIndex={0}
+        ref={ref}
+      >
         {/* <label htmlFor="datetime-picker-hour-input" className="cursor-pointer">
           <Clock className="mr-2 h-4 w-4" />
         </label> */}
