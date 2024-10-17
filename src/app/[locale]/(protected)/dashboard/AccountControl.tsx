@@ -35,6 +35,7 @@ export default function AccountControl({
   async function logOut() {
     await post('/api/logout');
     router.push('/login');
+    router.refresh();
   }
 
   return (
