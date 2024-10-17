@@ -1,4 +1,5 @@
 {
+  "End time must not exceed 7:00 am of the following day": "",
   "Error occurred!": "",
   "Plant": "",
   "Machine": "",
@@ -12,7 +13,8 @@
   "Extrusion Details": "",
   "Product": "",
   "Output": "",
-  "Date": "",
+  "Production Date": "",
+  "Prod. Date": "",
   "Shift": "",
   "Item": "",
   "Customer": "",

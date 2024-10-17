@@ -1,4 +1,5 @@
 {
+  "End time must not exceed 7:00 am of the following day": "Thời gian kết thúc không được vượt quá 7:00 sáng ngày hôm sau",
   "Error occurred!": "Đã xảy ra lỗi!",
   "Plant": "Nhà máy",
   "Machine": "Máy",
@@ -12,7 +13,8 @@
   "Extrusion Details": "Chi tiết đùn",
   "Product": "Thành phẩm",
   "Output": "Output",
-  "Date": "Ngày",
+  "Production Date": "Ngày sản xuất",
+  "Prod. Date": "Ngày sx",
   "Shift": "Ca",
   "Item": "Khách hàng",
   "Customer": "Customer",
