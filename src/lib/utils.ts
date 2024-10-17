@@ -68,3 +68,6 @@ export function toMinutes(time: string) {
   const minutes = parseInt(time.substring(3)) || 0;
   return hours * 60 + minutes;
 }
+
+export const stripSeconds = (time: string | null) =>
+  time && time.length === 8 ? time.substring(0, time.lastIndexOf(':')) : time;

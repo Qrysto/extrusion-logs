@@ -8,8 +8,9 @@ import {
   useInfiniteQuery,
   keepPreviousData,
 } from '@tanstack/react-query';
-import { fetchLimit } from './const';
+import { stripSeconds } from './utils';
 import type { SuggestionData, ExtrusionLog } from './types';
+import { fetchLimit } from './const';
 import { get } from './api';
 
 export function useUpdateSearchParams() {
@@ -82,6 +83,8 @@ export function useExtrusionLogs() {
         logs.map((log: ExtrusionLog) => ({
           ...log,
           date: new Date(log.date),
+          startTime: stripSeconds(log.startTime),
+          endTime: stripSeconds(log.endTime),
         }))
       ),
     }),

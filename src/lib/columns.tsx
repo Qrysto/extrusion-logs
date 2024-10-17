@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-table';
 import type { DashboardTableItem, ExtrusionLog, Draft } from '@/lib/types';
 import { format as formatDate, parse } from 'date-fns';
-import { displayDateFormat } from '@/lib/dateTime';
+import { displayDateFormat, timeFormat } from '@/lib/dateTime';
 import { memoize } from '@/lib/utils';
 
 const ch = createColumnHelper<DashboardTableItem>();
@@ -198,11 +198,11 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
       columns: [
         ch.accessor('startTime', {
           header: headerLabel,
-          cell: ({ getValue }) => stripSeconds(getValue<string>()),
+          cell: ({ getValue }) => getValue<string>(),
         }),
         ch.accessor('endTime', {
           header: headerLabel,
-          cell: ({ getValue }) => stripSeconds(getValue<string>()),
+          cell: ({ getValue }) => getValue<string>(),
         }),
         ch.display({
           id: 'duration',
@@ -247,9 +247,6 @@ const renderNumberCell: ColumnDefTemplate<
   <div className="text-right">{formatNumber(getValue<number>())}</div>
 );
 
-const stripSeconds = (time: string | null) =>
-  time && time.length === 8 ? time.substring(0, time.lastIndexOf(':')) : time;
-
 function duration({ row }: CellContext<DashboardTableItem, unknown>) {
   const startTime = row.getValue<string>('startTime');
   const endTime = row.getValue<string>('endTime');
@@ -259,9 +256,9 @@ function duration({ row }: CellContext<DashboardTableItem, unknown>) {
 
   const date = new Date();
   const start = Math.round(
-    parse(startTime, 'HH:mm:ss', date).getTime() / 60000
+    parse(startTime, timeFormat, date).getTime() / 60000
   );
-  const end = Math.round(parse(endTime, 'HH:mm:ss', date).getTime() / 60000);
+  const end = Math.round(parse(endTime, timeFormat, date).getTime() / 60000);
   let minutes = end - start + (end < start ? 1440 : 0);
   let hours = Math.floor(minutes / 60);
   minutes = minutes - hours * 60;
