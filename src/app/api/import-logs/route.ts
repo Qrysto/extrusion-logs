@@ -53,6 +53,8 @@ export async function POST(request: NextRequest) {
       ngPercentage,
       code,
       buttLength,
+      beforeSewing,
+      afterSewing,
     }) => ({
       item,
       shift: shift?.toLowerCase(),
@@ -89,6 +91,8 @@ export async function POST(request: NextRequest) {
       ngPercentage: toNumber(ngPercentage),
       code: code || null,
       buttLength: toNumber(buttLength),
+      beforeSewing: toNumber(beforeSewing),
+      afterSewing: toNumber(afterSewing),
     })
   );
 
@@ -174,6 +178,8 @@ async function addLog(log: any) {
     ngPercentage,
     code,
     buttLength,
+    beforeSewing,
+    afterSewing,
   } = log;
   console.log('log', log);
 
@@ -339,6 +345,8 @@ async function addLog(log: any) {
         // ngPercentage,
         // code,
         buttLength,
+        beforeSewing,
+        afterSewing,
       })
       .execute();
 

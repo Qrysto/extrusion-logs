@@ -108,6 +108,8 @@ function Field<T extends MutableFields>({ name }: { name: T }) {
     case 'coolingMode':
     case 'startButt':
     case 'endButt':
+    case 'beforeSewing':
+    case 'afterSewing':
       return <FormInput />;
   }
 }

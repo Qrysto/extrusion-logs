@@ -131,6 +131,8 @@ async function fetchExtrusionLogs({
       'extrusions.coolingMode',
       'extrusions.startButt',
       'extrusions.endButt',
+      'extrusions.beforeSewing',
+      'extrusions.afterSewing',
     ])
     .limit(fetchLimit);
   if (account?.role === 'team') {
@@ -244,6 +246,8 @@ export async function POST(request: NextRequest) {
     coolingMode,
     startButt,
     endButt,
+    beforeSewing,
+    afterSewing,
   } = body || {};
 
   const extrusionLogValues = {
@@ -294,6 +298,8 @@ export async function POST(request: NextRequest) {
     coolingMode,
     startButt,
     endButt,
+    beforeSewing,
+    afterSewing,
   };
 
   const [

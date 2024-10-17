@@ -202,6 +202,10 @@ export default function ExtrusionLogDialog({
             <div className="flex gap-x-4">
               <ExtrusionLogFormField name="startButt" className="flex-1" />
 
+              <ExtrusionLogFormField name="beforeSewing" className="flex-1" />
+
+              <ExtrusionLogFormField name="afterSewing" className="flex-1" />
+
               <ExtrusionLogFormField name="endButt" className="flex-1" />
             </div>
 

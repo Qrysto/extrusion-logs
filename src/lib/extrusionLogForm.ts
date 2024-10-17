@@ -55,6 +55,8 @@ export const formBaseSchema = z.object({
   coolingMode: z.coerce.number().int().min(0).nullable(),
   startButt: z.coerce.number().min(0).nullable(),
   endButt: z.coerce.number().min(0).nullable(),
+  beforeSewing: z.coerce.number().min(0).nullable(),
+  afterSewing: z.coerce.number().min(0).nullable(),
 });
 
 export const formSchema = formBaseSchema.refine(

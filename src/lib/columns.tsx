@@ -187,6 +187,14 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
           header: headerLabel,
           cell: renderNumberCell,
         }),
+        ch.accessor('beforeSewing', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('afterSewing', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
         ch.accessor('endButt', {
           header: headerLabel,
           cell: renderNumberCell,
@@ -330,6 +338,8 @@ const mutableFields = new Set<MutableFields>([
   'startButt',
   'startTime',
   'subNumber',
+  'beforeSewing',
+  'afterSewing',
 ]);
 
 const columnNames = mutableFields.union(
@@ -470,6 +480,10 @@ function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
       return __('Start Butt');
     case 'endButt':
       return __('End Butt');
+    case 'beforeSewing':
+      return __('Before Sewing');
+    case 'afterSewing':
+      return __('After Sewing');
     default:
       return '';
   }
