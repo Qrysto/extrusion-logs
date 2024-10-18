@@ -409,91 +409,67 @@ function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
       return __('Product Group');
     case 'dieCode':
       return __('Die Code');
-
     case 'subNumber':
       return [__('Sub Number'), __('Sub No.')];
     case 'cavity':
       return __('Cavity');
-    case 'productKgpm':
-      return ['Product kg/m', 'kg/m'];
 
     case 'billetType':
       return [__('Billet Type'), __('Type')];
+    case 'ingotRatio':
+      return __('Ingot Ratio');
     case 'billetKgpm':
       return ['Billet kg/m', 'kg/m'];
+    case 'lotNumberCode':
+      return __('Lot No.');
+
     case 'billetLength':
       return [__('Short Billet Length'), __('Length')];
     case 'billetQuantity':
       return [__('Short Billet Quantity'), __('Quantity')];
     case 'billetWeight':
       return [__('Short Billet Weight'), __('Weight')];
-    case 'ingotRatio':
-      return __('Ingot Ratio');
-    case 'lotNumberCode':
-      return __('Lot No.');
-
-    case 'productKgpm':
-      return __('Product kg/m');
-    case 'ramSpeed':
-      return __('Ram Speed');
-    case 'billetTemp':
-      return __('Billet Temperature');
-      __('Billet');
-    case 'outputTemp':
-      return __('Output Temperature');
-      __('Output');
-    case 'orderLength':
-      return __('Order Length');
-    case 'productionQuantity':
-      return [__('Production Quantity'), __('Prod. Qty')];
-    case 'productionWeight':
-      return ['Production Weight', 'Prod. Weight'];
-
-    case 'result':
-      return __('Result');
-    case 'yield':
-      return __('Yield');
-    case 'ngQuantity':
-      return [__('NG Quantity'), __('NG Qty')];
-    case 'ngWeight':
-      return __('NG Weight');
-    case 'remark':
-      return __('Remark');
     case 'buttLength':
       return __('Butt Length');
-    case 'startTime':
-      return [__('Start time'), __('Start')];
-    case 'endTime':
-      return [__('End time'), __('End')];
-    case 'duration':
-      return __('Duration');
+
     case 'dieTemp':
-      return __('Die Temperature');
-      __('Die');
+      return [__('Die Temperature'), __('Die')];
+    case 'billetTemp':
+      return [__('Billet Temperature'), __('Billet')];
     case 'containerTemp':
-      return __('Container Temperature');
-      __('Container');
+      return [__('Container Temperature'), __('Container')];
+    case 'outputTemp':
+      return [__('Output Temperature'), __('Output')];
+
+    case 'ramSpeed':
+      return __('Ram Speed');
     case 'pressure':
       return __('Extrusion Pressure');
+
     case 'pullerMode':
-      return __('Puller Mode');
-      __('Mode');
+      return [__('Puller Mode'), __('P.Mode')];
     case 'pullerSpeed':
-      return __('Puller Speed');
-      __('Speed');
+      return [__('Puller Speed'), __('P.Speed')];
+
     case 'pullerForce':
       return __('Puller Force');
       __('Force');
     case 'extrusionCycle':
       return __('Extrusion Cycle');
+
+    case 'productKgpm':
+      return ['Product kg/m', 'kg/m'];
     case 'extrusionLength':
       return __('Extrusion Length');
+    case 'orderLength':
+      return __('Order Length');
     case 'segments':
       return __('Segments');
     case 'coolingMethod':
       return __('Cooling Method');
     case 'coolingMode':
       return __('Cooling Mode');
+
     case 'startButt':
       return __('Start Butt');
     case 'endButt':
@@ -502,6 +478,28 @@ function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
       return __('Before Sewing');
     case 'afterSewing':
       return __('After Sewing');
+
+    case 'startTime':
+      return [__('Start time'), __('Start')];
+    case 'endTime':
+      return [__('End time'), __('End')];
+    case 'duration':
+      return __('Duration');
+    case 'productionQuantity':
+      return [__('Production Quantity'), __('Prod. Qty')];
+    case 'productionWeight':
+      return ['Production Weight', 'Prod. Weight'];
+
+    case 'yield':
+      return __('Yield');
+    case 'result':
+      return __('Result');
+    case 'remark':
+      return __('Remark');
+    case 'ngQuantity':
+      return [__('NG Quantity'), __('NG Qty')];
+    case 'ngWeight':
+      return __('NG Weight');
     default:
       return '';
   }
