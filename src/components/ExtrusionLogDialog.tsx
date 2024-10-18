@@ -301,9 +301,12 @@ export default function ExtrusionLogDialog({
 }
 
 function getDefaultValues() {
-  const now = new Date();
+  const productionDate = new Date();
+  if (productionDate.getHours() < 7) {
+    productionDate.setDate(productionDate.getDate() - 1);
+  }
   return {
     ...Array.from(mutableFields).map((field) => ({ [field]: null })),
-    date: formatDate(now),
+    date: formatDate(productionDate),
   };
 }
