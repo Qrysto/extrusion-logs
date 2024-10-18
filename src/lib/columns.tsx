@@ -505,13 +505,70 @@ function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
   }
 }
 
+function getColumnUnit(id: ColumnNames) {
+  switch (id) {
+    case 'ingotRatio':
+    case 'yield':
+      return '%';
+
+    case 'billetKgpm':
+    case 'productKgpm':
+      return 'kg/m';
+
+    case 'pullerMode':
+      return 'kg';
+
+    case 'extrusionCycle':
+      return 's';
+
+    case 'billetWeight':
+    case 'productionWeight':
+      return 'g';
+
+    case 'billetLength':
+    case 'buttLength':
+    case 'pullerForce':
+    case 'orderLength':
+      return 'mm';
+
+    case 'pullerSpeed':
+    case 'extrusionLength':
+      return 'm';
+
+    case 'dieTemp':
+    case 'billetTemp':
+    case 'containerTemp':
+    case 'outputTemp':
+      return <span>&deg;C</span>;
+
+    case 'billetQuantity':
+      return 'EA';
+
+    case 'pressure':
+      return (
+        <span>
+          kgf/cm<sup>2</sup>
+        </span>
+      );
+
+    default:
+      return null;
+  }
+}
+
 function getLabel(col: string, __: (text: string) => string) {
   const label = getColumnLabel(col as ColumnNames, __);
   if (!label) {
-    console.log(col, label);
+    console.log('No label!', col, label);
   }
+  const unit = getColumnUnit(col as ColumnNames);
   if (typeof label === 'string') {
-    return label;
+    return (
+      <span>
+        {label}
+        {unit ? <span> ({unit})</span> : ''}
+      </span>
+    );
   } else {
     return label[0];
   }
