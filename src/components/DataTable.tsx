@@ -71,6 +71,7 @@ export default function DataTable<TData>({
   useEffect(() => {
     fetchMoreOnBottomReached(scrollerRef.current);
   }, [fetchMoreOnBottomReached]);
+  console.log(table.getHeaderGroups());
 
   return (
     <ScrollArea
@@ -155,30 +156,55 @@ const HeaderCell = genericMemo(
     header: Header<TData, unknown>;
     sorted: false | 'asc' | 'desc';
   }) => {
-    const sortable = header.column.getCanSort();
+    // Don't render these leaf header cells because they are already rendered by their parents
+    const columnRelativeDepth = header.depth - header.column.depth;
+    if (
+      !header.isPlaceholder &&
+      columnRelativeDepth > 1 &&
+      header.id === header.column.id
+    ) {
+      return null;
+    }
+
+    // Render the leaf header instead of middle placeholders so header names are correctly displayed
+    let headerToRender = header;
+    let rowSpan = 1;
+    while (
+      headerToRender.isPlaceholder &&
+      headerToRender.subHeaders.length === 1
+    ) {
+      headerToRender = headerToRender.subHeaders[0];
+      rowSpan++;
+    }
+
+    const sortable = headerToRender.column.getCanSort();
     return (
       <TableHead
-        colSpan={header.colSpan}
+        colSpan={headerToRender.colSpan}
+        rowSpan={rowSpan}
         className={cn(
           'font-bold whitespace-nowrap group border border-border/50',
-          header.depth === 1 && 'text-center',
+          headerToRender.colSpan > 1 && 'text-center',
           sortable && 'cursor-pointer'
         )}
         onClick={
           sortable
             ? () => {
                 if (sorted === 'asc') {
-                  header.column.clearSorting();
+                  headerToRender.column.clearSorting();
                 } else {
-                  header.column.toggleSorting(sorted !== 'desc');
+                  headerToRender.column.toggleSorting(sorted !== 'desc');
                 }
               }
             : undefined
         }
       >
-        {header.isPlaceholder
+        {headerToRender.isPlaceholder
           ? null
-          : flexRender(header.column.columnDef.header, header.getContext())}
+          : flexRender(
+              headerToRender.column.columnDef.header,
+              headerToRender.getContext()
+            )}
         {sortable && sorted === false && (
           <ArrowUpDown className="inline-block ml-2 h-4 w-4 opacity-20 group-hover:opacity-40" />
         )}

@@ -116,21 +116,26 @@ function getColumns(
     ch.group({
       header: __('Extrusion Details'),
       columns: [
-        ch.accessor('dieTemp', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('billetTemp', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('containerTemp', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('outputTemp', {
-          header: headerLabel,
-          cell: renderNumberCell,
+        ch.group({
+          header: __('Temperature'),
+          columns: [
+            ch.accessor('dieTemp', {
+              header: headerLabel,
+              cell: renderNumberCell,
+            }),
+            ch.accessor('billetTemp', {
+              header: headerLabel,
+              cell: renderNumberCell,
+            }),
+            ch.accessor('containerTemp', {
+              header: headerLabel,
+              cell: renderNumberCell,
+            }),
+            ch.accessor('outputTemp', {
+              header: headerLabel,
+              cell: renderNumberCell,
+            }),
+          ],
         }),
         ch.accessor('ramSpeed', {
           header: headerLabel,
@@ -140,13 +145,18 @@ function getColumns(
           header: headerLabel,
           cell: renderNumberCell,
         }),
-        ch.accessor('pullerMode', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('pullerSpeed', {
-          header: headerLabel,
-          cell: renderNumberCell,
+        ch.group({
+          header: __('Puller'),
+          columns: [
+            ch.accessor('pullerMode', {
+              header: headerLabel,
+              cell: renderNumberCell,
+            }),
+            ch.accessor('pullerSpeed', {
+              header: headerLabel,
+              cell: renderNumberCell,
+            }),
+          ],
         }),
         ch.accessor('pullerForce', {
           header: headerLabel,
@@ -185,21 +195,26 @@ function getColumns(
           header: headerLabel,
           cell: renderNumberCell,
         }),
-        ch.accessor('startButt', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('beforeSewing', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('afterSewing', {
-          header: headerLabel,
-          cell: renderNumberCell,
-        }),
-        ch.accessor('endButt', {
-          header: headerLabel,
-          cell: renderNumberCell,
+        ch.group({
+          header: __('Straightening Length'),
+          columns: [
+            ch.accessor('startButt', {
+              header: headerLabel,
+              cell: renderNumberCell,
+            }),
+            ch.accessor('beforeSewing', {
+              header: headerLabel,
+              cell: renderNumberCell,
+            }),
+            ch.accessor('afterSewing', {
+              header: headerLabel,
+              cell: renderNumberCell,
+            }),
+            ch.accessor('endButt', {
+              header: headerLabel,
+              cell: renderNumberCell,
+            }),
+          ],
         }),
       ],
     }),
