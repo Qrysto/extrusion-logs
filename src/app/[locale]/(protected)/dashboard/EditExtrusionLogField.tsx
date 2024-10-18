@@ -23,6 +23,7 @@ import {
 import { Check, TriangleAlert } from 'lucide-react';
 import { useForm, DefaultValues } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
+import { formatDate } from '@/lib/dateTime';
 import { toMinutes } from '@/lib/utils';
 import { ExtrusionLog } from '@/lib/types';
 import { getLabel, MutableFields } from '@/lib/columns';
@@ -51,7 +52,8 @@ export function EditExtrusionLogField<T extends MutableFields>({
   const form = useForm<FormValues<T>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      [field]: extrusionLog[field],
+      [field]:
+        field === 'date' ? formatDate(extrusionLog.date) : extrusionLog[field],
     } as DefaultValues<FormValues<T>>,
   });
   const {

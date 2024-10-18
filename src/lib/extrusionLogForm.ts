@@ -4,7 +4,7 @@ import { toMinutes } from './utils';
 
 export const formBaseSchema = z.object({
   // employeeId: z.string().nullable(),
-  date: z.date().nullable(),
+  date: z.string().nullable(),
   // shift: z.enum(['DAY', 'NIGHT']).nullable(),
   startTime: z.string().nullable(),
   endTime: z.string().nullable(),

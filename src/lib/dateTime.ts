@@ -8,6 +8,8 @@ export const standardDateFormat = 'yyyy-MM-dd';
 
 export const referenceDate = new Date();
 
+export const timeFormat = 'HH:mm';
+
 export function formatDateRange(
   dateRange: DateRange | null,
   dateFormat: string = standardDateFormat
@@ -40,4 +42,29 @@ export function parseDateRange(
   }
 }
 
-export const timeFormat = 'HH:mm';
+export function formatDate(
+  date: Date | null,
+  dateFormat: string = standardDateFormat
+) {
+  if (!date) return null;
+  try {
+    return format(date, dateFormat);
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
+export function parseDate(
+  dateStr: string | null,
+  dateFormat: string = standardDateFormat
+) {
+  if (!dateStr) return null;
+  try {
+    const date = parse(dateStr, dateFormat, referenceDate);
+    return date;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}

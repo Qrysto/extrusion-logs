@@ -25,7 +25,7 @@ import { useTranslate } from '@/lib/intl/client';
 import { post } from '@/lib/api';
 // import { format } from 'date-fns';
 import { Form } from '@/components/ui/form';
-// import { timeFormat } from '@/lib/dateTime';
+import { formatDate } from '@/lib/dateTime';
 import { FullFormValues, formSchema } from '@/lib/extrusionLogForm';
 import ExtrusionLogFormField from '@/components/ExtrusionLogFormField';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -304,6 +304,6 @@ function getDefaultValues() {
   const now = new Date();
   return {
     ...Array.from(mutableFields).map((field) => ({ [field]: null })),
-    date: now,
+    date: formatDate(now),
   };
 }
