@@ -183,7 +183,7 @@ async function fetchExtrusionLogs({
       query = query.orderBy(`${id} ${desc ? 'desc' : 'asc'}`);
     }
   } else {
-    query = query.orderBy('date desc').orderBy('startTime desc');
+    query = query.orderBy('date desc').orderBy('correctedStartMinutes desc');
   }
   if (skip) {
     query = query.offset(skip);
