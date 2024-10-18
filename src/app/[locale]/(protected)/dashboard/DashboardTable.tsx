@@ -38,7 +38,10 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
     [data, drafts]
   );
 
-  const columns = getColumns(isAdmin, __, locale);
+  const columns = useMemo(
+    () => getColumns(isAdmin, __, locale),
+    [isAdmin, __, locale]
+  );
   const [sorting, setSorting] = useSortingState();
   const [columnVisibility, setColumnVisibility] = useColumnVisibility();
   const [rowSelection, setRowSelection] = useState({});

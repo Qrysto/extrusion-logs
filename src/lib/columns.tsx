@@ -8,251 +8,248 @@ import {
 import type { DashboardTableItem, ExtrusionLog, Draft } from '@/lib/types';
 import { parse } from 'date-fns';
 import { displayDate, timeFormat } from '@/lib/dateTime';
-import { memoize } from '@/lib/utils';
 
 const ch = createColumnHelper<DashboardTableItem>();
 const formatNumber = Intl.NumberFormat('en-US').format;
 
-const getColumns = memoize(
-  (
-    isAdmin: boolean,
-    __: (text: string) => string,
-    localeCode: 'vi' | 'kr' | 'en' = 'en'
-  ) => {
-    const adminColumns: ColumnDef<DashboardTableItem>[] = isAdmin
-      ? [
-          { accessorKey: 'plant', header: __('Plant') },
-          { accessorKey: 'machine', header: __('Machine') },
-          { accessorKey: 'inch', header: __('Inch') },
-        ]
-      : [];
-    const headerLabel: StringOrTemplateHeader<DashboardTableItem, unknown> = ({
-      column,
-    }) => getShortLabel(column.id, __);
+function getColumns(
+  isAdmin: boolean,
+  __: (text: string) => string,
+  localeCode: 'vi' | 'kr' | 'en' = 'en'
+) {
+  const adminColumns: ColumnDef<DashboardTableItem>[] = isAdmin
+    ? [
+        { accessorKey: 'plant', header: __('Plant') },
+        { accessorKey: 'machine', header: __('Machine') },
+        { accessorKey: 'inch', header: __('Inch') },
+      ]
+    : [];
+  const headerLabel: StringOrTemplateHeader<DashboardTableItem, unknown> = ({
+    column,
+  }) => getShortLabel(column.id, __);
 
-    const columns: ColumnDef<DashboardTableItem>[] = [
-      ch.group({
-        header: __('Machine Info'),
-        columns: [
-          ch.accessor('date', {
-            header: headerLabel,
-            cell: ({ getValue }) => displayDate(getValue<Date>(), localeCode),
-          }),
-          ch.display({
-            id: 'shift',
-            header: headerLabel,
-            cell: ({ row }) =>
-              isDayShift(row.original.startTime) ? __('Day') : __('Night'),
-          }),
-          ...adminColumns,
-        ],
-      }),
-      ch.group({
-        header: __('Die Info'),
-        columns: [
-          ch.display({
-            id: 'item',
-            header: headerLabel,
-            cell: () => '',
-          }),
-          ch.display({
-            id: 'customer',
-            header: headerLabel,
-            cell: () => '',
-          }),
-          ch.display({
-            id: 'productGroup',
-            header: headerLabel,
-            cell: () => '',
-          }),
-          ch.accessor('dieCode', { header: headerLabel }),
-          ch.accessor('subNumber', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.display({
-            id: 'cavity',
-            header: headerLabel,
-            cell: () => '',
-          }),
-        ],
-      }),
-      ch.group({
-        header: __('Long Billet'),
-        columns: [
-          ch.accessor('billetType', { header: headerLabel }),
-          ch.accessor('ingotRatio', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.display({
-            id: 'billetKgpm',
-            header: headerLabel,
-            cell: () => '',
-          }),
-          ch.accessor('lotNumberCode', { header: headerLabel }),
-        ],
-      }),
-      ch.group({
-        header: __('Short Billet'),
-        columns: [
-          ch.accessor('billetLength', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('billetQuantity', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.display({
-            id: 'billetWeight',
-            header: headerLabel,
-            cell: () => '',
-          }),
-          ch.accessor('buttLength', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-        ],
-      }),
-      ch.group({
-        header: __('Extrusion Details'),
-        columns: [
-          ch.accessor('dieTemp', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('billetTemp', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('containerTemp', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('outputTemp', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('ramSpeed', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('pressure', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('pullerMode', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('pullerSpeed', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('pullerForce', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('extrusionCycle', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-        ],
-      }),
-      ch.group({
-        header: __('Product'),
-        columns: [
-          ch.display({
-            id: 'productKgpm',
-            header: headerLabel,
-            cell: () => '',
-          }),
-          ch.accessor('extrusionLength', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('orderLength', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('segments', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('coolingMethod', {
-            header: headerLabel,
-          }),
-          ch.accessor('coolingMode', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('startButt', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('beforeSewing', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('afterSewing', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.accessor('endButt', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-        ],
-      }),
-      ch.group({
-        header: __('Output'),
-        columns: [
-          ch.accessor('startTime', {
-            header: headerLabel,
-            cell: ({ getValue }) => getValue<string>(),
-          }),
-          ch.accessor('endTime', {
-            header: headerLabel,
-            cell: ({ getValue }) => getValue<string>(),
-          }),
-          ch.display({
-            id: 'duration',
-            header: headerLabel,
-            cell: duration,
-          }),
-          ch.accessor('productionQuantity', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.display({
-            id: 'productionWeight',
-            header: headerLabel,
-            cell: () => '',
-          }),
-          ch.display({
-            id: 'yield',
-            header: headerLabel,
-            cell: () => '',
-          }),
-          ch.accessor('result', { header: headerLabel }),
-          ch.accessor('remark', { header: headerLabel }),
-          ch.accessor('ngQuantity', {
-            header: headerLabel,
-            cell: renderNumberCell,
-          }),
-          ch.display({
-            id: 'ngWeight',
-            header: headerLabel,
-            cell: () => '',
-          }),
-        ],
-      }),
-    ] as ColumnDef<DashboardTableItem>[];
+  const columns: ColumnDef<DashboardTableItem>[] = [
+    ch.group({
+      header: __('Machine Info'),
+      columns: [
+        ch.accessor('date', {
+          header: headerLabel,
+          cell: ({ getValue }) => displayDate(getValue<Date>(), localeCode),
+        }),
+        ch.display({
+          id: 'shift',
+          header: headerLabel,
+          cell: ({ row }) =>
+            isDayShift(row.original.startTime) ? __('Day') : __('Night'),
+        }),
+        ...adminColumns,
+      ],
+    }),
+    ch.group({
+      header: __('Die Info'),
+      columns: [
+        ch.display({
+          id: 'item',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.display({
+          id: 'customer',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.display({
+          id: 'productGroup',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.accessor('dieCode', { header: headerLabel }),
+        ch.accessor('subNumber', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.display({
+          id: 'cavity',
+          header: headerLabel,
+          cell: () => '',
+        }),
+      ],
+    }),
+    ch.group({
+      header: __('Long Billet'),
+      columns: [
+        ch.accessor('billetType', { header: headerLabel }),
+        ch.accessor('ingotRatio', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.display({
+          id: 'billetKgpm',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.accessor('lotNumberCode', { header: headerLabel }),
+      ],
+    }),
+    ch.group({
+      header: __('Short Billet'),
+      columns: [
+        ch.accessor('billetLength', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('billetQuantity', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.display({
+          id: 'billetWeight',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.accessor('buttLength', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+      ],
+    }),
+    ch.group({
+      header: __('Extrusion Details'),
+      columns: [
+        ch.accessor('dieTemp', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('billetTemp', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('containerTemp', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('outputTemp', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('ramSpeed', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('pressure', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('pullerMode', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('pullerSpeed', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('pullerForce', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('extrusionCycle', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+      ],
+    }),
+    ch.group({
+      header: __('Product'),
+      columns: [
+        ch.display({
+          id: 'productKgpm',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.accessor('extrusionLength', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('orderLength', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('segments', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('coolingMethod', {
+          header: headerLabel,
+        }),
+        ch.accessor('coolingMode', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('startButt', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('beforeSewing', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('afterSewing', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.accessor('endButt', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+      ],
+    }),
+    ch.group({
+      header: __('Output'),
+      columns: [
+        ch.accessor('startTime', {
+          header: headerLabel,
+          cell: ({ getValue }) => getValue<string>(),
+        }),
+        ch.accessor('endTime', {
+          header: headerLabel,
+          cell: ({ getValue }) => getValue<string>(),
+        }),
+        ch.display({
+          id: 'duration',
+          header: headerLabel,
+          cell: duration,
+        }),
+        ch.accessor('productionQuantity', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.display({
+          id: 'productionWeight',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.display({
+          id: 'yield',
+          header: headerLabel,
+          cell: () => '',
+        }),
+        ch.accessor('result', { header: headerLabel }),
+        ch.accessor('remark', { header: headerLabel }),
+        ch.accessor('ngQuantity', {
+          header: headerLabel,
+          cell: renderNumberCell,
+        }),
+        ch.display({
+          id: 'ngWeight',
+          header: headerLabel,
+          cell: () => '',
+        }),
+      ],
+    }),
+  ] as ColumnDef<DashboardTableItem>[];
 
-    return columns;
-  }
-);
+  return columns;
+}
 
 const renderNumberCell: ColumnDefTemplate<
   CellContext<DashboardTableItem, unknown>
@@ -412,7 +409,7 @@ function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
     case 'billetLength':
       return [__('Short Billet Length'), __('Length')];
     case 'billetQuantity':
-      return [__('Short Billet Quantity'), __('Qantity')];
+      return [__('Short Billet Quantity'), __('Quantity')];
     case 'billetWeight':
       return [__('Short Billet Weight'), __('Weight')];
     case 'ingotRatio':
