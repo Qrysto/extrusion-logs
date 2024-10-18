@@ -7,7 +7,7 @@ import {
   FormDatePicker,
   FormTimePicker,
 } from '@/components/ui/form-adapters';
-import { getLabel } from '@/lib/columns';
+import { getLabel, getColumnUnit } from '@/lib/columns';
 import { MutableFields } from '@/lib/types';
 import { useSuggestionData } from '@/lib/client';
 import { useTranslate } from '@/lib/intl/client';
@@ -29,9 +29,13 @@ export default function ExtrusionLogFormField<T extends MutableFields>({
   name: T;
 } & ComponentProps<typeof FormField>) {
   const __ = useTranslate();
+  const unit = getColumnUnit(name);
   return (
     <FormField name={name} {...rest}>
-      <FormLabel>{getLabel(name, __)}</FormLabel>
+      <FormLabel>
+        {getLabel(name, __)}
+        {unit ? <span> ({unit})</span> : null}
+      </FormLabel>
       <Field name={name} />
     </FormField>
   );

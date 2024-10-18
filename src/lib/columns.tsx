@@ -561,14 +561,8 @@ function getLabel(col: string, __: (text: string) => string) {
   if (!label) {
     console.log('No label!', col, label);
   }
-  const unit = getColumnUnit(col as ColumnNames);
   if (typeof label === 'string') {
-    return (
-      <span>
-        {label}
-        {unit ? <span> ({unit})</span> : ''}
-      </span>
-    );
+    return label;
   } else {
     return label[0];
   }
@@ -597,6 +591,7 @@ export {
   isColumnName,
   getLabel,
   getShortLabel,
+  getColumnUnit,
   mutableFields,
   isMutableField,
   isDraft,
