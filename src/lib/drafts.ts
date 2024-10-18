@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { draftLogsKey } from '@/lib/const';
 import { genId } from '@/lib/utils';
+import { formatDate } from '@/lib/dateTime';
 import { FullFormValues, Draft } from './types';
 
 let _drafts: Draft[] = [];
@@ -14,7 +15,7 @@ function loadDrafts() {
     try {
       const drafts = JSON.parse(json).map((draft: any) => ({
         ...draft,
-        date: draft.date && new Date(draft.date),
+        date: draft.date && formatDate(new Date(draft.date)),
       }));
       set(drafts);
     } catch (err) {}
