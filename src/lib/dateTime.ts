@@ -1,9 +1,28 @@
 import { format, parse } from 'date-fns';
-// import { vi } from 'date-fns/locale/vi';
+import { vi } from 'date-fns/locale/vi';
+import { ko } from 'date-fns/locale/ko';
 import type { DateRange } from './types';
 
-export const displayDateFormat = 'PP';
-// vi = 'EEEEE P'
+const enDisplayDateFormat = 'PP';
+const viDisplayDateFormat = 'EEEEE P';
+const koDisplayDateFormat = 'P (EEEEE)';
+
+export function displayDate(
+  date: Date | null,
+  localeCode: 'vi' | 'kr' | 'en' = 'en'
+) {
+  if (!date) return null;
+  const locale =
+    localeCode === 'vi' ? vi : localeCode === 'kr' ? ko : undefined;
+  const displayDateFormat =
+    localeCode === 'vi'
+      ? viDisplayDateFormat
+      : localeCode === 'kr'
+      ? koDisplayDateFormat
+      : enDisplayDateFormat;
+  return format(date, displayDateFormat, { locale });
+}
+
 export const standardDateFormat = 'yyyy-MM-dd';
 
 export const referenceDate = new Date();
@@ -19,6 +38,22 @@ export function formatDateRange(
     return `${format(dateRange.from, dateFormat)} - ${format(
       dateRange.to,
       dateFormat
+    )}`;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
+export function displayDateRange(
+  dateRange: DateRange | null,
+  localeCode: 'vi' | 'kr' | 'en' = 'en'
+) {
+  if (!dateRange) return null;
+  try {
+    return `${displayDate(dateRange.from, localeCode)} - ${displayDate(
+      dateRange.to,
+      localeCode
     )}`;
   } catch (err) {
     console.error(err);

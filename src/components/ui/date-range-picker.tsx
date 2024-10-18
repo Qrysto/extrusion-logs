@@ -10,13 +10,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { useTranslate } from '@/lib/intl/client';
+import { useTranslate, useLocale } from '@/lib/intl/client';
 import { type DateRange } from '@/lib/types';
-import {
-  formatDateRange,
-  displayDateFormat,
-  referenceDate,
-} from '@/lib/dateTime';
+import { displayDateRange, referenceDate } from '@/lib/dateTime';
 
 export function DateRangePicker({
   className,
@@ -27,7 +23,8 @@ export function DateRangePicker({
   onDateRangeChange: (dateRange: DateRange | null) => void;
 }) {
   const __ = useTranslate();
-  const dateRangeStr = formatDateRange(dateRange, displayDateFormat);
+  const locale = useLocale();
+  const dateRangeStr = displayDateRange(dateRange, locale);
 
   return (
     <div className={cn('grid gap-2', className)}>

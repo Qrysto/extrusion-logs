@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { colVisibilityKey } from '@/lib/const';
 import { DashboardTableItem } from '@/lib/types';
 import { del } from '@/lib/api';
-import { useTranslate } from '@/lib/intl/client';
+import { useTranslate, useLocale } from '@/lib/intl/client';
 import { toast, flashError, openDialog } from '@/lib/ui';
 import { useDrafts, removeDraft } from '@/lib/drafts';
 import { getColumns, isMutableField, isDraft } from '@/lib/columns';
@@ -29,6 +29,7 @@ import { EditExtrusionLogField } from './EditExtrusionLogField';
 
 export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
   const __ = useTranslate();
+  const locale = useLocale();
   const { data, isFetching, hasNextPage, fetchNextPage, refetch } =
     useExtrusionLogs();
   const { drafts } = useDrafts();
@@ -37,7 +38,7 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
     [data, drafts]
   );
 
-  const columns = getColumns(isAdmin, __);
+  const columns = getColumns(isAdmin, __, locale);
   const [sorting, setSorting] = useSortingState();
   const [columnVisibility, setColumnVisibility] = useColumnVisibility();
   const [rowSelection, setRowSelection] = useState({});
