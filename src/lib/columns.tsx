@@ -251,9 +251,10 @@ const getColumns = memoize((isAdmin: boolean, __: (text: string) => string) => {
 
 const renderNumberCell: ColumnDefTemplate<
   CellContext<DashboardTableItem, unknown>
-> = ({ getValue }) => (
-  <div className="text-right">{formatNumber(getValue<number>())}</div>
-);
+> = ({ getValue }) => {
+  const value = getValue<number>();
+  return <div className="text-right">{value && formatNumber(value)}</div>;
+};
 
 function duration({ row }: CellContext<DashboardTableItem, unknown>) {
   const startTime = row.getValue<string>('startTime');

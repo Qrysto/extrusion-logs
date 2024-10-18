@@ -306,7 +306,10 @@ function getDefaultValues() {
     productionDate.setDate(productionDate.getDate() - 1);
   }
   return {
-    ...Array.from(mutableFields).map((field) => ({ [field]: null })),
+    ...Array.from(mutableFields).reduce(
+      (obj, field) => ({ ...obj, [field]: null }),
+      {}
+    ),
     date: formatDate(productionDate),
   };
 }
