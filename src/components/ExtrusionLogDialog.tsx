@@ -81,6 +81,7 @@ export default function ExtrusionLogDialog({
 
   const inputRefs = Array(mutableFields.size + 1)
     .fill(null)
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     .map(() => useRef<HTMLElement>());
   let currentIndex = 0;
   const formIndex = () => ({
