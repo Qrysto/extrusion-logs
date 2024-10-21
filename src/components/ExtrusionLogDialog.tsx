@@ -1,5 +1,5 @@
 'use client';
-import { useId, useRef } from 'react';
+import { useId, useRef, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Dialog,
@@ -41,14 +41,14 @@ export default function ExtrusionLogDialog({
   draft?: Draft;
 } & FortifiedDialogProps) {
   const __ = useTranslate();
-  const defaultValues = draft || getDefaultValues();
+  const defaultValues = useMemo(() => draft || getDefaultValues(), [draft]);
   const formId = useId();
   const form = useForm<FullFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
   const {
-    formState: { isLoading, isSubmitting },
+    formState: { isLoading, isSubmitting, isDirty },
   } = form;
 
   async function onSubmit(values: FullFormValues) {
@@ -92,7 +92,7 @@ export default function ExtrusionLogDialog({
     <Dialog
       open={open}
       onOpenChange={async (open) => {
-        if (!open && form.formState.isDirty) {
+        if (!open && isDirty) {
           const confirmed = await confirm({
             title: (
               <span className="flex items-center space-x-2 text-destructive">
