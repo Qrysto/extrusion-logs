@@ -1,4 +1,9 @@
-import { ComponentProps } from 'react';
+import {
+  ComponentProps,
+  MutableRefObject,
+  useCallback,
+  KeyboardEvent,
+} from 'react';
 import { FormField, FormLabel } from '@/components/ui/form';
 import {
   FormInput,
@@ -24,9 +29,13 @@ const resultItems = [
 
 export default function ExtrusionLogFormField<T extends MutableFields>({
   name,
+  inputRef,
+  nextRef,
   ...rest
 }: {
   name: T;
+  inputRef?: MutableRefObject<HTMLElement | undefined>;
+  nextRef?: MutableRefObject<HTMLElement | undefined>;
 } & ComponentProps<typeof FormField>) {
   const __ = useTranslate();
   const unit = getColumnUnit(name);
@@ -36,23 +45,48 @@ export default function ExtrusionLogFormField<T extends MutableFields>({
         {getLabel(name, __)}
         {unit ? <span> ({unit})</span> : null}
       </FormLabel>
-      <Field name={name} />
+      <Field name={name} inputRef={inputRef} nextRef={nextRef} />
     </FormField>
   );
 }
 
-function Field<T extends MutableFields>({ name }: { name: T }) {
+function Field<T extends MutableFields>({
+  name,
+  inputRef,
+  nextRef,
+}: {
+  name: T;
+  inputRef?: MutableRefObject<HTMLElement | undefined>;
+  nextRef?: MutableRefObject<HTMLElement | undefined>;
+}) {
   const { data } = useSuggestionData();
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLElement>) => {
+      if (!nextRef) return;
+      if (event.key === 'Enter' || event.key === 'Tab') {
+        event.preventDefault();
+        nextRef.current?.focus();
+      }
+    },
+    [nextRef]
+  );
+
   switch (name) {
     case 'date':
       return (
         <div>
-          <FormDatePicker />
+          <FormDatePicker inputRef={inputRef} onKeyDown={handleKeyDown} />
         </div>
       );
     case 'startTime':
     case 'endTime':
-      return <FormTimePicker className="justify-start" />;
+      return (
+        <FormTimePicker
+          className="justify-start"
+          inputRef={inputRef}
+          onKeyDown={handleKeyDown}
+        />
+      );
     // case 'shift':
     //   return <FormToggleGroup type="single" items={shiftItems} />;
     case 'result':
@@ -61,6 +95,8 @@ function Field<T extends MutableFields>({ name }: { name: T }) {
           type="single"
           items={resultItems}
           className="justify-start"
+          inputRef={inputRef}
+          onKeyDown={handleKeyDown}
         />
       );
     // case 'item':
@@ -68,13 +104,37 @@ function Field<T extends MutableFields>({ name }: { name: T }) {
     // case 'customer':
     //   return <FormAutoComplete options={data?.customerList || []} />;
     case 'dieCode':
-      return <FormAutoComplete options={data?.dieCodeList || []} />;
+      return (
+        <FormAutoComplete
+          options={data?.dieCodeList || []}
+          inputRef={inputRef}
+          onKeyDown={handleKeyDown}
+        />
+      );
     case 'billetType':
-      return <FormAutoComplete options={data?.billetTypeList || []} />;
+      return (
+        <FormAutoComplete
+          options={data?.billetTypeList || []}
+          inputRef={inputRef}
+          onKeyDown={handleKeyDown}
+        />
+      );
     case 'lotNumberCode':
-      return <FormAutoComplete options={data?.lotNoList || []} />;
+      return (
+        <FormAutoComplete
+          options={data?.lotNoList || []}
+          inputRef={inputRef}
+          onKeyDown={handleKeyDown}
+        />
+      );
     case 'coolingMethod':
-      return <FormAutoComplete options={data?.coolingMethodList || []} />;
+      return (
+        <FormAutoComplete
+          options={data?.coolingMethodList || []}
+          inputRef={inputRef}
+          onKeyDown={handleKeyDown}
+        />
+      );
     // case 'code':
     //   return <FormAutoComplete options={data?.codeList || []} />;
     case 'ingotRatio':
@@ -114,6 +174,6 @@ function Field<T extends MutableFields>({ name }: { name: T }) {
     case 'endButt':
     case 'beforeSewing':
     case 'afterSewing':
-      return <FormInput />;
+      return <FormInput inputRef={inputRef} onKeyDown={handleKeyDown} />;
   }
 }

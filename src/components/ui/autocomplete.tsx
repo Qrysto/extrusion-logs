@@ -1,4 +1,4 @@
-import { ComponentProps } from 'react';
+import { ComponentProps, RefCallback } from 'react';
 import {
   CommandGroup,
   CommandItem,
@@ -18,6 +18,7 @@ type AutoCompleteProps = ComponentProps<typeof Input> & {
   value?: string;
   onValueChange?: (value: string) => void;
   isLoading?: boolean;
+  inputRef?: RefCallback<HTMLElement | undefined>;
 };
 
 export const AutoComplete = ({
@@ -30,14 +31,15 @@ export const AutoComplete = ({
   onFocus,
   onBlur,
   className,
+  inputRef,
   ...rest
 }: AutoCompleteProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const internalInputRef = useRef<HTMLInputElement>();
   const [isOpen, setOpen] = useState(false);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLDivElement>) => {
-      const input = inputRef.current;
+      const input = internalInputRef.current;
       if (!input) {
         return;
       }
@@ -68,7 +70,7 @@ export const AutoComplete = ({
       // This is a hack to prevent the input from being focused after the user selects an option
       // We can call this hack: "The next tick"
       setTimeout(() => {
-        inputRef?.current?.blur();
+        internalInputRef?.current?.blur();
       }, 0);
     },
     [onValueChange]
@@ -78,7 +80,10 @@ export const AutoComplete = ({
     <CommandPrimitive onKeyDown={handleKeyDown}>
       <div>
         <CommandInput
-          ref={inputRef}
+          ref={(el) => {
+            internalInputRef.current = el || undefined;
+            inputRef?.(el);
+          }}
           value={value}
           onValueChange={(value) => {
             if (!isLoading) {

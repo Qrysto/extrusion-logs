@@ -1,4 +1,4 @@
-import { ComponentProps } from 'react';
+import { ComponentProps, MutableRefObject } from 'react';
 import { FormControl } from './form';
 import { Input } from './input';
 import { AutoComplete } from './autocomplete';
@@ -6,60 +6,99 @@ import { ToggleGroup } from './toggle-group';
 import { DatePicker } from './date-picker';
 import { TimePicker } from './time-picker';
 
-export function FormInput(props: ComponentProps<typeof Input>) {
-  return (
-    <FormControl render={({ field }) => <Input {...field} {...props} />} />
-  );
-}
-
-export function FormAutoComplete(props: ComponentProps<typeof AutoComplete>) {
+export function FormInput({
+  inputRef,
+  ...rest
+}: ComponentProps<typeof Input> & {
+  inputRef?: MutableRefObject<HTMLElement | undefined>;
+}) {
   return (
     <FormControl
-      render={({ field: { onChange, ...field } }) => (
-        <AutoComplete {...field} onValueChange={onChange} {...props} />
+      render={({ field: { ref, ...fieldRest } }) => (
+        <Input
+          ref={(el) => {
+            if (inputRef) {
+              inputRef.current = el as HTMLElement;
+            }
+            if (ref) {
+              ref(el);
+            }
+          }}
+          {...fieldRest}
+          {...rest}
+        />
       )}
     />
   );
 }
 
-export function FormToggleGroup(props: ComponentProps<typeof ToggleGroup>) {
+export function FormAutoComplete({
+  inputRef,
+  ...rest
+}: Omit<ComponentProps<typeof AutoComplete>, 'inputRef'> & {
+  inputRef?: MutableRefObject<HTMLElement | undefined>;
+}) {
   return (
     <FormControl
-      render={({ field: { value, onChange, ...fieldRest } }) => (
+      render={({ field: { ref, onChange, ...fieldRest } }) => (
+        <AutoComplete
+          inputRef={(el) => {
+            if (inputRef) {
+              inputRef.current = el as HTMLElement;
+            }
+            if (ref) {
+              ref(el);
+            }
+          }}
+          {...fieldRest}
+          onValueChange={onChange}
+          {...rest}
+        />
+      )}
+    />
+  );
+}
+
+export function FormToggleGroup({
+  inputRef,
+  ...rest
+}: ComponentProps<typeof ToggleGroup> & {
+  inputRef?: MutableRefObject<HTMLElement | undefined>;
+}) {
+  return (
+    <FormControl
+      render={({ field: { ref, value, onChange, ...fieldRest } }) => (
         <ToggleGroup
           value={value}
           onValueChange={onChange}
+          ref={(el) => {
+            if (inputRef) {
+              inputRef.current = el as HTMLElement;
+            }
+            if (ref) {
+              ref(el);
+            }
+          }}
           {...fieldRest}
-          {...props}
+          {...rest}
         />
       )}
     />
   );
 }
 
-export function FormOkToggleGroup(props: ComponentProps<typeof ToggleGroup>) {
+export function FormDatePicker({
+  inputRef,
+  ...rest
+}: Omit<
+  ComponentProps<typeof DatePicker>,
+  'date' | 'onDateChange' | 'inputRef'
+> & {
+  inputRef?: MutableRefObject<HTMLElement | undefined>;
+}) {
   return (
     <FormControl
-      render={({ field: { value, onChange, ...fieldRest } }) => (
-        <ToggleGroup
-          value={(value === true ? 'OK' : value === false ? 'NG' : null) as any}
-          onValueChange={(val: any) =>
-            onChange(val === 'OK' ? true : val === 'NG' ? false : null)
-          }
-          {...fieldRest}
-          {...props}
-        />
-      )}
-    />
-  );
-}
-
-export function FormDatePicker(
-  props: Omit<ComponentProps<typeof DatePicker>, 'date' | 'onDateChange'>
-) {
-  return (
-    <FormControl
-      render={({ field: { value, onChange, ...fieldRest } }) => {
+      render={({ field: { ref, value, onChange, ...fieldRest } }) => {
         if (value !== null && !(typeof value === 'string')) {
           throw new Error(
             'FormDatePicker should be used within <FormField> of a Date field'
@@ -69,8 +108,16 @@ export function FormDatePicker(
           <DatePicker
             date={value}
             onDateChange={onChange}
+            inputRef={(el) => {
+              if (inputRef) {
+                inputRef.current = el as HTMLElement;
+              }
+              if (ref) {
+                ref(el);
+              }
+            }}
             {...fieldRest}
-            {...props}
+            {...rest}
           />
         );
       }}
@@ -78,18 +125,29 @@ export function FormDatePicker(
   );
 }
 
-export function FormTimePicker(
-  props: Omit<ComponentProps<typeof TimePicker>, 'value' | 'onChange'>
-) {
+export function FormTimePicker({
+  inputRef,
+  ...rest
+}: Omit<ComponentProps<typeof TimePicker>, 'value' | 'onChange'> & {
+  inputRef?: MutableRefObject<HTMLElement | undefined>;
+}) {
   return (
     <FormControl
-      render={({ field: { value, onChange, ...fieldRest } }) => {
+      render={({ field: { ref, value, onChange, ...fieldRest } }) => {
         return (
           <TimePicker
             value={value}
             onChange={onChange}
+            ref={(el) => {
+              if (inputRef) {
+                inputRef.current = el as HTMLElement;
+              }
+              if (ref) {
+                ref(el);
+              }
+            }}
             {...fieldRest}
-            {...props}
+            {...rest}
           />
         );
       }}

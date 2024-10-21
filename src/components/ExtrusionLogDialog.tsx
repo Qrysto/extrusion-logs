@@ -1,5 +1,5 @@
 'use client';
-import { useId } from 'react';
+import { useId, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Dialog,
@@ -79,6 +79,15 @@ export default function ExtrusionLogDialog({
     }
   };
 
+  const inputRefs = Array(mutableFields.size + 1)
+    .fill(null)
+    .map(() => useRef<HTMLElement>());
+  let currentIndex = 0;
+  const formIndex = () => ({
+    inputRef: inputRefs[currentIndex],
+    nextRef: inputRefs[++currentIndex],
+  });
+
   return (
     <Dialog
       open={open}
@@ -123,105 +132,227 @@ export default function ExtrusionLogDialog({
             onSubmit={onSubmit}
             className="px-6 py-2 space-y-8"
           >
-            <ExtrusionLogFormField name="date" />
+            <ExtrusionLogFormField name="date" {...formIndex()} />
 
             <div className="flex gap-x-4">
-              <ExtrusionLogFormField name="dieCode" className="flex-[2_2_0]" />
-
-              <ExtrusionLogFormField name="subNumber" className="flex-1" />
-            </div>
-
-            <div className="flex gap-x-4">
-              <ExtrusionLogFormField name="billetType" className="flex-1" />
-
-              <ExtrusionLogFormField name="ingotRatio" className="flex-1" />
-
-              <ExtrusionLogFormField name="lotNumberCode" className="flex-1" />
-            </div>
-
-            <div className="flex gap-x-4">
-              <ExtrusionLogFormField name="dieTemp" className="flex-1" />
-
-              <ExtrusionLogFormField name="billetTemp" className="flex-1" />
-
-              <ExtrusionLogFormField name="containerTemp" className="flex-1" />
-
-              <ExtrusionLogFormField name="outputTemp" className="flex-1" />
-            </div>
-
-            <div className="flex gap-x-4">
-              <ExtrusionLogFormField name="ramSpeed" className="flex-1" />
-
-              <ExtrusionLogFormField name="pressure" className="flex-1" />
-            </div>
-
-            <div className="flex gap-x-4">
-              <ExtrusionLogFormField name="pullerMode" className="flex-1" />
-
-              <ExtrusionLogFormField name="pullerSpeed" className="flex-1" />
-
-              <ExtrusionLogFormField name="pullerForce" className="flex-1" />
-
-              <ExtrusionLogFormField name="extrusionCycle" className="flex-1" />
-            </div>
-
-            <div className="flex gap-x-4">
-              <ExtrusionLogFormField name="billetLength" className="flex-1" />
-
-              <ExtrusionLogFormField name="billetQuantity" className="flex-1" />
-            </div>
-
-            <div className="flex gap-x-4">
-              <ExtrusionLogFormField name="orderLength" className="flex-1" />
+              <ExtrusionLogFormField
+                name="dieCode"
+                className="flex-[2_2_0]"
+                {...formIndex()}
+              />
 
               <ExtrusionLogFormField
+                name="subNumber"
+                className="flex-1"
+                {...formIndex()}
+              />
+            </div>
+
+            <div className="flex gap-x-4">
+              <ExtrusionLogFormField
+                name="billetType"
+                className="flex-1"
+                {...formIndex()}
+              />
+
+              <ExtrusionLogFormField
+                name="ingotRatio"
+                className="flex-1"
+                {...formIndex()}
+              />
+
+              <ExtrusionLogFormField
+                name="lotNumberCode"
+                className="flex-1"
+                {...formIndex()}
+              />
+            </div>
+
+            <div className="flex gap-x-4">
+              <ExtrusionLogFormField
+                name="dieTemp"
+                className="flex-1"
+                {...formIndex()}
+              />
+
+              <ExtrusionLogFormField
+                name="billetTemp"
+                className="flex-1"
+                {...formIndex()}
+              />
+
+              <ExtrusionLogFormField
+                name="containerTemp"
+                className="flex-1"
+                {...formIndex()}
+              />
+
+              <ExtrusionLogFormField
+                name="outputTemp"
+                className="flex-1"
+                {...formIndex()}
+              />
+            </div>
+
+            <div className="flex gap-x-4">
+              <ExtrusionLogFormField
+                name="ramSpeed"
+                className="flex-1"
+                {...formIndex()}
+              />
+
+              <ExtrusionLogFormField
+                name="pressure"
+                className="flex-1"
+                {...formIndex()}
+              />
+            </div>
+
+            <div className="flex gap-x-4">
+              <ExtrusionLogFormField
+                name="pullerMode"
+                className="flex-1"
+                {...formIndex()}
+              />
+
+              <ExtrusionLogFormField
+                name="pullerSpeed"
+                className="flex-1"
+                {...formIndex()}
+              />
+
+              <ExtrusionLogFormField
+                name="pullerForce"
+                className="flex-1"
+                {...formIndex()}
+              />
+
+              <ExtrusionLogFormField
+                name="extrusionCycle"
+                className="flex-1"
+                {...formIndex()}
+              />
+            </div>
+
+            <div className="flex gap-x-4">
+              <ExtrusionLogFormField
+                name="billetLength"
+                className="flex-1"
+                {...formIndex()}
+              />
+
+              <ExtrusionLogFormField
+                name="billetQuantity"
+                className="flex-1"
+                {...formIndex()}
+              />
+            </div>
+
+            <div className="flex gap-x-4">
+              <ExtrusionLogFormField
+                name="orderLength"
+                className="flex-1"
+                {...formIndex()}
+              />
+
+              <ExtrusionLogFormField
+                {...formIndex()}
                 name="extrusionLength"
                 className="flex-1"
               />
             </div>
 
             <div className="flex gap-x-4">
-              <ExtrusionLogFormField name="segments" className="flex-1" />
+              <ExtrusionLogFormField
+                name="segments"
+                className="flex-1"
+                {...formIndex()}
+              />
 
               <ExtrusionLogFormField
                 name="productionQuantity"
                 className="flex-1"
+                {...formIndex()}
               />
 
-              <ExtrusionLogFormField name="ngQuantity" className="flex-1" />
+              <ExtrusionLogFormField
+                name="ngQuantity"
+                className="flex-1"
+                {...formIndex()}
+              />
 
-              <ExtrusionLogFormField name="buttLength" className="flex-1" />
+              <ExtrusionLogFormField
+                name="buttLength"
+                className="flex-1"
+                {...formIndex()}
+              />
             </div>
 
             <div className="flex gap-x-4">
-              <ExtrusionLogFormField name="coolingMethod" className="flex-1" />
+              <ExtrusionLogFormField
+                name="coolingMethod"
+                className="flex-1"
+                {...formIndex()}
+              />
 
-              <ExtrusionLogFormField name="coolingMode" className="flex-1" />
+              <ExtrusionLogFormField
+                name="coolingMode"
+                className="flex-1"
+                {...formIndex()}
+              />
             </div>
 
             <div className="flex gap-x-4">
-              <ExtrusionLogFormField name="startButt" className="flex-1" />
+              <ExtrusionLogFormField
+                name="startButt"
+                className="flex-1"
+                {...formIndex()}
+              />
 
-              <ExtrusionLogFormField name="beforeSewing" className="flex-1" />
+              <ExtrusionLogFormField
+                name="beforeSewing"
+                className="flex-1"
+                {...formIndex()}
+              />
 
-              <ExtrusionLogFormField name="afterSewing" className="flex-1" />
+              <ExtrusionLogFormField
+                name="afterSewing"
+                className="flex-1"
+                {...formIndex()}
+              />
 
-              <ExtrusionLogFormField name="endButt" className="flex-1" />
+              <ExtrusionLogFormField
+                name="endButt"
+                className="flex-1"
+                {...formIndex()}
+              />
             </div>
 
             <div className="flex gap-x-4">
               <div className="flex-1">
-                <ExtrusionLogFormField name="startTime" className="flex-1" />
+                <ExtrusionLogFormField
+                  name="startTime"
+                  className="flex-1"
+                  {...formIndex()}
+                />
               </div>
 
               <div className="flex-1">
-                <ExtrusionLogFormField name="endTime" className="flex-1" />
+                <ExtrusionLogFormField
+                  name="endTime"
+                  className="flex-1"
+                  {...formIndex()}
+                />
               </div>
 
-              <ExtrusionLogFormField name="result" className="flex-1" />
+              <ExtrusionLogFormField
+                name="result"
+                className="flex-1"
+                {...formIndex()}
+              />
             </div>
 
-            <ExtrusionLogFormField name="remark" />
+            <ExtrusionLogFormField name="remark" {...formIndex()} />
           </Form>
         </ScrollArea>
 
@@ -289,6 +420,9 @@ export default function ExtrusionLogDialog({
               type="submit"
               form={formId}
               disabled={isSubmitting || isLoading}
+              ref={(el) => {
+                inputRefs[currentIndex].current = el || undefined;
+              }}
             >
               <Check className="mr-2 h-4 w-4" />
               {__('Submit')}

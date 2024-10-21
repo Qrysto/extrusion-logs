@@ -71,7 +71,6 @@ export default function DataTable<TData>({
   useEffect(() => {
     fetchMoreOnBottomReached(scrollerRef.current);
   }, [fetchMoreOnBottomReached]);
-  console.log(table.getHeaderGroups());
 
   return (
     <ScrollArea

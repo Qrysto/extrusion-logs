@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, ComponentProps } from 'react';
-import { format } from 'date-fns';
+import { useState, ComponentProps, RefCallback } from 'react';
 import { Calendar as CalendarIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -19,10 +18,12 @@ export function DatePicker({
   date,
   onDateChange,
   className,
+  inputRef,
   ...rest
 }: {
   date: string | null;
   onDateChange: (date: string | null) => void;
+  inputRef?: RefCallback<HTMLElement | undefined>;
 } & ComponentProps<typeof Button>) {
   const __ = useTranslate();
   const locale = useLocale();
@@ -39,6 +40,7 @@ export function DatePicker({
             !date && 'text-muted-foreground',
             className
           )}
+          ref={inputRef}
           {...rest}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
