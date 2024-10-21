@@ -49,12 +49,19 @@ export function EditExtrusionLogField<T extends MutableFields>({
     () => getFormSchema(extrusionLog, field, __),
     [extrusionLog, field, __]
   );
+  const defaultValues = useMemo(
+    () =>
+      ({
+        [field]:
+          field === 'date'
+            ? formatDate(extrusionLog.date)
+            : extrusionLog[field],
+      } as DefaultValues<FormValues<T>>),
+    [field, extrusionLog]
+  );
   const form = useForm<FormValues<T>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      [field]:
-        field === 'date' ? formatDate(extrusionLog.date) : extrusionLog[field],
-    } as DefaultValues<FormValues<T>>,
+    defaultValues,
   });
   const {
     formState: { isDirty, isLoading, isSubmitting },
