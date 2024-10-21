@@ -65,7 +65,16 @@ const ToggleGroup = React.forwardRef<
 >(({ items, ...rest }, ref) => (
   <ToggleGroupRoot ref={ref} {...rest}>
     {items.map(({ value, label }) => (
-      <ToggleGroupStyledItem key={value} value={value}>
+      <ToggleGroupStyledItem
+        key={value}
+        value={value}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === 'Tab') {
+            event.preventDefault();
+            rest.onValueChange?.(value);
+          }
+        }}
+      >
         {label}
       </ToggleGroupStyledItem>
     ))}
