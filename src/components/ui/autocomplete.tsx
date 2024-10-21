@@ -1,4 +1,11 @@
-import { ComponentProps, RefCallback } from 'react';
+import {
+  ComponentProps,
+  RefCallback,
+  useState,
+  useRef,
+  useCallback,
+  type KeyboardEvent,
+} from 'react';
 import {
   CommandGroup,
   CommandItem,
@@ -7,9 +14,7 @@ import {
 } from './command';
 import { Input } from './input';
 import { Command as CommandPrimitive } from 'cmdk';
-import { useState, useRef, useCallback, type KeyboardEvent } from 'react';
 import { Skeleton } from './skeleton';
-import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type AutoCompleteProps = ComponentProps<typeof Input> & {
@@ -32,34 +37,41 @@ export const AutoComplete = ({
   onBlur,
   className,
   inputRef,
+  onKeyDown,
   ...rest
 }: AutoCompleteProps) => {
   const internalInputRef = useRef<HTMLInputElement>();
+  const cmdListRef = useRef<HTMLDivElement>();
   const [isOpen, setOpen] = useState(false);
 
   const handleKeyDown = useCallback(
-    (event: KeyboardEvent<HTMLDivElement>) => {
-      const input = internalInputRef.current;
-      if (!input) {
-        return;
-      }
-
+    (event: KeyboardEvent<HTMLInputElement>) => {
       // Keep the options displayed when the user is typing
       if (!isOpen) {
         setOpen(true);
       }
 
-      // This is not a default behaviour of the <input /> field
-      if (event.key === 'Enter' && input.value !== '') {
-        const optionToSelect = options.find((option) => option === input.value);
-        if (optionToSelect) {
-          onValueChange?.(optionToSelect);
+      if (event.key === 'Enter' || event.key === 'Tab') {
+        event.preventDefault();
+        if (cmdListRef.current) {
+          const optionElements = Array.from(
+            cmdListRef.current?.children.item(0)?.children || []
+          );
+          const selectedOptionEl = optionElements.find(
+            (el) => el.getAttribute('data-selected') === 'true'
+          );
+          const selectedValue = selectedOptionEl?.getAttribute('data-value');
+          if (selectedValue) {
+            onValueChange?.(selectedValue);
+          }
         }
       }
 
       if (event.key === 'Escape') {
-        input.blur();
+        event.currentTarget?.blur?.();
       }
+
+      onKeyDown?.(event);
     },
     [isOpen, options, onValueChange]
   );
@@ -77,7 +89,7 @@ export const AutoComplete = ({
   );
 
   return (
-    <CommandPrimitive onKeyDown={handleKeyDown}>
+    <CommandPrimitive>
       <div>
         <CommandInput
           ref={(el) => {
@@ -99,6 +111,7 @@ export const AutoComplete = ({
             setOpen(true);
             onFocus?.(evt);
           }}
+          onKeyDown={handleKeyDown}
           className={cn('text-base', className)}
           {...rest}
         />
@@ -110,7 +123,12 @@ export const AutoComplete = ({
             isOpen ? 'block' : 'hidden'
           )}
         >
-          <CommandList scrollAreaClassName="rounded-md border">
+          <CommandList
+            scrollAreaClassName="rounded-md border"
+            ref={(el) => {
+              cmdListRef.current = el || undefined;
+            }}
+          >
             {isLoading ? (
               <CommandPrimitive.Loading>
                 <div className="p-1">
