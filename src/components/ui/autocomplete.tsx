@@ -73,7 +73,7 @@ export const AutoComplete = ({
 
       onKeyDown?.(event);
     },
-    [isOpen, options, onValueChange]
+    [isOpen, options, onValueChange, onKeyDown]
   );
 
   const handleSelectOption = useCallback(

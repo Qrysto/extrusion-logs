@@ -60,27 +60,30 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
     onRowSelectionChange: setRowSelection,
   });
 
-  const deleteRow = useCallback(async (row: Row<DashboardTableItem>) => {
-    try {
-      const orig = row.original;
-      if (isDraft(orig)) {
-        removeDraft(orig.id);
-        toast({
-          title: __('Draft has been deleted'),
+  const deleteRow = useCallback(
+    async (row: Row<DashboardTableItem>) => {
+      try {
+        const orig = row.original;
+        if (isDraft(orig)) {
+          removeDraft(orig.id);
+          toast({
+            title: __('Draft has been deleted'),
+          });
+        } else {
+          await del(`/api/extrusion-logs/${orig.id}`);
+          toast({
+            title: __('Extrusion log has been deleted'),
+          });
+          await refetch();
+        }
+      } catch (err: any) {
+        flashError({
+          message: err?.message ? __(err.message) : String(err),
         });
-      } else {
-        await del(`/api/extrusion-logs/${orig.id}`);
-        toast({
-          title: __('Extrusion log has been deleted'),
-        });
-        await refetch();
       }
-    } catch (err: any) {
-      flashError({
-        message: err?.message ? __(err.message) : String(err),
-      });
-    }
-  }, []);
+    },
+    [__, refetch]
+  );
 
   const editCell = useCallback(
     async (cell: Cell<DashboardTableItem, unknown>) =>

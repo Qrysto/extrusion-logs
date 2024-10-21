@@ -252,7 +252,7 @@ const DataRow = genericMemo(
       } finally {
         setDeleting(false);
       }
-    }, [row]);
+    }, [row, __, deleteRow]);
     const orig = row.original;
     const rowIsDraft = isDraft(orig);
 
