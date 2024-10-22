@@ -16,7 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { confirm, flashError, toast } from '@/lib/ui';
 import { addDraft, updateDraft, removeDraft } from '@/lib/drafts';
 import { mutableFields } from '@/lib/columns';
-import { Draft } from '@/lib/types';
+import { Draft, ExtrusionLog, FullFormValues } from '@/lib/types';
 import {
   refreshSuggestionData,
   refreshAllExtrusionQueries,
@@ -26,22 +26,28 @@ import { post } from '@/lib/api';
 // import { format } from 'date-fns';
 import { Form } from '@/components/ui/form';
 import { formatDate } from '@/lib/dateTime';
-import { FullFormValues, formSchema } from '@/lib/extrusionLogForm';
+import { formSchema } from '@/lib/extrusionLogForm';
 import ExtrusionLogFormField from '@/components/ExtrusionLogFormField';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function ExtrusionLogDialog({
-  // employeeId = '',
   open,
   onOpenChange,
   draft,
+  templateExtrusionLog,
   ...rest
 }: {
-  // employeeId?: string;
   draft?: Draft;
+  templateExtrusionLog?: ExtrusionLog;
 } & FortifiedDialogProps) {
   const __ = useTranslate();
-  const defaultValues = useMemo(() => draft || getDefaultValues(), [draft]);
+  const defaultValues = useMemo(
+    () =>
+      draft ||
+      duplicateExtrusionLog(templateExtrusionLog) ||
+      getDefaultValues(),
+    [draft, templateExtrusionLog]
+  );
   const formId = useId();
   const form = useForm<FullFormValues>({
     resolver: zodResolver(formSchema),
@@ -447,4 +453,82 @@ function getDefaultValues() {
     ),
     date: formatDate(productionDate),
   };
+}
+
+function duplicateExtrusionLog(extrusionLog?: ExtrusionLog) {
+  if (!extrusionLog) return undefined;
+  const {
+    billetLength,
+    billetQuantity,
+    billetTemp,
+    billetType,
+    buttLength,
+    containerTemp,
+    coolingMethod,
+    coolingMode,
+    date,
+    dieCode,
+    dieTemp,
+    endButt,
+    endTime,
+    extrusionCycle,
+    extrusionLength,
+    ingotRatio,
+    lotNumberCode,
+    ngQuantity,
+    orderLength,
+    outputTemp,
+    pressure,
+    productionQuantity,
+    pullerForce,
+    pullerMode,
+    pullerSpeed,
+    ramSpeed,
+    remark,
+    result,
+    segments,
+    startButt,
+    startTime,
+    subNumber,
+    beforeSewing,
+    afterSewing,
+  } = extrusionLog;
+  const defaultValues: FullFormValues = {
+    billetQuantity,
+    billetType,
+    coolingMethod,
+    coolingMode,
+    dieCode,
+    endTime,
+    extrusionCycle,
+    lotNumberCode,
+    ngQuantity,
+    productionQuantity,
+    pullerMode,
+    remark,
+    result,
+    segments,
+    startTime,
+    subNumber,
+    date: formatDate(date),
+    billetLength: billetLength !== null ? parseFloat(billetLength) : null,
+    billetTemp: billetTemp !== null ? parseFloat(billetTemp) : null,
+    buttLength: buttLength !== null ? parseFloat(buttLength) : null,
+    containerTemp: containerTemp !== null ? parseFloat(containerTemp) : null,
+    dieTemp: dieTemp !== null ? parseFloat(dieTemp) : null,
+    endButt: endButt !== null ? parseFloat(endButt) : null,
+    extrusionLength:
+      extrusionLength !== null ? parseFloat(extrusionLength) : null,
+    ingotRatio: ingotRatio !== null ? parseFloat(ingotRatio) : null,
+    orderLength: orderLength !== null ? parseFloat(orderLength) : null,
+    outputTemp: outputTemp !== null ? parseFloat(outputTemp) : null,
+    pressure: pressure !== null ? parseFloat(pressure) : null,
+    pullerForce: pullerForce !== null ? parseFloat(pullerForce) : null,
+    pullerSpeed: pullerSpeed !== null ? parseFloat(pullerSpeed) : null,
+    ramSpeed: ramSpeed !== null ? parseFloat(ramSpeed) : null,
+    startButt: startButt !== null ? parseFloat(startButt) : null,
+    beforeSewing: beforeSewing !== null ? parseFloat(beforeSewing) : null,
+    afterSewing: afterSewing !== null ? parseFloat(afterSewing) : null,
+  };
+  return defaultValues;
 }

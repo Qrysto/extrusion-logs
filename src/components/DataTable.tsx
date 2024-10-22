@@ -16,6 +16,7 @@ import {
   SortDesc,
   FilePenLine,
   Trash2,
+  CopyPlus,
 } from 'lucide-react';
 import {
   Table,
@@ -34,6 +35,7 @@ import {
 import { useTranslate } from '@/lib/intl/client';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isMutableField, getLabel, isDraft } from '@/lib/columns';
+import { ExtrusionLog } from '@/lib/types';
 import ExtrusionLogDialog from '@/components/ExtrusionLogDialog';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { cn, genericMemo } from '@/lib/utils';
@@ -229,6 +231,12 @@ const DataRow = genericMemo(
     editCell: (cell: Cell<TData, unknown>) => Promise<void>;
   }) => {
     const __ = useTranslate();
+    const orig = row.original;
+    const isExtrusionLog = (object: any): object is ExtrusionLog => {
+      return !isDraft(orig);
+    };
+    const rowIsDraft = isDraft(orig);
+
     const [deleting, setDeleting] = useState<boolean>(false);
     const del = useCallback(async () => {
       setDeleting(true);
@@ -253,8 +261,12 @@ const DataRow = genericMemo(
         setDeleting(false);
       }
     }, [row, __, deleteRow]);
-    const orig = row.original;
-    const rowIsDraft = isDraft(orig);
+
+    const duplicate = useCallback(() => {
+      if (isExtrusionLog(orig)) {
+        openDialog(ExtrusionLogDialog, { templateExtrusionLog: orig });
+      }
+    }, [orig]);
 
     return (
       <TableRow
@@ -278,6 +290,7 @@ const DataRow = genericMemo(
             cell={cell}
             deleteRow={del}
             editCell={editCell}
+            duplicateRow={duplicate}
           />
         ))}
       </TableRow>
@@ -290,10 +303,12 @@ const DataCell = genericMemo(
     cell,
     deleteRow,
     editCell,
+    duplicateRow,
   }: {
     cell: Cell<TData, unknown>;
     deleteRow: () => Promise<void>;
     editCell: (cell: Cell<TData, unknown>) => Promise<void>;
+    duplicateRow: () => void;
   }) => {
     const __ = useTranslate();
     const [editing, setEditing] = useState<boolean>(false);
@@ -320,6 +335,11 @@ const DataCell = genericMemo(
         </ContextMenuTrigger>
 
         <ContextMenuContent>
+          <ContextMenuItem className="cursor-pointer" onClick={duplicateRow}>
+            <CopyPlus className="w-4 h-4 mr-2" />
+            {__('Duplicate Extrusion Log')}
+          </ContextMenuItem>
+
           {isMutableField(column.id) && !rowIsDraft && (
             <ContextMenuItem
               className="cursor-pointer"
@@ -336,6 +356,7 @@ const DataCell = genericMemo(
               {__('Edit %columnName%', { columnName: getLabel(column.id, __) })}
             </ContextMenuItem>
           )}
+
           {rowIsDraft && (
             <ContextMenuItem
               className="cursor-pointer"
