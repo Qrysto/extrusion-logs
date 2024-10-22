@@ -22,7 +22,7 @@ import {
   refreshAllExtrusionQueries,
 } from '@/lib/client';
 import { useTranslate } from '@/lib/intl/client';
-import { post } from '@/lib/api';
+import { post, patch } from '@/lib/api';
 // import { format } from 'date-fns';
 import { Form } from '@/components/ui/form';
 import { formatDate } from '@/lib/dateTime';
@@ -33,20 +33,22 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 export default function ExtrusionLogDialog({
   open,
   onOpenChange,
-  draft,
-  templateExtrusionLog,
+  fromDraft,
+  fromExtrusionLog,
+  editId,
   ...rest
 }: {
-  draft?: Draft;
-  templateExtrusionLog?: ExtrusionLog;
+  fromDraft?: Draft;
+  fromExtrusionLog?: ExtrusionLog;
+  editId?: number;
 } & FortifiedDialogProps) {
   const __ = useTranslate();
   const defaultValues = useMemo(
     () =>
-      draft ||
-      duplicateExtrusionLog(templateExtrusionLog) ||
+      fromDraft ||
+      duplicateExtrusionLog(fromExtrusionLog) ||
       getDefaultValues(),
-    [draft, templateExtrusionLog]
+    [fromDraft, fromExtrusionLog]
   );
   const formId = useId();
   const form = useForm<FullFormValues>({
@@ -58,18 +60,26 @@ export default function ExtrusionLogDialog({
   } = form;
 
   async function onSubmit(values: FullFormValues) {
+    if (editId && !isDirty) {
+      // Do nothing if it's an edit and no changes were made
+      return;
+    }
+
+    const action = editId
+      ? patch(`/api/extrusion-logs/${editId}`, values)
+      : post('/api/extrusion-logs', values);
     try {
-      await post('/api/extrusion-logs', values);
+      await action;
     } catch (err: any) {
       flashError({ message: err?.message ? __(err.message) : String(err) });
       return;
     }
     onOpenChange(false);
     toast({
-      title: __('Created successfully!'),
+      title: editId ? __('Edited successfully!') : __('Created successfully!'),
     });
-    if (draft) {
-      removeDraft(draft.id);
+    if (fromDraft) {
+      removeDraft(fromDraft.id);
     }
     refreshSuggestionData();
     refreshAllExtrusionQueries();
@@ -129,7 +139,9 @@ export default function ExtrusionLogDialog({
 
       <DialogContent className="flex flex-col h-[90%] max-w-3xl px-0">
         <DialogHeader className="flex-shrink-0 px-6">
-          <DialogTitle>{__('Create Extrusion Log')}</DialogTitle>
+          <DialogTitle>
+            {editId ? __('Edit Extrusion Log') : __('Create Extrusion Log')}
+          </DialogTitle>
         </DialogHeader>
 
         <ScrollArea className="flex-1">
@@ -365,7 +377,7 @@ export default function ExtrusionLogDialog({
 
         <DialogFooter className="px-6 sm:justify-between flex-shrink-0">
           <div>
-            {!!draft && (
+            {!!fromDraft && (
               <Button
                 variant="destructive"
                 onClick={async () => {
@@ -384,7 +396,7 @@ export default function ExtrusionLogDialog({
                     noLabel: __('Go back'),
                   });
                   if (!confirmed) return;
-                  removeDraft(draft.id);
+                  removeDraft(fromDraft.id);
                   toast({
                     title: __('Draft deleted successfully!'),
                     variant: 'destructive',
@@ -404,24 +416,26 @@ export default function ExtrusionLogDialog({
               {__('Reset form')}
             </Button>
 
-            <Button
-              variant="secondary"
-              onClick={() => {
-                const values = form.getValues();
-                if (draft) {
-                  updateDraft(draft.id, values);
-                } else {
-                  addDraft(values);
-                }
-                toast({
-                  title: __('Draft saved successfully!'),
-                });
-                onOpenChange(false);
-              }}
-            >
-              <Save className="mr-2 h-4 w-4" />
-              {__('Save draft')}
-            </Button>
+            {!editId && (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  const values = form.getValues();
+                  if (fromDraft) {
+                    updateDraft(fromDraft.id, values);
+                  } else {
+                    addDraft(values);
+                  }
+                  toast({
+                    title: __('Draft saved successfully!'),
+                  });
+                  onOpenChange(false);
+                }}
+              >
+                <Save className="mr-2 h-4 w-4" />
+                {__('Save draft')}
+              </Button>
+            )}
 
             <Button
               type="submit"
@@ -432,7 +446,7 @@ export default function ExtrusionLogDialog({
               }}
             >
               <Check className="mr-2 h-4 w-4" />
-              {__('Submit')}
+              {editId ? __('Submit changes') : __('Submit')}
             </Button>
           </div>
         </DialogFooter>

@@ -31,6 +31,7 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
+  ContextMenuSeparator,
 } from '@/components/ui/context-menu';
 import { useTranslate } from '@/lib/intl/client';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -264,7 +265,16 @@ const DataRow = genericMemo(
 
     const duplicate = useCallback(() => {
       if (isExtrusionLog(orig)) {
-        openDialog(ExtrusionLogDialog, { templateExtrusionLog: orig });
+        openDialog(ExtrusionLogDialog, { fromExtrusionLog: orig });
+      }
+    }, [orig]);
+
+    const edit = useCallback(() => {
+      if (isExtrusionLog(orig)) {
+        openDialog(ExtrusionLogDialog, {
+          fromExtrusionLog: orig,
+          editId: orig.id,
+        });
       }
     }, [orig]);
 
@@ -279,7 +289,7 @@ const DataRow = genericMemo(
         onClick={
           rowIsDraft
             ? () => {
-                openDialog(ExtrusionLogDialog, { draft: orig });
+                openDialog(ExtrusionLogDialog, { fromDraft: orig });
               }
             : undefined
         }
@@ -291,6 +301,7 @@ const DataRow = genericMemo(
             deleteRow={del}
             editCell={editCell}
             duplicateRow={duplicate}
+            editRow={edit}
           />
         ))}
       </TableRow>
@@ -304,11 +315,13 @@ const DataCell = genericMemo(
     deleteRow,
     editCell,
     duplicateRow,
+    editRow,
   }: {
     cell: Cell<TData, unknown>;
     deleteRow: () => Promise<void>;
     editCell: (cell: Cell<TData, unknown>) => Promise<void>;
     duplicateRow: () => void;
+    editRow: () => void;
   }) => {
     const __ = useTranslate();
     const [editing, setEditing] = useState<boolean>(false);
@@ -335,27 +348,37 @@ const DataCell = genericMemo(
         </ContextMenuTrigger>
 
         <ContextMenuContent>
+          {isMutableField(column.id) && !rowIsDraft && (
+            <>
+              <ContextMenuItem
+                className="cursor-pointer"
+                onClick={async () => {
+                  setEditing(true);
+                  try {
+                    await editCell(cell);
+                  } finally {
+                    setEditing(false);
+                  }
+                }}
+              >
+                <FilePenLine className="w-4 h-4 mr-2" />
+                {__('Edit %columnName%', {
+                  columnName: getLabel(column.id, __),
+                })}
+              </ContextMenuItem>
+              <ContextMenuSeparator />
+            </>
+          )}
+
           <ContextMenuItem className="cursor-pointer" onClick={duplicateRow}>
             <CopyPlus className="w-4 h-4 mr-2" />
             {__('Duplicate Extrusion Log')}
           </ContextMenuItem>
 
-          {isMutableField(column.id) && !rowIsDraft && (
-            <ContextMenuItem
-              className="cursor-pointer"
-              onClick={async () => {
-                setEditing(true);
-                try {
-                  await editCell(cell);
-                } finally {
-                  setEditing(false);
-                }
-              }}
-            >
-              <FilePenLine className="w-4 h-4 mr-2" />
-              {__('Edit %columnName%', { columnName: getLabel(column.id, __) })}
-            </ContextMenuItem>
-          )}
+          <ContextMenuItem className="cursor-pointer" onClick={editRow}>
+            <FilePenLine className="w-4 h-4 mr-2" />
+            {__('Edit Extrusion Log')}
+          </ContextMenuItem>
 
           {rowIsDraft && (
             <ContextMenuItem
@@ -363,7 +386,7 @@ const DataCell = genericMemo(
               onClick={(evt) => {
                 // Prevent opening Edit dialog twice because clicking menu item is also clicking the row
                 evt.stopPropagation();
-                openDialog(ExtrusionLogDialog, { draft: orig });
+                openDialog(ExtrusionLogDialog, { fromDraft: orig });
               }}
             >
               <FilePenLine className="w-4 h-4 mr-2" />
