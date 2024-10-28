@@ -11,7 +11,7 @@ export const formBaseSchema = z.object({
 
   // item: z.string(),
   // customer: z.string(),
-  dieCode: z.string(),
+  dieCode: z.string().length(10),
   subNumber: z.coerce
     .number()
     .min(0, 'Cannot be negative')
