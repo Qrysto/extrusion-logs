@@ -26,6 +26,7 @@ import { post, patch } from '@/lib/api';
 // import { format } from 'date-fns';
 import { Form } from '@/components/ui/form';
 import { formatDate } from '@/lib/dateTime';
+import { nullToUndefined } from '@/lib/utils';
 import { formSchema } from '@/lib/extrusionLogForm';
 import ExtrusionLogFormField from '@/components/ExtrusionLogFormField';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -45,7 +46,7 @@ export default function ExtrusionLogDialog({
   const __ = useTranslate();
   const defaultValues = useMemo(
     () =>
-      fromDraft ||
+      (fromDraft && nullToUndefined(fromDraft)) ||
       duplicateExtrusionLog(fromExtrusionLog) ||
       getDefaultValues(),
     [fromDraft, fromExtrusionLog]
@@ -461,12 +462,8 @@ function getDefaultValues() {
     productionDate.setDate(productionDate.getDate() - 1);
   }
   return {
-    ...Array.from(mutableFields).reduce(
-      (obj, field) => ({ ...obj, [field]: null }),
-      {}
-    ),
-    date: formatDate(productionDate),
-  };
+    date: formatDate(productionDate) || undefined,
+  } as FullFormValues;
 }
 
 function duplicateExtrusionLog(extrusionLog?: ExtrusionLog) {
@@ -507,7 +504,7 @@ function duplicateExtrusionLog(extrusionLog?: ExtrusionLog) {
     beforeSewing,
     afterSewing,
   } = extrusionLog;
-  const defaultValues: FullFormValues = {
+  const defaultValues = {
     billetQuantity,
     billetType,
     coolingMethod,
@@ -525,24 +522,25 @@ function duplicateExtrusionLog(extrusionLog?: ExtrusionLog) {
     startTime,
     subNumber,
     date: formatDate(date),
-    billetLength: billetLength !== null ? parseFloat(billetLength) : null,
-    billetTemp: billetTemp !== null ? parseFloat(billetTemp) : null,
-    buttLength: buttLength !== null ? parseFloat(buttLength) : null,
-    containerTemp: containerTemp !== null ? parseFloat(containerTemp) : null,
-    dieTemp: dieTemp !== null ? parseFloat(dieTemp) : null,
-    endButt: endButt !== null ? parseFloat(endButt) : null,
+    billetLength: billetLength !== null ? parseFloat(billetLength) : undefined,
+    billetTemp: billetTemp !== null ? parseFloat(billetTemp) : undefined,
+    buttLength: buttLength !== null ? parseFloat(buttLength) : undefined,
+    containerTemp:
+      containerTemp !== null ? parseFloat(containerTemp) : undefined,
+    dieTemp: dieTemp !== null ? parseFloat(dieTemp) : undefined,
+    endButt: endButt !== null ? parseFloat(endButt) : undefined,
     extrusionLength:
-      extrusionLength !== null ? parseFloat(extrusionLength) : null,
-    ingotRatio: ingotRatio !== null ? parseFloat(ingotRatio) : null,
-    orderLength: orderLength !== null ? parseFloat(orderLength) : null,
-    outputTemp: outputTemp !== null ? parseFloat(outputTemp) : null,
-    pressure: pressure !== null ? parseFloat(pressure) : null,
-    pullerForce: pullerForce !== null ? parseFloat(pullerForce) : null,
-    pullerSpeed: pullerSpeed !== null ? parseFloat(pullerSpeed) : null,
-    ramSpeed: ramSpeed !== null ? parseFloat(ramSpeed) : null,
-    startButt: startButt !== null ? parseFloat(startButt) : null,
-    beforeSewing: beforeSewing !== null ? parseFloat(beforeSewing) : null,
-    afterSewing: afterSewing !== null ? parseFloat(afterSewing) : null,
-  };
-  return defaultValues;
+      extrusionLength !== null ? parseFloat(extrusionLength) : undefined,
+    ingotRatio: ingotRatio !== null ? parseFloat(ingotRatio) : undefined,
+    orderLength: orderLength !== null ? parseFloat(orderLength) : undefined,
+    outputTemp: outputTemp !== null ? parseFloat(outputTemp) : undefined,
+    pressure: pressure !== null ? parseFloat(pressure) : undefined,
+    pullerForce: pullerForce !== null ? parseFloat(pullerForce) : undefined,
+    pullerSpeed: pullerSpeed !== null ? parseFloat(pullerSpeed) : undefined,
+    ramSpeed: ramSpeed !== null ? parseFloat(ramSpeed) : undefined,
+    startButt: startButt !== null ? parseFloat(startButt) : undefined,
+    beforeSewing: beforeSewing !== null ? parseFloat(beforeSewing) : undefined,
+    afterSewing: afterSewing !== null ? parseFloat(afterSewing) : undefined,
+  } as FullFormValues;
+  return nullToUndefined(defaultValues);
 }

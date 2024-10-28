@@ -71,3 +71,11 @@ export function toMinutes(time: string) {
 
 export const stripSeconds = (time: string | null) =>
   time && time.length === 8 ? time.substring(0, time.lastIndexOf(':')) : time;
+
+export function nullToUndefined<T extends Record<string, any>>(obj: T) {
+  const result: Record<string, any> = {};
+  Object.keys(result).forEach((key) => {
+    result[key] = obj[key] === null ? undefined : obj[key];
+  });
+  return result as T;
+}

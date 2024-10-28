@@ -32,7 +32,6 @@ export type { FullFormValues, ColumnNames, MutableFields };
 
 export type Draft = FullFormValues & {
   id: string;
-  duration: undefined;
   isDraft: true;
 };
 
