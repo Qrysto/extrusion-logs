@@ -542,5 +542,8 @@ function duplicateExtrusionLog(extrusionLog?: ExtrusionLog) {
     beforeSewing: beforeSewing !== null ? parseFloat(beforeSewing) : undefined,
     afterSewing: afterSewing !== null ? parseFloat(afterSewing) : undefined,
   } as FullFormValues;
+  console.log(defaultValues);
+  console.log(nullToUndefined(defaultValues));
+
   return nullToUndefined(defaultValues);
 }

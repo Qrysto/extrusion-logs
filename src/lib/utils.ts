@@ -74,7 +74,9 @@ export const stripSeconds = (time: string | null) =>
 
 export function nullToUndefined<T extends Record<string, any>>(obj: T) {
   const result: Record<string, any> = {};
-  Object.keys(result).forEach((key) => {
+  Object.keys(obj).forEach((key) => {
+    console.log(key, obj[key] === null ? undefined : obj[key]);
+
     result[key] = obj[key] === null ? undefined : obj[key];
   });
   return result as T;
