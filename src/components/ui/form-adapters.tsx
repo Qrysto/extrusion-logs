@@ -99,7 +99,7 @@ export function FormDatePicker({
   return (
     <FormControl
       render={({ field: { ref, value, onChange, ...fieldRest } }) => {
-        if (value !== null && !(typeof value === 'string')) {
+        if (value && !(typeof value === 'string')) {
           throw new Error(
             'FormDatePicker should be used within <FormField> of a Date field'
           );
