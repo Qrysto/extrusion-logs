@@ -17,6 +17,7 @@ import {
   FilePenLine,
   Trash2,
   CopyPlus,
+  ArchiveRestore,
 } from 'lucide-react';
 import {
   Table,
@@ -48,6 +49,7 @@ export default function DataTable<TData>({
   hasNextPage,
   fetchNextPage,
   deleteRow,
+  restoreRow,
   editCell,
   readOnly,
 }: {
@@ -56,6 +58,7 @@ export default function DataTable<TData>({
   hasNextPage: boolean;
   fetchNextPage: Function;
   deleteRow: (row: Row<TData>) => Promise<void>;
+  restoreRow: (row: Row<TData>) => Promise<void>;
   editCell: (cell: Cell<TData, unknown>) => Promise<void>;
   readOnly: boolean;
 }) {
@@ -103,6 +106,7 @@ export default function DataTable<TData>({
                 row={row}
                 selected={!!table.getSelectedRowModel().rowsById[row.id]}
                 deleteRow={deleteRow}
+                restoreRow={restoreRow}
                 editCell={editCell}
                 readOnly={readOnly}
               />
@@ -226,6 +230,7 @@ const DataRow = genericMemo(
   <TData,>({
     row,
     deleteRow,
+    restoreRow,
     editCell,
     selected,
     readOnly,
@@ -233,6 +238,7 @@ const DataRow = genericMemo(
     row: Row<TData>;
     selected: boolean;
     deleteRow: (row: Row<TData>) => Promise<void>;
+    restoreRow: (row: Row<TData>) => Promise<void>;
     editCell: (cell: Cell<TData, unknown>) => Promise<void>;
     readOnly: boolean;
   }) => {
@@ -268,6 +274,31 @@ const DataRow = genericMemo(
       }
     }, [row, __, deleteRow]);
 
+    const [restoring, setRestoring] = useState<boolean>(false);
+    const restore = useCallback(async () => {
+      setRestoring(true);
+      try {
+        const confirmed = await confirm({
+          title: (
+            <span className="text-destructive">
+              {__('Restore Extrusion Log?')}
+            </span>
+          ),
+          description: __(
+            'Are you sure you want to restore this extrusion log?'
+          ),
+          variant: 'default',
+          yesLabel: __('Restore'),
+          noLabel: __('Cancel'),
+        });
+        if (confirmed) {
+          await restoreRow(row);
+        }
+      } finally {
+        setRestoring(false);
+      }
+    }, [row, __, restoreRow]);
+
     const duplicate = useCallback(() => {
       if (isExtrusionLog(orig)) {
         openDialog(ExtrusionLogDialog, { fromExtrusionLog: orig });
@@ -290,6 +321,7 @@ const DataRow = genericMemo(
           rowIsDraft && 'italic opacity-80 cursor-pointer',
           selected && !deleting && 'bg-accent text-accent-foreground',
           deleting && 'bg-destructive text-destructive-foreground',
+          restoring && 'bg-primary text-primary-foreground',
           (orig as ExtrusionLog).deleted && 'text-destructive'
         )}
         onClick={
@@ -305,6 +337,7 @@ const DataRow = genericMemo(
             key={cell.id}
             cell={cell}
             deleteRow={del}
+            restoreRow={restore}
             editCell={editCell}
             duplicateRow={duplicate}
             editRow={edit}
@@ -320,6 +353,7 @@ const DataCell = genericMemo(
   <TData,>({
     cell,
     deleteRow,
+    restoreRow,
     editCell,
     duplicateRow,
     editRow,
@@ -327,6 +361,7 @@ const DataCell = genericMemo(
   }: {
     cell: Cell<TData, unknown>;
     deleteRow: () => Promise<void>;
+    restoreRow: () => Promise<void>;
     editCell: (cell: Cell<TData, unknown>) => Promise<void>;
     duplicateRow: () => void;
     editRow: () => void;
@@ -337,6 +372,7 @@ const DataCell = genericMemo(
     const { column } = cell;
     const orig = cell.row.original;
     const rowIsDraft = isDraft(orig);
+    const deleted = (orig as ExtrusionLog).deleted;
 
     const tableCell = (
       <TableCell
@@ -407,10 +443,19 @@ const DataCell = genericMemo(
             </ContextMenuItem>
           )}
 
-          <ContextMenuItem className="cursor-pointer" onClick={deleteRow}>
-            <Trash2 className="w-4 h-4 mr-2" />
-            {rowIsDraft ? __('Delete Draft') : __('Delete Extrusion Log')}
-          </ContextMenuItem>
+          {!deleted && (
+            <ContextMenuItem className="cursor-pointer" onClick={deleteRow}>
+              <Trash2 className="w-4 h-4 mr-2" />
+              {rowIsDraft ? __('Delete Draft') : __('Delete Extrusion Log')}
+            </ContextMenuItem>
+          )}
+
+          {deleted && !rowIsDraft && (
+            <ContextMenuItem className="cursor-pointer" onClick={restoreRow}>
+              <ArchiveRestore className="w-4 h-4 mr-2" />
+              {__('Restore Extrusion Log')}
+            </ContextMenuItem>
+          )}
         </ContextMenuContent>
       </ContextMenu>
     );

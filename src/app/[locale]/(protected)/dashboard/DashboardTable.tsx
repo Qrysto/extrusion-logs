@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { colVisibilityKey } from '@/lib/const';
 import { DashboardTableItem } from '@/lib/types';
 import { AccountRole } from 'kysely-codegen';
-import { del } from '@/lib/api';
+import { del, post } from '@/lib/api';
 import { useTranslate, useLocale } from '@/lib/intl/client';
 import { toast, flashError, openDialog } from '@/lib/ui';
 import { useDrafts, removeDraft } from '@/lib/drafts';
@@ -87,6 +87,24 @@ export default function DashboardTable({ role }: { role: AccountRole }) {
     [__, refetch]
   );
 
+  const restoreRow = useCallback(
+    async (row: Row<DashboardTableItem>) => {
+      try {
+        const orig = row.original;
+        if (isDraft(orig)) return;
+        await post(`/api/extrusion-logs/${orig.id}/restore`);
+        toast({
+          title: __('Extrusion log has been restored'),
+        });
+      } catch (err: any) {
+        flashError({
+          message: err?.message ? __(err.message) : String(err),
+        });
+      }
+    },
+    [__, refetch]
+  );
+
   const editCell = useCallback(
     async (cell: Cell<DashboardTableItem, unknown>) =>
       new Promise<void>((resolve) => {
@@ -130,6 +148,7 @@ export default function DashboardTable({ role }: { role: AccountRole }) {
           hasNextPage={hasNextPage}
           fetchNextPage={fetchNextPage}
           deleteRow={deleteRow}
+          restoreRow={restoreRow}
           editCell={editCell}
           readOnly={role === 'admin'}
         />
