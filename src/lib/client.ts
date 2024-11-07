@@ -74,6 +74,7 @@ export function useExtrusionLogs() {
   const lotNo = searchParams.get('lotNo');
   const result = searchParams.get('result');
   const remarkSearch = searchParams.get('remarkSearch');
+  const deleted = searchParams.get('deleted');
   const sort = searchParams.get('sort');
 
   const select = useCallback(
@@ -124,6 +125,9 @@ export function useExtrusionLogs() {
   }
   if (remarkSearch) {
     params.remarkSearch = remarkSearch;
+  }
+  if (deleted) {
+    params.deleted = deleted;
   }
   if (sort) {
     params.sort = sort;

@@ -151,6 +151,27 @@ export default function Filters({ isAdmin }: { isAdmin: boolean }) {
         }
         className="w-40"
       />
+
+      <Select
+        value={searchParams.get('deleted') || ''}
+        onValueChange={(value) =>
+          updateSearchParams(
+            'deleted',
+            ['true', 'both'].includes(value) ? value : ''
+          )
+        }
+      >
+        <SelectTrigger className="w-28">
+          <SelectValue
+            placeholder={<span className="opacity-50">{__('Deleted?')}</span>}
+          />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="true">{__('Deleted')}</SelectItem>
+          <SelectItem value="false">{__('Not deleted')}</SelectItem>
+          <SelectItem value="both">{__('Both')}</SelectItem>
+        </SelectContent>
+      </Select>
     </>
   );
 }
