@@ -137,6 +137,8 @@ async function fetchExtrusionLogs({
       'extrusions.endButt',
       'extrusions.beforeSewing',
       'extrusions.afterSewing',
+      'extrusions.createdAt',
+      'extrusions.lastEdited',
       'extrusions.deleted',
     ])
     .limit(fetchLimit);

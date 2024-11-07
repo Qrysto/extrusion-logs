@@ -17,16 +17,32 @@ function getColumns(
   __: (text: string) => string,
   localeCode: 'vi' | 'kr' | 'en' = 'en'
 ) {
-  const adminColumns: ColumnDef<DashboardTableItem>[] = isAdmin
-    ? [
-        { accessorKey: 'plant', header: __('Plant') },
-        { accessorKey: 'machine', header: __('Machine') },
-        { accessorKey: 'inch', header: __('Inch') },
-      ]
-    : [];
   const headerLabel: StringOrTemplateHeader<DashboardTableItem, unknown> = ({
     column,
   }) => getShortLabel(column.id, __);
+
+  const adminColumns: ColumnDef<DashboardTableItem>[] = isAdmin
+    ? [
+        { accessorKey: 'plant', header: headerLabel },
+        { accessorKey: 'machine', header: headerLabel },
+        { accessorKey: 'inch', header: headerLabel },
+        {
+          accessorKey: 'createdAt',
+          header: headerLabel,
+          cell: ({ getValue }) => displayDate(getValue<Date>(), localeCode),
+        },
+        {
+          accessorKey: 'lastEdited',
+          header: headerLabel,
+          cell: ({ getValue }) => displayDate(getValue<Date>(), localeCode),
+        },
+        {
+          accessorKey: 'deleted',
+          header: headerLabel,
+          cell: ({ getValue }) => (getValue<boolean>() ? 'Deleted' : ''),
+        },
+      ]
+    : [];
 
   const columns: ColumnDef<DashboardTableItem>[] = [
     ch.group({
@@ -302,7 +318,7 @@ function isDraft(object: any): object is Draft {
 
 type MutableFields = Exclude<
   keyof ExtrusionLog,
-  'id' | 'machine' | 'plant' | 'inch' | 'deleted'
+  'id' | 'machine' | 'plant' | 'inch' | 'createdAt' | 'lastEdited' | 'deleted'
 >;
 
 type ColumnNames =
@@ -321,7 +337,10 @@ type ColumnNames =
   | 'ngWeight'
   | 'machine'
   | 'plant'
-  | 'inch';
+  | 'inch'
+  | 'createdAt'
+  | 'lastEdited'
+  | 'deleted';
 
 const mutableFields = new Set<MutableFields>([
   'billetLength',
@@ -377,6 +396,9 @@ const columnNames = mutableFields.union(
     'machine',
     'plant',
     'inch',
+    'createdAt',
+    'lastEdited',
+    'deleted',
   ])
 ) as Set<ColumnNames>;
 
@@ -400,6 +422,12 @@ function getColumnLabel(id: ColumnNames, __: (text: string) => string) {
       return __('Machine');
     case 'inch':
       return __('Inch');
+    case 'createdAt':
+      return __('Created At');
+    case 'lastEdited':
+      return __('Last Edited');
+    case 'deleted':
+      return __('Deleted');
 
     case 'item':
       return __('Item');
