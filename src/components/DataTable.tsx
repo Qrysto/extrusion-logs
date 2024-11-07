@@ -289,7 +289,8 @@ const DataRow = genericMemo(
         className={cn(
           rowIsDraft && 'italic opacity-80 cursor-pointer',
           selected && !deleting && 'bg-accent text-accent-foreground',
-          deleting && 'bg-destructive text-destructive-foreground'
+          deleting && 'bg-destructive text-destructive-foreground',
+          (orig as ExtrusionLog).deleted && 'text-destructive'
         )}
         onClick={
           rowIsDraft

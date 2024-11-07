@@ -302,7 +302,7 @@ function isDraft(object: any): object is Draft {
 
 type MutableFields = Exclude<
   keyof ExtrusionLog,
-  'id' | 'machine' | 'plant' | 'inch'
+  'id' | 'machine' | 'plant' | 'inch' | 'deleted'
 >;
 
 type ColumnNames =

@@ -137,6 +137,7 @@ async function fetchExtrusionLogs({
       'extrusions.endButt',
       'extrusions.beforeSewing',
       'extrusions.afterSewing',
+      'extrusions.deleted',
     ])
     .limit(fetchLimit);
   if (account?.role === 'team') {
