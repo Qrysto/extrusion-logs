@@ -49,6 +49,7 @@ export default function DataTable<TData>({
   fetchNextPage,
   deleteRow,
   editCell,
+  readOnly,
 }: {
   table: TableType<TData>;
   isFetching: boolean;
@@ -56,6 +57,7 @@ export default function DataTable<TData>({
   fetchNextPage: Function;
   deleteRow: (row: Row<TData>) => Promise<void>;
   editCell: (cell: Cell<TData, unknown>) => Promise<void>;
+  readOnly: boolean;
 }) {
   const __ = useTranslate();
   const { rows } = table.getRowModel();
@@ -102,6 +104,7 @@ export default function DataTable<TData>({
                 selected={!!table.getSelectedRowModel().rowsById[row.id]}
                 deleteRow={deleteRow}
                 editCell={editCell}
+                readOnly={readOnly}
               />
             ))
           ) : (
@@ -225,11 +228,13 @@ const DataRow = genericMemo(
     deleteRow,
     editCell,
     selected,
+    readOnly,
   }: {
     row: Row<TData>;
     selected: boolean;
     deleteRow: (row: Row<TData>) => Promise<void>;
     editCell: (cell: Cell<TData, unknown>) => Promise<void>;
+    readOnly: boolean;
   }) => {
     const __ = useTranslate();
     const orig = row.original;
@@ -302,6 +307,7 @@ const DataRow = genericMemo(
             editCell={editCell}
             duplicateRow={duplicate}
             editRow={edit}
+            readOnly={readOnly}
           />
         ))}
       </TableRow>
@@ -316,12 +322,14 @@ const DataCell = genericMemo(
     editCell,
     duplicateRow,
     editRow,
+    readOnly,
   }: {
     cell: Cell<TData, unknown>;
     deleteRow: () => Promise<void>;
     editCell: (cell: Cell<TData, unknown>) => Promise<void>;
     duplicateRow: () => void;
     editRow: () => void;
+    readOnly: boolean;
   }) => {
     const __ = useTranslate();
     const [editing, setEditing] = useState<boolean>(false);
@@ -329,23 +337,27 @@ const DataCell = genericMemo(
     const orig = cell.row.original;
     const rowIsDraft = isDraft(orig);
 
+    const tableCell = (
+      <TableCell
+        className={cn(
+          'whitespace-nowrap',
+          !rowIsDraft && 'hover:bg-accent hover:text-accent-foreground',
+          editing && 'bg-primary'
+        )}
+      >
+        {flexRender(column.columnDef.cell, cell.getContext())}
+      </TableCell>
+    );
+
+    if (readOnly) return tableCell;
+
     return (
       <ContextMenu
         onOpenChange={(open) => {
           cell.row.toggleSelected(open);
         }}
       >
-        <ContextMenuTrigger asChild>
-          <TableCell
-            className={cn(
-              'whitespace-nowrap',
-              !rowIsDraft && 'hover:bg-accent hover:text-accent-foreground',
-              editing && 'bg-primary'
-            )}
-          >
-            {flexRender(column.columnDef.cell, cell.getContext())}
-          </TableCell>
-        </ContextMenuTrigger>
+        <ContextMenuTrigger asChild></ContextMenuTrigger>
 
         <ContextMenuContent>
           {isMutableField(column.id) && !rowIsDraft && (
@@ -393,6 +405,7 @@ const DataCell = genericMemo(
               {__('Edit Draft')}
             </ContextMenuItem>
           )}
+
           <ContextMenuItem className="cursor-pointer" onClick={deleteRow}>
             <Trash2 className="w-4 h-4 mr-2" />
             {rowIsDraft ? __('Delete Draft') : __('Delete Extrusion Log')}

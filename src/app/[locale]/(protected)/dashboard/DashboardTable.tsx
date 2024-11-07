@@ -17,6 +17,7 @@ import { ListRestart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { colVisibilityKey } from '@/lib/const';
 import { DashboardTableItem } from '@/lib/types';
+import { AccountRole } from 'kysely-codegen';
 import { del } from '@/lib/api';
 import { useTranslate, useLocale } from '@/lib/intl/client';
 import { toast, flashError, openDialog } from '@/lib/ui';
@@ -27,7 +28,7 @@ import ColumnSelector from './ColumnSelector';
 import DataTable from '@/components/DataTable';
 import { EditExtrusionLogField } from './EditExtrusionLogField';
 
-export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
+export default function DashboardTable({ role }: { role: AccountRole }) {
   const __ = useTranslate();
   const locale = useLocale();
   const { data, isFetching, hasNextPage, fetchNextPage, refetch } =
@@ -38,6 +39,7 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
     [data, drafts]
   );
 
+  const isAdmin = role !== 'team';
   const columns = useMemo(
     () => getColumns(isAdmin, __, locale),
     [isAdmin, __, locale]
@@ -129,6 +131,7 @@ export default function DashboardTable({ isAdmin }: { isAdmin: boolean }) {
           fetchNextPage={fetchNextPage}
           deleteRow={deleteRow}
           editCell={editCell}
+          readOnly={role === 'admin'}
         />
       </main>
     </>

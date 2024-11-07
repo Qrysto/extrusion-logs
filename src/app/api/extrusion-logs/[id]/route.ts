@@ -24,7 +24,7 @@ export async function DELETE(
       { status: 404 }
     );
   }
-  if (account.role !== 'admin' && log.createdBy !== account.id) {
+  if (account.role !== 'super_admin' && log.createdBy !== account.id) {
     return Response.json({ message: __('Unauthorized!') }, { status: 401 });
   }
 
@@ -60,7 +60,7 @@ export async function PATCH(
       { status: 404 }
     );
   }
-  if (account.role !== 'admin' && log.createdBy !== account.id) {
+  if (account.role !== 'super_admin' && log.createdBy !== account.id) {
     return Response.json({ message: __('Unauthorized!') }, { status: 401 });
   }
 
