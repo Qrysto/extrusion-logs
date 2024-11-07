@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
   const lotNo = searchParams.get('lotNo');
   const result = searchParams.get('result');
   const remarkSearch = searchParams.get('remarkSearch');
+  const deleted = searchParams.get('deleted');
   const sort = searchParams.get('sort');
   const skip = searchParams.get('skip');
 
@@ -40,6 +41,7 @@ export async function GET(request: NextRequest) {
     lotNo,
     result: result === 'OK' ? 'OK' : result === 'NG' ? 'NG' : null,
     remarkSearch,
+    deleted: deleted === 'true' ? true : deleted === 'both' ? null : false,
     sort: sort && JSON.parse(sort),
     skip: skip ? parseInt(skip) : undefined,
   });
@@ -59,6 +61,7 @@ async function fetchExtrusionLogs({
   lotNo,
   result,
   remarkSearch,
+  deleted,
   sort,
   skip = 0,
 }: {
@@ -74,6 +77,7 @@ async function fetchExtrusionLogs({
   lotNo: string | null;
   result: 'OK' | 'NG' | null;
   remarkSearch: string | null;
+  deleted: boolean | null;
   sort: { id: string; desc: boolean }[] | null;
   skip?: number;
 }) {
@@ -176,6 +180,9 @@ async function fetchExtrusionLogs({
   }
   if (remarkSearch) {
     query = query.where('extrusions.remark', 'like', `%${remarkSearch}%`);
+  }
+  if (deleted !== null) {
+    query = query.where('extrusions.deleted', '=', deleted);
   }
   if (sort?.length) {
     for (const { id, desc } of sort) {

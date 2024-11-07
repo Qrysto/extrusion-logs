@@ -28,11 +28,16 @@ export async function DELETE(
     return Response.json({ message: __('Unauthorized!') }, { status: 401 });
   }
 
+  // const result = await db
+  //   .deleteFrom('extrusions')
+  //   .where('id', '=', log.id)
+  //   .executeTakeFirst();
   const result = await db
-    .deleteFrom('extrusions')
+    .updateTable('extrusions')
     .where('id', '=', log.id)
+    .set({ deleted: true })
     .executeTakeFirst();
-  if (!result.numDeletedRows) {
+  if (!result.numChangedRows) {
     return Response.json({ message: __('Delete failed!') }, { status: 500 });
   }
 
