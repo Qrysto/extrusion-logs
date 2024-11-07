@@ -7,6 +7,10 @@ const enDisplayDateFormat = 'PP';
 const viDisplayDateFormat = 'EEEEE P';
 const koDisplayDateFormat = 'P (EEEEE)';
 
+const enDisplayTimeFormat = 'PP HH:mm';
+const viDisplayTimeFormat = 'EEEEE P HH:mm';
+const koDisplayTimeFormat = 'P (EEEEE) HH:mm';
+
 export function displayDate(
   date: Date | null,
   localeCode: 'vi' | 'kr' | 'en' = 'en'
@@ -21,6 +25,22 @@ export function displayDate(
       ? koDisplayDateFormat
       : enDisplayDateFormat;
   return format(date, displayDateFormat, { locale });
+}
+
+export function displayTime(
+  date: Date | null,
+  localeCode: 'vi' | 'kr' | 'en' = 'en'
+) {
+  if (!date) return null;
+  const locale =
+    localeCode === 'vi' ? vi : localeCode === 'kr' ? ko : undefined;
+  const displayTimeFormat =
+    localeCode === 'vi'
+      ? viDisplayTimeFormat
+      : localeCode === 'kr'
+      ? koDisplayTimeFormat
+      : enDisplayTimeFormat;
+  return format(date, displayTimeFormat, { locale });
 }
 
 export const standardDateFormat = 'yyyy-MM-dd';

@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-table';
 import type { DashboardTableItem, ExtrusionLog, Draft } from '@/lib/types';
 import { parse } from 'date-fns';
-import { displayDate, timeFormat } from '@/lib/dateTime';
+import { displayDate, displayTime, timeFormat } from '@/lib/dateTime';
 
 const ch = createColumnHelper<DashboardTableItem>();
 const formatNumber = Intl.NumberFormat('en-US').format;
@@ -29,12 +29,12 @@ function getColumns(
         {
           accessorKey: 'createdAt',
           header: headerLabel,
-          cell: ({ getValue }) => displayDate(getValue<Date>(), localeCode),
+          cell: ({ getValue }) => displayTime(getValue<Date>(), localeCode),
         },
         {
           accessorKey: 'lastEdited',
           header: headerLabel,
-          cell: ({ getValue }) => displayDate(getValue<Date>(), localeCode),
+          cell: ({ getValue }) => displayTime(getValue<Date>(), localeCode),
         },
         {
           accessorKey: 'deleted',
