@@ -30,7 +30,7 @@ export async function POST(
     .where('id', '=', log.id)
     .set({ deleted: false })
     .executeTakeFirst();
-  if (!result.numChangedRows) {
+  if (!result.numUpdatedRows) {
     return Response.json(
       { message: __('Restoration failed!') },
       { status: 500 }

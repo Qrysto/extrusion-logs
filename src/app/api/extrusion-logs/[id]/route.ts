@@ -37,7 +37,7 @@ export async function DELETE(
     .where('id', '=', log.id)
     .set({ deleted: true })
     .executeTakeFirst();
-  if (!result.numChangedRows) {
+  if (!result.numUpdatedRows) {
     return Response.json({ message: __('Delete failed!') }, { status: 500 });
   }
 
