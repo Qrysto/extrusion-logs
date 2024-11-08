@@ -19,9 +19,9 @@ import {
   DropdownMenuItem,
   DropdownMenuArrow,
 } from '@/components/ui/dropdown-menu';
+import { useRedirect } from '@/lib/intl/client';
 import { ChevronDown } from 'lucide-react';
 import { post } from '@/lib/api';
-import { useRouter } from 'next/navigation';
 import type { LoggedInAccount } from '@/lib/auth';
 
 export default function AccountControl({
@@ -31,10 +31,10 @@ export default function AccountControl({
 }) {
   const __ = useTranslate();
   const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const redirect = useRedirect();
   async function logOut() {
     await post('/api/logout');
-    router.push('/login');
+    const router = redirect('/login');
     router.refresh();
   }
 

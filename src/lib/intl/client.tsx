@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, useRouter, usePathname } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Locale } from '@/lib/types';
 import { memoize } from '@/lib/utils';
 import { translateEn, translateVi, translateKr } from './translate';
@@ -24,8 +24,19 @@ export const getLocale = memoize((pathname: string) => {
 
 export function useSetLocale() {
   const router = useRouter();
-  const pathname = usePathname();
-  return (locale: Locale) => router.push(`/${locale}${pathname.substring(3)}`);
+  const pathname = location.pathname;
+  const searchQuery = location.search;
+  return (locale: Locale) =>
+    router.push(`/${locale}${pathname.substring(3)}${searchQuery}`);
+}
+
+export function useRedirect() {
+  const router = useRouter();
+  const locale = useLocale();
+  return (pathname: String) => {
+    router.push(`/${locale}${pathname}`);
+    return router;
+  };
 }
 
 export function useTranslate() {

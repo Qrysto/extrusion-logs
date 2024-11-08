@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useTranslate } from '@/lib/intl/client';
 import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRedirect } from '@/lib/intl/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { post } from '@/lib/api';
 
@@ -16,7 +16,7 @@ interface FormValues {
 }
 
 export default function LoginForm() {
-  const router = useRouter();
+  const redirect = useRedirect();
   const __ = useTranslate();
 
   const {
@@ -36,7 +36,7 @@ export default function LoginForm() {
       return;
     }
 
-    router.push('/dashboard');
+    redirect('/dashboard');
   };
 
   return (
