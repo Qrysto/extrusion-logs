@@ -38,3 +38,7 @@ next-env.d.ts
 .vercel
 
 imports
+
+# local cmd files
+backup-db.cmd
+restore-db.cmd
