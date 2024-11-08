@@ -394,7 +394,7 @@ const DataCell = genericMemo(
           cell.row.toggleSelected(open);
         }}
       >
-        <ContextMenuTrigger asChild></ContextMenuTrigger>
+        <ContextMenuTrigger asChild>{tableCell}</ContextMenuTrigger>
 
         <ContextMenuContent>
           {isMutableField(column.id) && !rowIsDraft && (

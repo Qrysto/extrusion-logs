@@ -96,6 +96,7 @@ export default function DashboardTable({ role }: { role: AccountRole }) {
         toast({
           title: __('Extrusion log has been restored'),
         });
+        await refetch();
       } catch (err: any) {
         flashError({
           message: err?.message ? __(err.message) : String(err),
