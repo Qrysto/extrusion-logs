@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "codegen": "env-cmd -f ./.env.local kysely-codegen --camel-case",
+    "codegen": "env-cmd -f ./.env.production.local kysely-codegen --camel-case",
+    "codegen-dev": "env-cmd -f ./.env.development.local kysely-codegen --camel-case",
     "trans-extract": "node -r @babel/register ./scripts/extractTranslations.js"
   },
   "dependencies": {
