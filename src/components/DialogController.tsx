@@ -172,12 +172,16 @@ const dialogStore = new DialogStore();
 
 const openDialog = dialogStore.openDialog.bind(dialogStore);
 const dismissDialog = dialogStore.dismissDialog.bind(dialogStore);
+const subscribe = dialogStore.subscribe.bind(dialogStore);
+const getSnapshot = dialogStore.getState.bind(dialogStore);
+const emptyArray: any[] = [];
+const getServerSnapshot = () => emptyArray;
 
 function DialogController() {
   const dialogs = useSyncExternalStore(
-    dialogStore.subscribe.bind(dialogStore),
-    dialogStore.getState.bind(dialogStore),
-    () => []
+    subscribe,
+    getSnapshot,
+    getServerSnapshot
   );
 
   return dialogs.map(({ id, Component, props }) => (
