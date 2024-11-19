@@ -8,13 +8,12 @@ export default async function Dashboard({
   params: { locale: string };
 }) {
   const account = await protectPage(locale);
-  const role = account.role;
 
   return (
     <div className="flex flex-col w-full h-screen px-6">
       <Header account={account} />
 
-      <DashboardTable role={role} />
+      <DashboardTable account={account} />
     </div>
   );
 }

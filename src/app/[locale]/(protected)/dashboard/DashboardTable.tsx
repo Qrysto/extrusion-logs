@@ -23,12 +23,17 @@ import { useTranslate, useLocale } from '@/lib/intl/client';
 import { toast, flashError, openDialog } from '@/lib/ui';
 import { useDrafts, removeDraft } from '@/lib/drafts';
 import { getColumns, isMutableField, isDraft } from '@/lib/columns';
+import { LoggedInAccount } from '@/lib/auth';
 import Filters from './Filters';
 import ColumnSelector from './ColumnSelector';
 import DataTable from '@/components/DataTable';
 import { EditExtrusionLogField } from './EditExtrusionLogField';
 
-export default function DashboardTable({ role }: { role: AccountRole }) {
+export default function DashboardTable({
+  account,
+}: {
+  account: LoggedInAccount;
+}) {
   const __ = useTranslate();
   const locale = useLocale();
   const { data, isFetching, hasNextPage, fetchNextPage, refetch } =
@@ -39,10 +44,10 @@ export default function DashboardTable({ role }: { role: AccountRole }) {
     [data, drafts]
   );
 
-  const isAdmin = role !== 'team';
+  const isAdmin = account.role !== 'team';
   const columns = useMemo(
-    () => getColumns(isAdmin, __, locale),
-    [isAdmin, __, locale]
+    () => getColumns(account, __, locale),
+    [account, __, locale]
   );
   const [sorting, setSorting] = useSortingState();
   const [columnVisibility, setColumnVisibility] = useColumnVisibility();

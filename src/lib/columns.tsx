@@ -6,6 +6,7 @@ import {
   createColumnHelper,
 } from '@tanstack/react-table';
 import type { DashboardTableItem, ExtrusionLog, Draft } from '@/lib/types';
+import { LoggedInAccount } from './auth';
 import { parse } from 'date-fns';
 import { displayDate, displayTime, timeFormat } from '@/lib/dateTime';
 
@@ -13,10 +14,11 @@ const ch = createColumnHelper<DashboardTableItem>();
 const formatNumber = Intl.NumberFormat('en-US').format;
 
 function getColumns(
-  isAdmin: boolean,
+  account: LoggedInAccount,
   __: (text: string) => string,
   localeCode: 'vi' | 'kr' | 'en' = 'en'
 ) {
+  const isAdmin = account.role !== 'team';
   const headerLabel: StringOrTemplateHeader<DashboardTableItem, unknown> = ({
     column,
   }) => getShortLabel(column.id, __);
@@ -56,7 +58,14 @@ function getColumns(
           id: 'shift',
           header: headerLabel,
           cell: ({ row }) =>
-            isDayShift(row.original.startTime) ? __('Day') : __('Night'),
+            isDayShift(
+              row.original.startTime,
+              (row.original as Draft).isDraft
+                ? account.username
+                : (row.original as ExtrusionLog).machine
+            )
+              ? __('Day')
+              : __('Night'),
         }),
         ...adminColumns,
       ],
@@ -605,12 +614,15 @@ function getShortLabel(col: string, __: (text: string) => string) {
   }
 }
 
-function isDayShift(startTime: string | null) {
+function isDayShift(startTime: string | null, machine: string | null) {
   if (!startTime) return null;
   const hour = parseInt(startTime.substring(0, 2));
   if (Number.isNaN(hour)) return null;
-  const dayShift = hour >= 7 && hour < 19;
-  return dayShift;
+  if (machine && ['MC1', 'MC2', 'MC3', 'MC5'].includes(machine)) {
+    return hour >= 8 && hour < 20;
+  } else {
+    return hour >= 7 && hour < 19;
+  }
 }
 
 export {
