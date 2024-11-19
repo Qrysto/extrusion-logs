@@ -10,7 +10,7 @@ import { useTheme } from 'next-themes';
 import { LoggedInAccount } from '@/lib/auth';
 import { openDialog } from '@/lib/ui';
 import ExtrusionLogDialog from '@/components/ExtrusionLogDialog';
-import LanguageSelector from '@/components/LanguageSelector';
+import DynamicLanguageSelector from '@/components/DynamicLanguageSelector';
 import AccountControl from './AccountControl';
 
 export default function Header({ account }: { account: LoggedInAccount }) {
@@ -97,7 +97,7 @@ export default function Header({ account }: { account: LoggedInAccount }) {
             <MoonStar className="h-4 w-4" />
           </Button>
         )}
-        <LanguageSelector />
+        <DynamicLanguageSelector />
         <AccountControl account={account} />
       </div>
     </header>

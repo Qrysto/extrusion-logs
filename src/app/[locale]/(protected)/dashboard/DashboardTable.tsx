@@ -17,7 +17,6 @@ import { ListRestart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { colVisibilityKey } from '@/lib/const';
 import { DashboardTableItem } from '@/lib/types';
-import { AccountRole } from 'kysely-codegen';
 import { del, post } from '@/lib/api';
 import { useTranslate, useLocale } from '@/lib/intl/client';
 import { toast, flashError, openDialog } from '@/lib/ui';
@@ -156,7 +155,7 @@ export default function DashboardTable({
           deleteRow={deleteRow}
           restoreRow={restoreRow}
           editCell={editCell}
-          readOnly={role === 'admin'}
+          readOnly={account.role === 'admin'}
         />
       </main>
     </>

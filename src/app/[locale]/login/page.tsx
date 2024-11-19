@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { getTranslate } from '@/lib/intl/server';
 import LoginForm from './LoginForm';
-import LanguageSelector from '@/components/LanguageSelector';
+import DynamicLanguageSelector from '@/components/DynamicLanguageSelector';
 
 export default function Login({
   params: { locale },
@@ -11,7 +11,7 @@ export default function Login({
   const __ = getTranslate(locale);
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
-      <LanguageSelector className="absolute top-4 right-4" />
+      <DynamicLanguageSelector className="absolute top-4 right-4" />
       <div className="w-full max-w-md space-y-8">
         <Image
           src="/images/aluko-logo.png"
