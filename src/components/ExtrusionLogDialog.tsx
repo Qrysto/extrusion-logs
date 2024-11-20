@@ -1,4 +1,5 @@
 'use client';
+
 import { useId, useRef, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -20,6 +21,7 @@ import { Draft, ExtrusionLog, FullFormValues } from '@/lib/types';
 import {
   refreshSuggestionData,
   refreshAllExtrusionQueries,
+  useAccount,
 } from '@/lib/client';
 import { useTranslate } from '@/lib/intl/client';
 import { post, patch } from '@/lib/api';
@@ -27,9 +29,10 @@ import { post, patch } from '@/lib/api';
 import { Form } from '@/components/ui/form';
 import { formatDate } from '@/lib/dateTime';
 import { nullToUndefined } from '@/lib/utils';
-import { formSchema } from '@/lib/extrusionLogForm';
+import { refineFormSchema } from '@/lib/extrusionLogForm';
 import ExtrusionLogFormField from '@/components/ExtrusionLogFormField';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { machinesWith8To8Shift } from '@/lib/const';
 
 export default function ExtrusionLogDialog({
   open,
@@ -44,6 +47,7 @@ export default function ExtrusionLogDialog({
   editId?: number;
 } & FortifiedDialogProps) {
   const __ = useTranslate();
+  const account = useAccount();
   const defaultValues = useMemo(
     () =>
       (fromDraft && nullToUndefined(fromDraft)) ||
@@ -52,6 +56,8 @@ export default function ExtrusionLogDialog({
     [fromDraft, fromExtrusionLog]
   );
   const formId = useId();
+  const shiftStartsAt8 = machinesWith8To8Shift.includes(account.username);
+  const formSchema = refineFormSchema(shiftStartsAt8);
   const form = useForm<FullFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,

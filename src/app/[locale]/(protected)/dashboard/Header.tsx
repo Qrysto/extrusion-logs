@@ -6,18 +6,19 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Plus, MoonStar, Sun } from 'lucide-react';
 import { useTranslate } from '@/lib/intl/client';
+import { useAccount } from '@/lib/client';
 import { useTheme } from 'next-themes';
-import { LoggedInAccount } from '@/lib/auth';
 import { openDialog } from '@/lib/ui';
 import ExtrusionLogDialog from '@/components/ExtrusionLogDialog';
 import DynamicLanguageSelector from '@/components/DynamicLanguageSelector';
 import AccountControl from './AccountControl';
 
-export default function Header({ account }: { account: LoggedInAccount }) {
+export default function Header() {
   const __ = useTranslate();
   // const [employeeId, setEmployeeId] = useState('');
   // const [editing, setEditing] = useState(false);
   const { setTheme, theme } = useTheme();
+  const account = useAccount();
 
   return (
     <header className="bg-background border-b py-6 flex justify-between items-start shrink-0">
@@ -98,7 +99,7 @@ export default function Header({ account }: { account: LoggedInAccount }) {
           </Button>
         )}
         <DynamicLanguageSelector />
-        <AccountControl account={account} />
+        <AccountControl />
       </div>
     </header>
   );

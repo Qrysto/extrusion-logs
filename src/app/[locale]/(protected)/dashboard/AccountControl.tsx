@@ -11,7 +11,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { useTranslate } from '@/lib/intl/client';
+import { useTranslate, useRedirect } from '@/lib/intl/client';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -19,17 +19,13 @@ import {
   DropdownMenuItem,
   DropdownMenuArrow,
 } from '@/components/ui/dropdown-menu';
-import { useRedirect } from '@/lib/intl/client';
+import { useAccount } from '@/lib/client';
 import { ChevronDown } from 'lucide-react';
 import { post } from '@/lib/api';
-import type { LoggedInAccount } from '@/lib/auth';
 
-export default function AccountControl({
-  account,
-}: {
-  account: LoggedInAccount;
-}) {
+export default function AccountControl() {
   const __ = useTranslate();
+  const account = useAccount();
   const [open, setOpen] = useState(false);
   const redirect = useRedirect();
   async function logOut() {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, createContext, useContext } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { QueryClient, InfiniteData } from '@tanstack/react-query';
 import {
@@ -10,6 +10,7 @@ import {
 } from '@tanstack/react-query';
 import { stripSeconds } from './utils';
 import type { SuggestionData, ExtrusionLog } from './types';
+import { LoggedInAccount } from './auth';
 import { fetchLimit } from './const';
 import { get } from './api';
 
@@ -154,3 +155,11 @@ export async function refreshAllExtrusionQueries() {
 
 const flatLength = (arr: any[]) =>
   arr.reduce((sum, page) => sum + page.length, 0);
+
+export const AccountContext = createContext<LoggedInAccount>(
+  {} as LoggedInAccount
+);
+
+export function useAccount() {
+  return useContext(AccountContext);
+}

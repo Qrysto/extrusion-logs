@@ -58,23 +58,28 @@ export const formBaseSchema = z.object({
   afterSewing: z.coerce.number().min(0),
 });
 
-export const formSchema = formBaseSchema.refine(
-  ({ startTime, endTime }) => {
-    if (!startTime || !endTime) return true;
-    const startMinutes = toMinutes(startTime);
-    const endMinutes = toMinutes(endTime);
-    if (endMinutes > startMinutes) return true;
-    return endMinutes < 420; // 420 minutes == 7:00 am
-  },
-  () => {
-    const __ = getTranslate();
-    console.log('get Error');
+export const refineFormSchema = (shiftStartsAt8: boolean) =>
+  formBaseSchema.refine(
+    ({ startTime, endTime }) => {
+      if (!startTime || !endTime) return true;
+      const startMinutes = toMinutes(startTime);
+      const endMinutes = toMinutes(endTime);
+      if (endMinutes > startMinutes) return true;
+      if (shiftStartsAt8) {
+        return endMinutes < 480; // 480 minutes == 8:00 am
+      } else {
+        return endMinutes < 420; // 420 minutes == 7:00 am
+      }
+    },
+    () => {
+      const __ = getTranslate();
+      console.log('get Error');
 
-    return {
-      message: __('End time must not exceed 7:00 am of the following day'),
-      path: ['endTime'],
-    };
-  }
-);
+      return {
+        message: __('End time must not exceed 7:00 am of the following day'),
+        path: ['endTime'],
+      };
+    }
+  );
 
-export type FullFormValues = z.infer<typeof formSchema>;
+export type FullFormValues = z.infer<typeof formBaseSchema>;

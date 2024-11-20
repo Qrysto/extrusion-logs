@@ -6,9 +6,10 @@ import {
   createColumnHelper,
 } from '@tanstack/react-table';
 import type { DashboardTableItem, ExtrusionLog, Draft } from '@/lib/types';
-import { LoggedInAccount } from './auth';
 import { parse } from 'date-fns';
 import { displayDate, displayTime, timeFormat } from '@/lib/dateTime';
+import { machinesWith8To8Shift } from './const';
+import { LoggedInAccount } from './auth';
 
 const ch = createColumnHelper<DashboardTableItem>();
 const formatNumber = Intl.NumberFormat('en-US').format;
@@ -618,7 +619,7 @@ function isDayShift(startTime: string | null, machine: string | null) {
   if (!startTime) return null;
   const hour = parseInt(startTime.substring(0, 2));
   if (Number.isNaN(hour)) return null;
-  if (machine && ['MC1', 'MC2', 'MC3', 'MC5'].includes(machine)) {
+  if (machine && machinesWith8To8Shift.includes(machine)) {
     return hour >= 8 && hour < 20;
   } else {
     return hour >= 7 && hour < 19;

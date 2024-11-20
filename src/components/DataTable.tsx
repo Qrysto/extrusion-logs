@@ -35,6 +35,7 @@ import {
   ContextMenuSeparator,
 } from '@/components/ui/context-menu';
 import { useTranslate } from '@/lib/intl/client';
+import { useAccount } from '@/lib/client';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isMutableField, getLabel, isDraft } from '@/lib/columns';
 import { ExtrusionLog } from '@/lib/types';
@@ -51,7 +52,6 @@ export default function DataTable<TData>({
   deleteRow,
   restoreRow,
   editCell,
-  readOnly,
 }: {
   table: TableType<TData>;
   isFetching: boolean;
@@ -60,7 +60,6 @@ export default function DataTable<TData>({
   deleteRow: (row: Row<TData>) => Promise<void>;
   restoreRow: (row: Row<TData>) => Promise<void>;
   editCell: (cell: Cell<TData, unknown>) => Promise<void>;
-  readOnly: boolean;
 }) {
   const __ = useTranslate();
   const { rows } = table.getRowModel();
@@ -108,7 +107,6 @@ export default function DataTable<TData>({
                 deleteRow={deleteRow}
                 restoreRow={restoreRow}
                 editCell={editCell}
-                readOnly={readOnly}
               />
             ))
           ) : (
@@ -233,14 +231,12 @@ const DataRow = genericMemo(
     restoreRow,
     editCell,
     selected,
-    readOnly,
   }: {
     row: Row<TData>;
     selected: boolean;
     deleteRow: (row: Row<TData>) => Promise<void>;
     restoreRow: (row: Row<TData>) => Promise<void>;
     editCell: (cell: Cell<TData, unknown>) => Promise<void>;
-    readOnly: boolean;
   }) => {
     const __ = useTranslate();
     const orig = row.original;
@@ -341,7 +337,6 @@ const DataRow = genericMemo(
             editCell={editCell}
             duplicateRow={duplicate}
             editRow={edit}
-            readOnly={readOnly}
           />
         ))}
       </TableRow>
@@ -357,7 +352,6 @@ const DataCell = genericMemo(
     editCell,
     duplicateRow,
     editRow,
-    readOnly,
   }: {
     cell: Cell<TData, unknown>;
     deleteRow: () => Promise<void>;
@@ -365,28 +359,15 @@ const DataCell = genericMemo(
     editCell: (cell: Cell<TData, unknown>) => Promise<void>;
     duplicateRow: () => void;
     editRow: () => void;
-    readOnly: boolean;
   }) => {
     const __ = useTranslate();
+    const account = useAccount();
+    const readOnly = account.role === 'admin';
     const [editing, setEditing] = useState<boolean>(false);
     const { column } = cell;
     const orig = cell.row.original;
     const rowIsDraft = isDraft(orig);
     const deleted = (orig as ExtrusionLog).deleted;
-
-    const tableCell = (
-      <TableCell
-        className={cn(
-          'whitespace-nowrap',
-          !rowIsDraft && 'hover:bg-accent hover:text-accent-foreground',
-          editing && 'bg-primary'
-        )}
-      >
-        {flexRender(column.columnDef.cell, cell.getContext())}
-      </TableCell>
-    );
-
-    if (readOnly) return tableCell;
 
     return (
       <ContextMenu
@@ -394,69 +375,81 @@ const DataCell = genericMemo(
           cell.row.toggleSelected(open);
         }}
       >
-        <ContextMenuTrigger asChild>{tableCell}</ContextMenuTrigger>
+        <ContextMenuTrigger asChild>
+          <TableCell
+            className={cn(
+              'whitespace-nowrap',
+              !rowIsDraft && 'hover:bg-accent hover:text-accent-foreground',
+              editing && 'bg-primary'
+            )}
+          >
+            {flexRender(column.columnDef.cell, cell.getContext())}
+          </TableCell>
+        </ContextMenuTrigger>
 
-        <ContextMenuContent>
-          {isMutableField(column.id) && !rowIsDraft && (
-            <>
+        {!readOnly && (
+          <ContextMenuContent>
+            {isMutableField(column.id) && !rowIsDraft && (
+              <>
+                <ContextMenuItem
+                  className="cursor-pointer"
+                  onClick={async () => {
+                    setEditing(true);
+                    try {
+                      await editCell(cell);
+                    } finally {
+                      setEditing(false);
+                    }
+                  }}
+                >
+                  <FilePenLine className="w-4 h-4 mr-2" />
+                  {__('Edit %columnName%', {
+                    columnName: getLabel(column.id, __),
+                  })}
+                </ContextMenuItem>
+                <ContextMenuSeparator />
+              </>
+            )}
+
+            <ContextMenuItem className="cursor-pointer" onClick={duplicateRow}>
+              <CopyPlus className="w-4 h-4 mr-2" />
+              {__('Duplicate Extrusion Log')}
+            </ContextMenuItem>
+
+            <ContextMenuItem className="cursor-pointer" onClick={editRow}>
+              <FilePenLine className="w-4 h-4 mr-2" />
+              {__('Edit Extrusion Log')}
+            </ContextMenuItem>
+
+            {rowIsDraft && (
               <ContextMenuItem
                 className="cursor-pointer"
-                onClick={async () => {
-                  setEditing(true);
-                  try {
-                    await editCell(cell);
-                  } finally {
-                    setEditing(false);
-                  }
+                onClick={(evt) => {
+                  // Prevent opening Edit dialog twice because clicking menu item is also clicking the row
+                  evt.stopPropagation();
+                  openDialog(ExtrusionLogDialog, { fromDraft: orig });
                 }}
               >
                 <FilePenLine className="w-4 h-4 mr-2" />
-                {__('Edit %columnName%', {
-                  columnName: getLabel(column.id, __),
-                })}
+                {__('Edit Draft')}
               </ContextMenuItem>
-              <ContextMenuSeparator />
-            </>
-          )}
+            )}
 
-          <ContextMenuItem className="cursor-pointer" onClick={duplicateRow}>
-            <CopyPlus className="w-4 h-4 mr-2" />
-            {__('Duplicate Extrusion Log')}
-          </ContextMenuItem>
+            {!deleted && (
+              <ContextMenuItem className="cursor-pointer" onClick={deleteRow}>
+                <Trash2 className="w-4 h-4 mr-2" />
+                {rowIsDraft ? __('Delete Draft') : __('Delete Extrusion Log')}
+              </ContextMenuItem>
+            )}
 
-          <ContextMenuItem className="cursor-pointer" onClick={editRow}>
-            <FilePenLine className="w-4 h-4 mr-2" />
-            {__('Edit Extrusion Log')}
-          </ContextMenuItem>
-
-          {rowIsDraft && (
-            <ContextMenuItem
-              className="cursor-pointer"
-              onClick={(evt) => {
-                // Prevent opening Edit dialog twice because clicking menu item is also clicking the row
-                evt.stopPropagation();
-                openDialog(ExtrusionLogDialog, { fromDraft: orig });
-              }}
-            >
-              <FilePenLine className="w-4 h-4 mr-2" />
-              {__('Edit Draft')}
-            </ContextMenuItem>
-          )}
-
-          {!deleted && (
-            <ContextMenuItem className="cursor-pointer" onClick={deleteRow}>
-              <Trash2 className="w-4 h-4 mr-2" />
-              {rowIsDraft ? __('Delete Draft') : __('Delete Extrusion Log')}
-            </ContextMenuItem>
-          )}
-
-          {deleted && !rowIsDraft && (
-            <ContextMenuItem className="cursor-pointer" onClick={restoreRow}>
-              <ArchiveRestore className="w-4 h-4 mr-2" />
-              {__('Restore Extrusion Log')}
-            </ContextMenuItem>
-          )}
-        </ContextMenuContent>
+            {deleted && !rowIsDraft && (
+              <ContextMenuItem className="cursor-pointer" onClick={restoreRow}>
+                <ArchiveRestore className="w-4 h-4 mr-2" />
+                {__('Restore Extrusion Log')}
+              </ContextMenuItem>
+            )}
+          </ContextMenuContent>
+        )}
       </ContextMenu>
     );
   }

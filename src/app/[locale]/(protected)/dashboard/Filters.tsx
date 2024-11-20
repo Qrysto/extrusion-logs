@@ -12,11 +12,13 @@ import {
 } from '@/components/ui/select';
 import { useTranslate } from '@/lib/intl/client';
 import { Combobox } from '@/components/ui/combobox';
-import { useSuggestionData } from '@/lib/client';
+import { useSuggestionData, useAccount } from '@/lib/client';
 import { formatDateRange, parseDateRange } from '@/lib/dateTime';
 
-export default function Filters({ isAdmin }: { isAdmin: boolean }) {
+export default function Filters() {
   const __ = useTranslate();
+  const account = useAccount();
+  const isAdmin = account.role !== 'team';
   const [searchParams, updateSearchParams] = useUpdateSearchParams();
   const { data } = useSuggestionData();
   const {

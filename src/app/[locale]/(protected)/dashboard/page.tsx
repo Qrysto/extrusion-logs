@@ -1,8 +1,7 @@
 import { protectPage } from '@/lib/auth';
-import Header from './Header';
-import DashboardTable from './DashboardTable';
+import Dashboard from './Dashboard';
 
-export default async function Dashboard({
+export default async function DashboardPage({
   params: { locale },
 }: {
   params: { locale: string };
@@ -11,9 +10,7 @@ export default async function Dashboard({
 
   return (
     <div className="flex flex-col w-full h-screen px-6">
-      <Header account={account} />
-
-      <DashboardTable account={account} />
+      <Dashboard account={account} />
     </div>
   );
 }

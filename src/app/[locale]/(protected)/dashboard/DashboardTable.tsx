@@ -12,7 +12,7 @@ import {
   Row,
   Cell,
 } from '@tanstack/react-table';
-import { useUpdateSearchParams } from '@/lib/client';
+import { useUpdateSearchParams, useAccount } from '@/lib/client';
 import { ListRestart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { colVisibilityKey } from '@/lib/const';
@@ -22,18 +22,14 @@ import { useTranslate, useLocale } from '@/lib/intl/client';
 import { toast, flashError, openDialog } from '@/lib/ui';
 import { useDrafts, removeDraft } from '@/lib/drafts';
 import { getColumns, isMutableField, isDraft } from '@/lib/columns';
-import { LoggedInAccount } from '@/lib/auth';
 import Filters from './Filters';
 import ColumnSelector from './ColumnSelector';
 import DataTable from '@/components/DataTable';
 import { EditExtrusionLogField } from './EditExtrusionLogField';
 
-export default function DashboardTable({
-  account,
-}: {
-  account: LoggedInAccount;
-}) {
+export default function DashboardTable() {
   const __ = useTranslate();
+  const account = useAccount();
   const locale = useLocale();
   const { data, isFetching, hasNextPage, fetchNextPage, refetch } =
     useExtrusionLogs();
@@ -43,7 +39,6 @@ export default function DashboardTable({
     [data, drafts]
   );
 
-  const isAdmin = account.role !== 'team';
   const columns = useMemo(
     () => getColumns(account, __, locale),
     [account, __, locale]
@@ -133,7 +128,7 @@ export default function DashboardTable({
     <>
       <div className="my-3 flex gap-4 items-center flex-wrap flex-shrink-0">
         <ColumnSelector table={table} />
-        <Filters isAdmin={isAdmin} />
+        <Filters />
         <Button
           variant="outline"
           disabled={sorting.length === 0}
@@ -155,7 +150,6 @@ export default function DashboardTable({
           deleteRow={deleteRow}
           restoreRow={restoreRow}
           editCell={editCell}
-          readOnly={account.role === 'admin'}
         />
       </main>
     </>
