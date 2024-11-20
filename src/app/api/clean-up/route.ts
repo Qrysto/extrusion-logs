@@ -2,12 +2,6 @@ import { type NextRequest } from 'next/server';
 import db from '@/lib/db';
 
 export async function GET(request: NextRequest) {
-  if (
-    request.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`
-  ) {
-    return Response.json({ message: 'Unauthorized' }, { status: 401 });
-  }
-
   console.log('[Clean up] Start Clean Up');
   const startTime = Date.now();
   const monthAgo = new Date(startTime - 30 * 24 * 60 * 60 * 1000);
