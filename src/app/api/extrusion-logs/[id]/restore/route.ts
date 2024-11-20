@@ -1,5 +1,6 @@
 import { type NextRequest } from 'next/server';
 import db from '@/lib/db';
+import { sql } from 'kysely';
 import { getAccount } from '@/lib/auth';
 import { dummyTranslate as __ } from '@/lib/intl/server';
 
@@ -28,7 +29,7 @@ export async function POST(
   const result = await db
     .updateTable('extrusions')
     .where('id', '=', log.id)
-    .set({ deleted: false })
+    .set({ deleted: false, lastEdited: sql`DEFAULT` })
     .executeTakeFirst();
   if (!result.numUpdatedRows) {
     return Response.json(

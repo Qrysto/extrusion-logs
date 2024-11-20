@@ -1,4 +1,5 @@
 import { type NextRequest } from 'next/server';
+import { sql } from 'kysely';
 import db from '@/lib/db';
 import { getAccount } from '@/lib/auth';
 import { dummyTranslate as __ } from '@/lib/intl/server';
@@ -35,7 +36,7 @@ export async function DELETE(
   const result = await db
     .updateTable('extrusions')
     .where('id', '=', log.id)
-    .set({ deleted: true })
+    .set({ deleted: true, lastEdited: sql`DEFAULT` })
     .executeTakeFirst();
   if (!result.numUpdatedRows) {
     return Response.json({ message: __('Delete failed!') }, { status: 500 });
@@ -194,7 +195,7 @@ export async function PATCH(
     await db
       .updateTable('extrusions')
       .where('id', '=', log.id)
-      .set(body)
+      .set({ ...body, lastEdited: sql`DEFAULT` })
       .execute();
 
     return Response.json({ ok: true });
